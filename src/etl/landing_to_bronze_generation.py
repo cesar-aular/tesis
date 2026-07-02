@@ -177,6 +177,12 @@ def process_generation(landing_dir: str | Path, bronze_dir: str | Path, visuales
     raw_csv_dir = landing_dir / "generacion_raw"
     
     if not data_exists or force:
+        # CRITICO: limpiar salidas previas. La escritura por planta usa mode='a'
+        # (necesario para ensamblar multiples archivos crudos dentro de UNA corrida);
+        # sin esta limpieza, cada re-ejecucion con --force APENDIZA el dataset
+        # completo otra vez (bug historico: bronze quedo triplicado, ratio ~3.17x).
+        for old_csv in (bronze_dir / "generacion").glob("*.csv"):
+            old_csv.unlink()
         if raw_csv_dir.exists():
             csv_files = list(raw_csv_dir.glob("*.csv"))
             if csv_files:

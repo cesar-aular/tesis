@@ -39,12 +39,13 @@ def run_tune(train_df: pd.DataFrame, strategy: str = "toy"):
     futr_exog = ['sin_hour', 'cos_hour', 'sin_month', 'cos_month', 'sin_season', 'cos_season', 'estacion_idx']
     
     def objective(trial):
-        hidden_size = trial.suggest_categorical('hidden_size', [16, 32, 64]) if 'TFT' == 'TFT' else trial.suggest_categorical('hidden_size', [32, 64, 128])
+        hidden_size = trial.suggest_categorical('hidden_size', [16, 32, 64])
         lr = trial.suggest_float('learning_rate', 1e-4, 1e-2, log=True)
-        
+
         model_obj = TFT(
             h=24,
             input_size=168,
+            hidden_size=hidden_size,  # antes el trial no usaba hidden_size
             max_steps=max_steps,
             learning_rate=lr,
             batch_size=batch_size,

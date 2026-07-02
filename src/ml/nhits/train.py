@@ -48,10 +48,13 @@ def run_train(train_df: pd.DataFrame, strategy: str = "toy"):
     stat_exog = ['macrozona_idx', 'potencia_neta_mw']
     hist_exog = ['humedad-relativa', 'radiacion-global-instantanea', 'temp-aire-seco']
     futr_exog = ['sin_hour', 'cos_hour', 'sin_month', 'cos_month', 'sin_season', 'cos_season', 'estacion_idx']
+    _h = params.get('hidden_size', 64)
     model_obj = NHITS(
-        h=24, 
+        h=24,
         input_size=params.get('input_size', 168),
-        hidden_size=params.get('hidden_size', 64),
+        # nf 3.x: NHITS no acepta 'hidden_size' (caia en trainer_kwargs y rompia
+        # el fit). Su equivalente arquitectonico son las unidades MLP por stack.
+        mlp_units=3 * [[_h, _h]],
         learning_rate=params.get('learning_rate', 1e-3),
         max_steps=max_steps,
         scaler_type='robust',

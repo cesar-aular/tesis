@@ -50,7 +50,8 @@ def make_hourly_grid(test_df: pd.DataFrame, planta: str) -> pd.DataFrame:
     - Features temporales y estacion_idx se recalculan desde ds.
     - Estáticas se propagan (constantes por planta).
     """
-    test_df = test_df.sort_values('ds')
+    # Dedup defensivo: reindex exige indice unico (una fila por hora)
+    test_df = test_df.sort_values('ds').drop_duplicates(subset=['ds'], keep='last')
     full_range = pd.date_range(test_df['ds'].min(), test_df['ds'].max(), freq='h')
     grid = (test_df.set_index('ds')
             .reindex(full_range)

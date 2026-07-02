@@ -49,9 +49,11 @@ def run_train(train_df: pd.DataFrame, strategy: str = "toy"):
     hist_exog = ['humedad-relativa', 'radiacion-global-instantanea', 'temp-aire-seco']
     futr_exog = ['sin_hour', 'cos_hour', 'sin_month', 'cos_month', 'sin_season', 'cos_season', 'estacion_idx']
     model_obj = LSTM(
-        h=24, 
+        h=24,
         input_size=params.get('input_size', 168),
-        hidden_size=params.get('hidden_size', 64),
+        # nf 3.x: el parametro es encoder_hidden_size ('hidden_size' caia en
+        # trainer_kwargs y rompia el fit, forzando siempre el fallback sin tunear)
+        encoder_hidden_size=params.get('hidden_size', 64),
         learning_rate=params.get('learning_rate', 1e-3),
         max_steps=max_steps,
         scaler_type='robust',

@@ -105,11 +105,14 @@ def process_silver(bronze_dir: str | Path, silver_dir: str | Path, write_csv: bo
             for csv_file in var_dir.glob("*.csv"):
                 df_st = pd.read_csv(csv_file, low_memory=False)
                 if df_st.empty or 'unique_id' not in df_st.columns: continue
-                
+
                 st_name = df_st['unique_id'].iloc[0]
                 macrozona = st_to_macrozona.get(st_name, "Desconocida")
                 if macrozona == "Desconocida": continue
-                
+
+                # Dedup defensivo por estacion: duplicados desiguales sesgarian
+                # el promedio por macrozona (bug historico de append en Bronze)
+                df_st = df_st.drop_duplicates(subset=['unique_id', 'ds'], keep='last')
                 df_st['macrozona'] = macrozona
                 var_dfs.append(df_st)
                 
@@ -148,10 +151,19 @@ def process_silver(bronze_dir: str | Path, silver_dir: str | Path, write_csv: bo
             df_gen['ds'] = pd.to_datetime(df_gen['ds'], format='ISO8601', errors='coerce')
             df_gen['macrozona'] = macrozona
             df_gen['potencia_neta_mw'] = cap
-            
+
             gen_dfs.append(df_gen)
-            
+
     df_unified = pd.concat(gen_dfs, ignore_index=True) if gen_dfs else pd.DataFrame()
+
+    # Dedup defensivo: una (planta, hora) = UNA fila. El bug de append en Bronze
+    # triplico el dataset historicamente (14.4M filas vs 4.4M reales).
+    if not df_unified.empty:
+        antes = len(df_unified)
+        df_unified = df_unified.drop_duplicates(subset=['unique_id', 'ds'], keep='last')
+        if antes != len(df_unified):
+            print(f"[ETL Silver] WARNING: {antes - len(df_unified)} filas duplicadas "
+                  f"(unique_id, ds) eliminadas de Generacion (bronze contaminado).")
     
     # 4. Cruzar Generacion con Variables Exogenas por Macrozona y Fecha
     if not df_unified.empty and not df_exo_consolidated.empty:

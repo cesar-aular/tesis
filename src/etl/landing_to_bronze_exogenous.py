@@ -169,6 +169,13 @@ def process_exogenous(landing_dir: str | Path, bronze_dir: str | Path, visuales_
     raw_csv_dir = landing_dir / "variables_externas"
     
     if not data_exists or force:
+        # CRITICO: limpiar salidas previas. La escritura por estacion usa mode='a'
+        # (necesario dentro de UNA corrida); sin limpieza, cada --force APENDIZA
+        # el dataset completo otra vez (bug historico: bronze triplicado).
+        exo_base = bronze_dir / "exogenas"
+        if exo_base.exists():
+            for old_csv in exo_base.rglob("*.csv"):
+                old_csv.unlink()
         if raw_csv_dir.exists():
             for var_dir in raw_csv_dir.iterdir():
                 if not var_dir.is_dir(): continue
