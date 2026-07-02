@@ -14,8 +14,17 @@ import warnings
 
 
 def silence_noise():
-    # Importar primero: lightning fija su nivel INFO EN el import y pisaria
-    # cualquier configuracion hecha antes.
+    # ORDEN CRITICO (Windows DLL hell): pyarrow DEBE cargar sus DLLs antes que
+    # torch/lightning. Si lightning carga primero, el import perezoso de
+    # pyarrow.dataset (dentro de read_parquet) hace segfault (exit 139).
+    try:
+        import pyarrow.dataset   # noqa: F401
+        import pyarrow.parquet   # noqa: F401
+    except ImportError:
+        pass
+
+    # Importar lightning ANTES de configurar: fija su nivel INFO en el import
+    # y pisaria cualquier configuracion hecha antes.
     try:
         import pytorch_lightning  # noqa: F401
         import lightning_fabric   # noqa: F401
