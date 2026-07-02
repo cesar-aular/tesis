@@ -36,6 +36,19 @@ visuales/**/*.jpg
 *.db
 *.sqlite3
 
+# ---- LaTeX (artefactos de compilacion TeXworks/MiKTeX) ----
+latex-tesis/*.aux
+latex-tesis/*.lof
+latex-tesis/*.lot
+latex-tesis/*.out
+latex-tesis/*.toc
+latex-tesis/*.bbl
+latex-tesis/*.blg
+latex-tesis/*.synctex.gz
+latex-tesis/*.synctex(busy)
+latex-tesis/*.fls
+latex-tesis/*.fdb_latexmk
+
 # ---- OS / editor ----
 .DS_Store
 Thumbs.db

@@ -70,7 +70,7 @@ Para abordar resolutivamente los desafíos expuestos en la literatura, este proy
 Para garantizar la rigurosidad del \textit{benchmarking} y validar empíricamente la efectividad de la técnica frente a la escasez de datos, la investigación estipula un esquema de evaluación comparativo final cerrado, constituido por:
 \begin{enumerate}
     \item \textbf{Líneas Base Locales Tradicionales:} Utilización del algoritmo \textit{XGBoost} y redes neuronales \textit{LSTM}, ambos condicionados por su estricto entrenamiento aislado en plantas individuales.
-    \item \textbf{Arquitecturas Globales Profundas:} Despliegue de redes jerárquicas \textit{N-HiTS} y la arquitectura atencional \textit{Temporal Fusion Transformer (TFT)}, entrenados bajo un paradigma de retención de una planta (\textit{Leave-One-Plant-Out}) para medir escenarios de \textit{Cold-Start} real.
+    \item \textbf{Arquitecturas Globales Profundas:} Despliegue de redes jerárquicas \textit{N-HiTS} y las arquitecturas atencionales \textit{Temporal Fusion Transformer (TFT)} e \textit{Informer}, entrenadas bajo un paradigma de retención de una planta (\textit{Leave-One-Plant-Out}) para medir escenarios de \textit{Cold-Start} real.
 \end{enumerate}
 
 Esta arquitectura de evaluación empírica permitirá dictaminar cuantitativamente si el \textit{Temporal Fusion Transformer} es capaz de transferir el conocimiento climático generalizado de la flota operativa para mitigar los sesgos predictivos durante los arranques iniciales de los parques solares a nivel macrozonal.

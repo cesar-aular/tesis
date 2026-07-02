@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1_otono",
+    "planta": "alto_solar",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.2973598421114565,
+        "MAE": 0.9191885587351862,
+        "sMAPE": 167.03149219301477,
+        "rRMSE": 149.1723409371196,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.140714191403337,
+        "Pinball_P95": 0.7832653698661791
+    }
+}

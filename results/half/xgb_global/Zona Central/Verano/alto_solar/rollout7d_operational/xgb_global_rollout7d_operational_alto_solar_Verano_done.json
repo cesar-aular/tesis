@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_rollout7d_operational",
+    "planta": "alto_solar",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.4776977694140039,
+        "MAE": 0.3256261331345221,
+        "sMAPE": 82.35373782498924,
+        "rRMSE": 60.11112148306288
+    }
+}

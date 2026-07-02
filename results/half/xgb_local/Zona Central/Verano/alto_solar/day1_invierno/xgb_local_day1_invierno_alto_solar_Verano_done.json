@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_day1_invierno",
+    "planta": "alto_solar",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.7457084704186822,
+        "MAE": 0.38463940674167435,
+        "sMAPE": 140.81506085713548,
+        "rRMSE": 107.91470596647135
+    }
+}

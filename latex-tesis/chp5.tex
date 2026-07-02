@@ -1,16 +1,71 @@
 \section{Desarrollo de la Propuesta y Resultados}
 
-Considere que en este apartado debe demostrar el desarrollo de la propuesta del capítulo anterior con los resultados obtenidos en cada fase.
+Este capítulo documenta la ejecución de las cuatro fases metodológicas definidas en la Sección \ref{p:adaptacion}, junto a las evidencias y resultados obtenidos en cada una de ellas. Las evidencias complementarias (tablas completas de métricas por planta, registros de imputación y bitácoras de ejecución) se remiten a los Anexos.
 
+\subsection{Fase 0: Construcción del Pipeline de Datos (ETL)}
+La implementación del modelo de capas \textit{Medallion} consolidó los registros horarios de generación del Coordinador Eléctrico Nacional (139 archivos mensuales, período 2014--2024) con las variables meteorológicas de la red CR2 (radiación global instantánea, temperatura del aire y humedad relativa), resultando en un corpus unificado de \textbf{94 plantas fotovoltaicas} y aproximadamente \textbf{4,37 millones de observaciones planta-hora} tras el proceso de depuración.
+
+Durante la construcción de la capa \textit{Bronze} se identificaron y resolvieron tres hallazgos relevantes de calidad de datos:
+\begin{enumerate}
+    \item \textbf{Agregación multi-unidad:} centrales compuestas por múltiples unidades físicas de reporte (ej. PFV Jama, con dos unidades registradas bajo la misma central y una capacidad combinada de 51 MW) se consolidaron sumando la generación por hora, en coherencia con la capacidad declarada en el maestro de instalaciones.
+    \item \textbf{Transiciones de horario de verano (DST):} la hora repetida del primer domingo de abril se colapsó de forma segura (para generación solar corresponde a horas nocturnas de producción nula).
+    \item \textbf{Integridad del target:} en concordancia con la regla metodológica de no imputación de la variable objetivo, los vacíos de generación permanecen ausentes y las métricas se computan exclusivamente sobre observaciones reales.
+\end{enumerate}
+
+La capa \textit{Silver} incorporó las características cíclicas temporales (seno/coseno de hora, mes y estación), la asociación geográfica por Macrozona y la imputación trazable de exógenas (con variables indicadoras \textit{is\_imputed} y bitácora de imputación), mientras que la capa \textit{Gold} materializó las particiones de validación LOPO por planta.
+
+\begin{figure}[hbt!]
+  \centering
+  \framebox(300,150){\textit{Placeholder: Diagrama del pipeline Medallion implementado}}
+  \caption{\label{fig:etl_implementado} Flujo de datos implementado: Landing $\rightarrow$ Bronze $\rightarrow$ Silver $\rightarrow$ Gold.}
+\end{figure}
+
+\subsection{Fase 1: Sintonización de Hiperparámetros}
+La búsqueda de hiperparámetros se implementó mediante optimización bayesiana (\textit{Optuna}), explorando la tasa de aprendizaje y la dimensión oculta de cada arquitectura global (mapeada al parámetro real de cada red: \textit{encoder} en LSTM, unidades MLP por bloque en N-HiTS y dimensión del modelo en TFT e Informer). Para contener el costo computacional, la sintonización se ejecuta una única vez por arquitectura y estrategia de escala, reutilizando la configuración óptima en todos los pliegues LOPO; la fuga de información a nivel de hiperparámetros asociada a esta decisión se considera despreciable en la literatura de pronóstico global.
+
+Adicionalmente, el entrenamiento incorpora detención temprana (\textit{early stopping}) sobre una ventana de validación de 168 horas por serie, precisión mixta (fp16) en las arquitecturas numéricamente estables (TFT, N-HiTS) y precisión completa (fp32) en aquellas propensas a divergencia bajo aritmética reducida (LSTM, Informer).
+
+% [PENDIENTE: tabla con los hiperparámetros óptimos por arquitectura una vez concluida la corrida HALF]
+
+\subsection{Fase 2: Simulación Cold-Start (LOPO)}
+La evaluación \textit{Leave-One-Plant-Out} se ejecutó conforme al diseño metodológico: para cada planta objetivo, los modelos globales se entrenan con las restantes $N-1$ instalaciones y la inferencia se inicializa con un contexto histórico 100\% sintético ($y = \text{capacidad} \times PR_{\text{regional}} \times \text{perfil solar}$), donde el \textit{Performance Ratio} regional se computa estrictamente sobre el conjunto de entrenamiento, estratificado por Macrozona y estación del año.
+
+Como refinamiento metodológico surgido durante el desarrollo, la evaluación incorpora un \textbf{análisis de sensibilidad sobre la definición de la ventana de evaluación}, motivado por la detección de \textit{rampas de puesta en marcha}: períodos iniciales de las series (de días a semanas) con generación nula previa a la operación comercial sostenida. Se evalúan por planta:
 \begin{itemize}
-\item Debe incorporar los apartados de cada etapa declarada y evidencias más importantes del desarrollo, con los resultados obtenidos en cada uno de ellos, el resto de las evidencias de cada una de las fases, deben pasar a los Anexos.
-\item \colorbox{yellow}{Borre el texto que no sea suyo} y comience a escribir en ese punto.
+    \item \textbf{Ventana Raw:} desde la primera hora registrada de la planta (fiel al registro histórico, incluye la rampa).
+    \item \textbf{Ventana Operacional:} desde la primera hora de producción sostenida (definida como el primer instante productivo que inaugura al menos 10 horas con generación superior al 5\% de la capacidad dentro de las 72 horas siguientes).
+    \item \textbf{Ventanas Estacionales:} la primera ventana de producción sostenida cuyo inicio cae en cada una de las cuatro estaciones del año, permitiendo cuantificar el efecto de la variabilidad meteorológica cíclica sobre la transferencia \textit{Cold-Start}.
 \end{itemize}
 
-\subsubsection{Etapa1 del desarrollo}
+Cada ventana se evalúa en los dos horizontes definidos (\textit{day1} y \textit{rollout7d}, este último con realimentación autorregresiva de la mediana predicha), y las ventanas de evaluación se excluyen íntegramente del entrenamiento del baseline local para prevenir contaminación \textit{train-on-test}.
 
-\subsubsection{Etapa 2 del desarrollo}
+\subsection{Fase 3: Resultados y Análisis Comparativo}
 
-\subsubsection{Etapa X del desarrollo}
+% ===================================================================
+% [PENDIENTE: esta sección se completa con los resultados de la
+%  corrida HALF (47 plantas) actualmente en ejecución. Estructura
+%  prevista:]
+% ===================================================================
 
-Documentar cada una de las partes del desarrollo de su propuesta, de acuerdo con la carta gantt y los elementos comprometidos en el capítulo anterior, hasta llegar al resultado, con los elementos más importantes, el resto debe quedar en evidencia como anexo a este documento.
+\subsubsection{Resultados Globales por Arquitectura}
+% [PENDIENTE: tabla resumen RMSE/MAE/sMAPE/rRMSE por modelo y horizonte,
+%  ventana Operacional, agregada sobre las 47 plantas]
+
+\subsubsection{Análisis por Estación del Año}
+% [PENDIENTE: comparativa estacional (Verano/Otoño/Invierno/Primavera).
+%  El piloto de verificación (2 plantas) anticipa que el Invierno es la
+%  estación de mayor dificultad predictiva para todas las arquitecturas.]
+
+\subsubsection{Análisis de Sensibilidad: Ventana Raw vs. Operacional}
+% [PENDIENTE: contraste de métricas entre ambas definiciones de ventana;
+%  la ventana Raw produce métricas degeneradas en plantas con rampa de
+%  puesta en marcha (rRMSE indefinido con generación media nula).]
+
+\subsubsection{Calidad Probabilística de los Intervalos}
+% [PENDIENTE: cobertura empírica del intervalo de 90\% (Coverage\_90)
+%  y pérdidas Pinball P05/P95 para las arquitecturas profundas.]
+
+\subsubsection{Contraste de la Hipótesis}
+% [PENDIENTE: comparación directa modelo global (TFT/Informer/N-HiTS)
+%  vs. baseline local (XGBoost con historia propia) en la ventana
+%  Cold-Start, respondiendo a la hipótesis del Capítulo I.]

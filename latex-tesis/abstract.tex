@@ -1,6 +1,8 @@
-En base al resumen del Ítem anterior elabore un abstract de no más de 300 palabras en el idioma inglés.
+% DRAFT generated from project context — to be reviewed and adjusted by the author.
+The accelerated expansion of photovoltaic generation faces a critical barrier during the commissioning of new facilities: the absence of local operating history prevents traditional forecasting models, trained in isolation for each plant, from delivering reliable projections (the \textit{Cold-Start} problem). This algorithmic uncertainty translates into operational inefficiencies and financial risk for power-system operators and small distributed-generation actors.
 
-\begin{itemize}
-\item No copiar directamente de traductores online.
-\item \colorbox{yellow}{Borre el texto que no es suyo y comience a escribir}
-\end{itemize}
+This undergraduate thesis project addresses the problem through the design, implementation and validation of a \textit{Cross-Site Learning} framework, in which state-of-the-art Deep Learning architectures —the \textit{Temporal Fusion Transformer} (TFT), \textit{Informer} and \textit{N-HiTS}— are trained globally over a set of consolidated Chilean solar plants, integrating multimodal data: hourly generation series (2014--2024), exogenous meteorological variables and static geographic features grouped by macro-zone.
+
+The evaluation follows a \textit{Leave-One-Plant-Out} (LOPO) protocol, which completely hides the target plant during training and simulates its cold start by initializing the context window with purely synthetic values, derived from a regional efficiency coefficient computed strictly on the training set. Performance is contrasted against locally trained baselines (XGBoost and LSTM) over 24-hour and autoregressive 7-day horizons, using both point metrics (RMSE, MAE, sMAPE, rRMSE) and probabilistic metrics (90\% interval coverage and Pinball loss), stratified by season of the year.
+
+The expected results will quantify the ability of the global approach to transfer generalized atmospheric patterns to facilities without history, empirically determining whether multi-site learning constitutes a viable alternative to the local training paradigm during the early operational stages of a solar park.
