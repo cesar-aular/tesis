@@ -1,0 +1,11 @@
+{
+    "model": "tft_day1",
+    "planta": "alto_solar",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.520369291305542,
+        "MAE": 0.4928298890590668,
+        "sMAPE": 200.0,
+        "rRMSE": 0.0
+    }
+}

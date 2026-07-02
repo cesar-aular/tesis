@@ -1,0 +1,45 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# ---- Virtual env ----
+.venv/
+venv/
+env/
+
+# ---- Data (regenerable via ETL; too heavy for VCS) ----
+data/landing/
+data/bronze/
+data/silver/
+data/gold/
+data/temp/
+data/**/*.parquet
+data/**/*.csv
+
+# ---- Trained models / checkpoints ----
+models/**/nf_models/
+models/**/*.ckpt
+models/**/*.joblib
+models/**/*.pkl
+lightning_logs/
+
+# ---- Results (heavy plots / prediction dumps) ----
+results/**/*.parquet
+results/**/*.png
+visuales/**/*.png
+visuales/**/*.jpg
+
+# ---- Optuna / study dbs ----
+*.db
+*.sqlite3
+
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+*.log
+
+# ---- Keep structure of ignored dirs ----
+!.gitkeep

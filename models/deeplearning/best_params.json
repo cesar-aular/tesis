@@ -1,0 +1,1 @@
+{"LSTM": {"input_size": 168, "hidden_size": 64, "max_steps": 100, "learning_rate": 0.001}, "NHITS": {"input_size": 168, "max_steps": 100, "learning_rate": 0.001}}
