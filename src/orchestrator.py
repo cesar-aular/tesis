@@ -87,7 +87,9 @@ def main():
         print("\n--- Ejecutando Capa Silver ---")
         try:
             from src.etl.bronze_to_silver import process_silver
-            process_silver("data/bronze", "data/silver")
+            # write_csv=False: el CSV de 4.4GB es redundante (Parquet es la fuente);
+            # generarlo bajo demanda con process_silver(..., write_csv=True).
+            process_silver("data/bronze", "data/silver", write_csv=False)
         except Exception as e:
             print(f"Error en Capa Silver: {e}")
             sys.exit(1)
@@ -99,7 +101,15 @@ def main():
         except Exception as e:
             print(f"Error en Capa Gold: {e}")
             sys.exit(1)
-            
+
+        print("\n--- Generando Dataset Deep Learning (silver_dl) ---")
+        try:
+            from src.ml.prepare_dl_dataset import prepare_dl_dataset
+            prepare_dl_dataset()
+        except Exception as e:
+            print(f"Error generando silver_dl: {e}")
+            sys.exit(1)
+
         print("\n[OK] Pipeline ETL Completo Ejecutado Exitosamente!")
 
     # --- Iniciar ML ---

@@ -76,12 +76,20 @@ def test_bronze_to_silver_pipeline(tmp_path):
     
     # Validaciones estructurales para ML (Panel Data)
     expected_cols = [
-        "unique_id", "ds", "y", "macrozona", "potencia_neta_mw", "PR",
+        "unique_id", "ds", "y", "macrozona", "potencia_neta_mw",
         "radiacion", "sin_hour", "cos_hour", "sin_day_year", "cos_day_year",
         "sin_day_month", "cos_day_month", "sin_month", "cos_month", "estacion_año"
     ]
     for col in expected_cols:
         assert col in df_silver.columns, f"Falta la columna esperada: {col}"
+
+    # ANTI-LEAKAGE: PR = y/capacidad es el target disfrazado (corr(PR,y)=1.0).
+    # JAMAS debe existir como columna/feature en Silver. El prior regional
+    # leakage-free se calcula en la capa ML (src/ml/utils/regional_prior.py)
+    # usando exclusivamente plantas de entrenamiento dentro del split LOPO.
+    assert "PR" not in df_silver.columns, (
+        "LEAKAGE: la columna PR (y/capacidad) no debe existir en Silver."
+    )
         
     # Verificar Macrozonas asignadas correctamente
     norte_df = df_silver[df_silver["unique_id"] == "planta_1"]
@@ -91,7 +99,3 @@ def test_bronze_to_silver_pipeline(tmp_path):
     centro_df = df_silver[df_silver["unique_id"] == "planta_2"]
     assert centro_df.iloc[0]["macrozona"] == "Zona Central"
     assert centro_df.iloc[0]["radiacion"] == 800.0
-    
-    # Verificar Performance Ratio (PR)
-    # PR = Generacion / (Potencia * horas) -> Generacion: 8, Potencia: 10, horas: 1 -> PR = 0.8
-    assert np.isclose(norte_df.iloc[0]["PR"], 0.8)

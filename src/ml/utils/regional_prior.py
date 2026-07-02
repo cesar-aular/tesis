@@ -1,0 +1,70 @@
+"""Prior regional de eficiencia (Performance Ratio) LIBRE DE LEAKAGE.
+
+Lección crítica del proyecto: la columna `PR = y / potencia_neta_mw` calculada
+fila a fila en Silver era el target disfrazado (corr(PR, y) = 1.0) e invalidaba
+los benchmarks XGBoost (rRMSE falso de ~0.8% vs ~56% real).
+
+El reemplazo correcto es un prior AGREGADO por macrozona + estación del año,
+calculado EXCLUSIVAMENTE con las plantas de entrenamiento dentro de cada split
+LOPO. La planta objetivo recibe el prior de su región, jamás un valor derivado
+de su propio y.
+"""
+import pandas as pd
+
+DEFAULT_PR = 0.25  # factor de planta solar típico si no hay información regional
+
+
+def compute_regional_pr(train_df: pd.DataFrame) -> pd.DataFrame:
+    """Calcula la tabla de priors [macrozona, estacion_año, pr_regional].
+
+    Eficiencia estática por planta y estación: mean(y) / potencia_neta_mw,
+    luego promedio ENTRE plantas de la macrozona (evita que plantas grandes
+    dominen). `train_df` DEBE ser el set N-1 del split LOPO (sin la objetivo).
+    """
+    per_plant = (train_df
+                 .groupby(['unique_id', 'macrozona', 'estacion_año'], observed=True)
+                 .agg(mean_y=('y', 'mean'), cap=('potencia_neta_mw', 'first'))
+                 .reset_index())
+    per_plant = per_plant[per_plant['cap'] > 0]
+    per_plant['eff'] = per_plant['mean_y'] / per_plant['cap']
+
+    table = (per_plant
+             .groupby(['macrozona', 'estacion_año'], observed=True)['eff']
+             .mean()
+             .reset_index(name='pr_regional'))
+    return table
+
+
+def lookup_regional_pr(table: pd.DataFrame, macrozona: str, estacion: str) -> float:
+    """Devuelve el prior para una macrozona+estación, con fallbacks seguros.
+
+    Fallbacks: media de la macrozona -> media global de la tabla -> DEFAULT_PR.
+    El resultado se acota a (0, 1] (un PR fuera de ese rango no es físico).
+    """
+    if table is None or table.empty:
+        return DEFAULT_PR
+
+    exact = table[(table['macrozona'] == macrozona) & (table['estacion_año'] == estacion)]
+    if not exact.empty:
+        value = float(exact['pr_regional'].iloc[0])
+    else:
+        mz = table[table['macrozona'] == macrozona]
+        value = float(mz['pr_regional'].mean()) if not mz.empty else float(table['pr_regional'].mean())
+
+    if not (value > 0):
+        return DEFAULT_PR
+    return min(value, 1.0)
+
+
+def merge_regional_pr(df: pd.DataFrame, table: pd.DataFrame) -> pd.DataFrame:
+    """Une el prior como feature `pr_regional` (por macrozona+estación).
+
+    Para filas sin combinación en la tabla se aplica el fallback de lookup.
+    Seguro para train y test: la tabla proviene solo de plantas de entrenamiento.
+    """
+    out = df.merge(table, on=['macrozona', 'estacion_año'], how='left')
+    if out['pr_regional'].isna().any():
+        global_mean = float(table['pr_regional'].mean()) if not table.empty else DEFAULT_PR
+        out['pr_regional'] = out['pr_regional'].fillna(global_mean if global_mean > 0 else DEFAULT_PR)
+    out['pr_regional'] = out['pr_regional'].clip(upper=1.0)
+    return out

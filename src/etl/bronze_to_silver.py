@@ -67,7 +67,7 @@ def fast_parse_dates(series):
     # Ya no es necesaria, los datos vienen limpios de Bronze.
     return pd.to_datetime(series)
 
-def process_silver(bronze_dir: str | Path, silver_dir: str | Path):
+def process_silver(bronze_dir: str | Path, silver_dir: str | Path, write_csv: bool = True):
     bronze_dir = Path(bronze_dir)
     silver_dir = Path(silver_dir)
     silver_dir.mkdir(parents=True, exist_ok=True)
@@ -162,16 +162,13 @@ def process_silver(bronze_dir: str | Path, silver_dir: str | Path):
     if not df_unified.empty:
         print("[ETL Silver] Generando Features Cíclicos...")
         df_unified = add_cyclical_features(df_unified, date_col='ds')
-        
-        # 6. Calcular Performance Ratio (PR)
-        print("[ETL Silver] Calculando Performance Ratio (PR)...")
-        # PR = Generacion / (Potencia * horas) - Asumiendo frecuencia horaria (horas=1)
-        df_unified['PR'] = np.where(
-            df_unified['potencia_neta_mw'] > 0,
-            df_unified['y'] / df_unified['potencia_neta_mw'],
-            0.0
-        )
-        
+
+        # 6. ANTI-LEAKAGE: NO calcular PR = y/capacidad aqui.
+        # Esa columna es el target normalizado (corr(PR, y) = 1.0) y alimentarla
+        # como feature invalida los benchmarks. El prior regional leakage-free
+        # se calcula en la capa ML (src/ml/utils/regional_prior.py) usando
+        # exclusivamente plantas de entrenamiento dentro de cada split LOPO.
+
         # 7. Imputacion de Outliers y NaNs en Exogenas
         print("[ETL Silver] Imputando valores perdidos en exogenas y guardando log...")
         exo_columns = [c for c in df_exo_consolidated.columns if c not in ['macrozona', 'ds']]
@@ -201,12 +198,14 @@ def process_silver(bronze_dir: str | Path, silver_dir: str | Path):
             df_log.to_csv(silver_dir / "imputation_log.csv", index=False)
             print(f"[ETL Silver] Se detectaron {len(df_log)} registros exogenos imputados (ffill/bfill).")
         
-        # Guardar en Parquet y CSV
+        # Guardar en Parquet (CSV opcional: duplica ~4.4GB y varios minutos)
         print(f"[ETL Silver] Escribiendo Salidas Unified ({len(df_unified)} registros)...")
         df_unified.to_parquet(silver_dir / "silver_unified.parquet", index=False)
-        df_unified.to_csv(silver_dir / "silver_unified.csv", index=False)
-        
+        if write_csv:
+            df_unified.to_csv(silver_dir / "silver_unified.csv", index=False)
+
     print("[ETL Silver] ¡Capa Silver Finalizada!")
+    return True
 
 if __name__ == "__main__":
     process_silver("data/bronze", "data/silver")

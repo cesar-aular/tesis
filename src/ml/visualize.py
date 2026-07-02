@@ -154,7 +154,12 @@ def generate_global_metrics_report(strategy: str = "toy"):
                 "Planta": planta,
                 "RMSE": metrics.get("RMSE", 0),
                 "MAE": metrics.get("MAE", 0),
-                "rMAE": metrics.get("rMAE", 0),
+                "sMAPE": metrics.get("sMAPE", 0),
+                "rRMSE": metrics.get("rRMSE", 0),
+                # Metricas probabilisticas (solo modelos DL con MQLoss level=[90])
+                "Coverage_90": metrics.get("Coverage_90"),
+                "Pinball_P05": metrics.get("Pinball_P05"),
+                "Pinball_P95": metrics.get("Pinball_P95"),
             }
             all_metrics.append(row)
         except Exception as e:
@@ -183,7 +188,7 @@ def generate_global_metrics_report(strategy: str = "toy"):
             if df_subset.empty: continue
             
             plt.figure(figsize=(12, 6))
-            sns.barplot(data=df_subset, x="Model", y="RMSE", hue="Horizon", ci=None)
+            sns.barplot(data=df_subset, x="Model", y="RMSE", hue="Horizon", errorbar=None)
             plt.title(f"Comparacion de RMSE - {macrozona} ({estacion}) [Todos los modelos]")
             plt.ylabel("RMSE")
             plt.grid(axis='y', alpha=0.3)
