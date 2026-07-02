@@ -16,6 +16,16 @@
   de fuga a nivel de hiperparámetros documentado como despreciable.
 - **Sin lightning_logs ni progress bar**: `logger=False`, menos IO.
 - Trials de tuning: 3 (antes 5), cortos (~200 steps): rankean configs, no convergen.
+- **Estabilidad numérica medida a escala half**: LSTM (recurrente) e Informer
+  (atención prob-sparse) divergen a NaN en fp16 → fijados a fp32 vía `MODEL_SPECS`;
+  TFT y NHITS mantienen fp16 (estables verificados). `gradient_clip_val=1.0` global.
+  Guards: trial NaN→9999; todos-fallan→defaults; predicción NaN aborta solo ese
+  modelo/planta; try/except por modelo en el orquestador (un fallo no mata 8h de corrida).
+- **XGBoost en GPU** (`device='cuda'`, fallback CPU): fit global de 4.3M filas en ~4s.
+- **Benchmark medido (RTX 2060, escala half, por fold)**: TFT 186s · LSTM ~105s ·
+  Informer 44s · NHITS 15s · XGB ~10s · overhead ~45s ≈ **~6.7 min/fold**.
+  Proyección: `half` (47 folds) ≈ **5.5-6.5h** (antes: días); `total` (94 folds,
+  2 años, tope 1500 steps) ≈ **20-26h** — ajustable bajando el tope de steps.
 
 ## [2026-07-01] - Análisis de Sensibilidad: Ventana Cold-Start Raw vs Operacional
 - **Contexto**: la ventana LOPO comenzaba en la primera hora registrada de cada planta,
