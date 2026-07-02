@@ -26,9 +26,8 @@ models/**/*.joblib
 models/**/*.pkl
 lightning_logs/
 
-# ---- Results (heavy plots / prediction dumps) ----
-results/**/*.parquet
-results/**/*.png
+# ---- Results (regenerables por el pipeline; markers incluidos) ----
+results/
 visuales/**/*.png
 visuales/**/*.jpg
 
