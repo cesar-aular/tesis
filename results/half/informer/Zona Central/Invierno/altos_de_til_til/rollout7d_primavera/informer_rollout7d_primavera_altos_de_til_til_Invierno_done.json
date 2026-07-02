@@ -1,0 +1,14 @@
+{
+    "model": "informer_rollout7d_primavera",
+    "planta": "altos_de_til_til",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.8376876744159191,
+        "MAE": 0.5705216552707411,
+        "sMAPE": 169.05676637161133,
+        "rRMSE": 155.7744992878584,
+        "Coverage_90": 0.19047619047619047,
+        "Pinball_P05": 0.07985938232879908,
+        "Pinball_P95": 0.30160187725864707
+    }
+}

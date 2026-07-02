@@ -2,6 +2,9 @@ import argparse
 import gc
 from pathlib import Path
 
+from src.ml.utils.quiet import silence_noise
+silence_noise()  # antes de que NeuralForecast/Lightning configuren sus loggers
+
 import pandas as pd
 
 from src.ml.utils.data_loader import load_lopo_split

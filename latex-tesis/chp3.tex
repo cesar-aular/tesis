@@ -1,0 +1,76 @@
+\section{Estado del Arte / Benchmarking}
+Esta sección analiza críticamente los principales trabajos de la literatura científica reciente que abordan el pronóstico de generación fotovoltaica, la gestión de series temporales multivariadas bajo escasez de datos y el uso de técnicas de transferencia de conocimiento. La revisión clasifica los artículos bibliográficos según sus arquitecturas y metodologías, contrastando objetivamente las ventajas y limitaciones metodológicas expuestas por cada autor.
+
+\subsection{Modelos Base y Pronóstico de Ámbito Local}
+La investigación académica inicial del pronóstico fotovoltaico empleó predominantemente algoritmos ajustados con historiales climáticos de una sola ubicación. Zhaoyang Zhu et al. (2023) \cite{rodriguez2023energy} exploraron la eficiencia algorítmica de distintos esquemas de regresión no lineal, demostrando la superioridad métrica del algoritmo \textit{XGBoost} sobre técnicas de series puramente estadísticas. 
+\begin{itemize}
+    \item \textbf{Pros:} Alta eficiencia computacional y gran desempeño para identificar la importancia de características (\textit{feature importance}) dentro de variables meteorológicas correlacionadas.
+    \item \textbf{Contras:} La naturaleza basada en árboles sufre degradaciones severas y pérdida de la capacidad de extrapolación cuando los regímenes de datos de prueba (como los que suceden en un arranque en frío) carecen de historial de entrenamiento (\textit{Cold-Start}).
+\end{itemize}
+
+Por su parte, Salinas et al. (2020) \cite{Salinas2020} propusieron \textit{DeepAR}, un modelo estructurado mediante redes recurrentes autorregresivas optimizadas para entregar densidades probabilísticas futuras en lugar de un estimador puntual.
+\begin{itemize}
+    \item \textbf{Pros:} Permite cuantificar de forma analítica los intervalos de incertidumbre de la estimación solar diaria.
+    \item \textbf{Contras:} El procesamiento secuencial característico del núcleo recurrente incrementa asintóticamente el tiempo de entrenamiento, limitando la habilidad práctica del algoritmo para ingerir largas secuencias climáticas de forma paralela.
+\end{itemize}
+
+\subsection{Aplicación de Arquitecturas Transformer en Series Temporales}
+Para superar los obstáculos del procesamiento secuencial, los mecanismos de atención \cite{Vaswani2017} fueron adaptados hacia ecosistemas temporales. Zhou et al. (2021) \cite{Zhou2021} concibieron la arquitectura \textit{Informer}, integrando una innovación de autoatención denominada \textit{ProbSparse}.
+\begin{itemize}
+    \item \textbf{Pros:} Al reducir el cálculo de atención de complejidad cuadrática a logarítmica, el modelo permite predecir eficientemente secuencias extremadamente extensas que antes colapsaban la memoria.
+    \item \textbf{Contras:} El análisis puntual del mecanismo de atención tiende a fraccionar la contigüidad cronológica real de las fluctuaciones climáticas en la serie de tiempo.
+\end{itemize}
+
+A fin de retener dicho contexto, Nie et al. (2022) \cite{Nie2022} publicaron \textit{PatchTST}, un Transformer que preprocesa la señal temporal trozándola en ventanas sub-agrupadas (parches).
+\begin{itemize}
+    \item \textbf{Pros:} Retiene satisfactoriamente la información semántica a nivel de vecindario temporal de la serie y se alza como líder sobre los índices de error de las líneas base recurrentes.
+    \item \textbf{Contras:} Añade complejidad paramétrica al obligar a sintonizar heurísticamente la longitud del parche para cada frecuencia de resolución (horaria, diez-minutal) extraída de las plantas.
+\end{itemize}
+
+En un debate científico paralelo, Zeng et al. (2023) \cite{Zeng2023} cuestionaron estadísticamente el predominio del Transformer, reportando escenarios en que combinaciones lineales de componentes simples batían consistentemente arquitecturas atencionales sobre-complejas. 
+
+\subsection{Transfer Learning y Aprendizajes Globales Multi-Sitio}
+Finalmente, la discusión bibliográfica migra hacia la problemática del \textit{Cold-Start}. Bak et al. (2025) \cite{Bak2025} testearon empíricamente la efectividad de los esquemas de \textit{Transfer Learning} agregando datos de gran escala desde diversas plantas operativas para el entrenamiento de bases preentrenadas.
+\begin{itemize}
+    \item \textbf{Pros:} Demuestra empíricamente una atenuación de los márgenes de error durante las primeras semanas de operación en nuevos sitios geográficos.
+    \item \textbf{Contras:} Todavía exige algoritmos de post-entrenamiento (ajuste fino) una vez logrados los primeros flujos de información local.
+\end{itemize}
+
+Alineado a ello, Damato et al. (2026) \cite{Damato2026} ejecutaron un análisis paramétrico global versus local, resaltando que el aprendizaje cruzado inyecta un efecto estabilizador en conjuntos de datos propensos a cortes intermitentes en la transmisión de telemetría.
+\begin{itemize}
+    \item \textbf{Pros:} Máxima tolerancia a registros ruidosos o fallas persistentes en los sensores, logrando proyecciones fiables por imputación contextual implícita.
+    \item \textbf{Contras:} Impone requerimientos de infraestructura de \textit{hardware} avanzados para soportar la fase de entrenamiento concurrente.
+\end{itemize}
+
+\begin{table}[hbt!]
+  \centering
+  \resizebox{\textwidth}{!}{
+  \begin{tabular}{|m{3.5cm}|m{4cm}|m{5cm}|m{5cm}|}
+    \hline
+    \textbf{Arquitectura} & \textbf{Enfoque Paradigmático} & \textbf{Ventajas (Pros)} & \textbf{Limitaciones (Contras)} \\
+    \hline
+    XGBoost & Machine Learning Local & Alta interpretabilidad de variables espaciales y rapidez computacional. & Degradación predictiva severa y sobreajuste ante escenarios de arranque en frío. \\
+    \hline
+    LSTM & Deep Learning Recurrente & Excelente modelado secuencial probabilístico a corto plazo. & Limitada capacidad para evaluar relaciones temporales lejanas; procesamiento lento. \\
+    \hline
+    Informer / PatchTST & Transformer Global & Mecanismos de atención eficientes para secuencias extendidas. & Complejidad paramétrica elevada para afinar el tamaño óptimo de los parches. \\
+    \hline
+    TFT & Transformer Multivariado & Arquitectura diseñada para segregar variables estáticas (planta) y dinámicas (clima). & Altos requerimientos de hardware para su entrenamiento inicial (Cross-Site). \\
+    \hline
+  \end{tabular}
+  }
+  \caption{\label{tab:benchmarking} Síntesis comparativa de las arquitecturas predictivas expuestas en el estado del arte.}
+\end{table}
+
+\subsection{Conclusión del Estado del Arte y Aporte del Proyecto}
+La literatura académica indica que, si bien modelos predictivos locales basados en XGBoost o LSTM son altamente eficaces sobre bancos de datos de larga data, estos algoritmos son metodológicamente incapaces de operar solventemente frente al problema de escasez de datos tempranos (\textit{Cold-Start}). Alternativamente, el \textit{Cross-Site Learning} basado en arquitecturas avanzadas emerge como una solución robusta respaldada por investigaciones modernas. 
+
+Para abordar resolutivamente los desafíos expuestos en la literatura, este proyecto de título define como aporte metodológico central la implementación y evaluación de un marco predictivo \textit{Cross-Site} (entrenamiento cruzado multi-sitio) soportado sobre el \textit{Temporal Fusion Transformer} (TFT). La idoneidad del TFT se justifica científicamente por su capacidad intrínseca para fusionar variables temporales dinámicas y estáticas de forma asimétrica, característica vital para extrapolar conocimientos meteorológicos entre diferentes ubicaciones geográficas.
+
+Para garantizar la rigurosidad del \textit{benchmarking} y validar empíricamente la efectividad de la técnica frente a la escasez de datos, la investigación estipula un esquema de evaluación comparativo final cerrado, constituido por:
+\begin{enumerate}
+    \item \textbf{Líneas Base Locales Tradicionales:} Utilización del algoritmo \textit{XGBoost} y redes neuronales \textit{LSTM}, ambos condicionados por su estricto entrenamiento aislado en plantas individuales.
+    \item \textbf{Arquitecturas Globales Profundas:} Despliegue de redes jerárquicas \textit{N-HiTS} y la arquitectura atencional \textit{Temporal Fusion Transformer (TFT)}, entrenados bajo un paradigma de retención de una planta (\textit{Leave-One-Plant-Out}) para medir escenarios de \textit{Cold-Start} real.
+\end{enumerate}
+
+Esta arquitectura de evaluación empírica permitirá dictaminar cuantitativamente si el \textit{Temporal Fusion Transformer} es capaz de transferir el conocimiento climático generalizado de la flota operativa para mitigar los sesgos predictivos durante los arranques iniciales de los parques solares a nivel macrozonal.

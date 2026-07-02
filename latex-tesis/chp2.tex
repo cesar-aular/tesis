@@ -1,0 +1,42 @@
+\section{Marco Teórico}
+Este capítulo presenta los fundamentos teóricos necesarios para sustentar el desarrollo de la investigación. Se abordan los conceptos relacionados con la generación de energía fotovoltaica, el modelado de series de tiempo y las técnicas avanzadas de \textit{Machine Learning} y \textit{Deep Learning} empleadas para la predicción de energía bajo condiciones de escasez de datos.
+
+\subsection{Generación Fotovoltaica y Variables Meteorológicas}
+La generación de energía solar fotovoltaica corresponde al proceso de conversión directa de la radiación solar en electricidad. La potencia activa de salida de una planta fotovoltaica posee una dependencia estocástica respecto a múltiples variables atmosféricas dinámicas. La variable con mayor correlación directa es la Irradiancia Horizontal Global (GHI), definida como la cantidad total de radiación de onda corta recibida desde arriba por una superficie horizontal. Adicionalmente, factores térmicos y atmosféricos, tales como la temperatura ambiente, la velocidad del viento y la nubosidad, alteran la eficiencia de los paneles solares. En conjunto, la intermitencia de estas variables produce fluctuaciones severas en la inyección de energía a la red.
+
+\subsection{Series de Tiempo y Modelado Predictivo Tradicional}
+Una serie de tiempo se define como un conjunto ordenado de observaciones cuantitativas registradas en intervalos de tiempo regulares. El modelado predictivo consiste en analizar estas secuencias históricas para proyectar valores futuros. En el contexto del pronóstico energético, el modelado tradicional se fundamenta en un paradigma de aprendizaje local, donde los modelos operan sobre la premisa de contar con historiales de datos largos e ininterrumpidos pertenecientes a una sola estación.
+
+Las arquitecturas clásicas incluyen tanto modelos estadísticos como métodos de aprendizaje automático (\textit{Machine Learning}). Por un lado, algoritmos basados en ensambles de árboles de decisión, como \textit{XGBoost}, han demostrado un alto desempeño predictivo al capturar interacciones no lineales de forma eficiente. Por otro lado, enfoques de aprendizaje profundo (\textit{Deep Learning}) como las redes neuronales recurrentes \textit{Long Short-Term Memory} (LSTM) \cite{Hochreiter1997} introdujeron la capacidad de retener información de estados pasados mediante compuertas de memoria, permitiendo analizar la dinámica temporal y las dependencias a corto plazo en las lecturas de los sensores.
+
+\subsection{El Problema de Arranque en Frío (Cold-Start)}
+El concepto de \textit{Cold-Start} (o arranque en frío) en el ámbito de las energías renovables se refiere a la incapacidad de un algoritmo predictivo para generar estimaciones confiables debido a la falta parcial o total de datos históricos locales en una nueva instalación. Dado que los modelos locales estadísticos y de Machine Learning requieren extensos registros para modelar la estacionalidad climática anual y evitar el sobreajuste, la fase inicial de operación de un nuevo parque solar se caracteriza por una alta degradación predictiva, impactando la estabilidad de la red de transmisión.
+
+\subsection{Arquitecturas basadas en Transformers y Enfoques Modernos (N-HiTS)}
+La arquitectura Transformer \cite{Vaswani2017} representa una disrupción en el procesamiento secuencial al eliminar la dependencia de recurrencia en favor del mecanismo de \textit{Autoatención} (\textit{Self-Attention}). A diferencia de las redes recurrentes como LSTM, los Transformers procesan secuencias completas en paralelo, reduciendo drásticamente la pérdida de gradientes a largo plazo.
+
+Dentro del universo de arquitecturas basadas en atención para series de tiempo, el \textit{Temporal Fusion Transformer} (TFT) destaca como una topología especialmente diseñada para escenarios multivariados. A diferencia de un Transformer convencional, el TFT integra módulos de selección de variables y redes neuronales especializadas para procesar de forma diferenciada atributos estáticos (como la ubicación geográfica de la planta) y atributos dinámicos (irradiancia, temperatura futura). Esta capacidad de segmentar los flujos de datos convierte al TFT en la arquitectura idónea para estructurar modelos espaciales robustos.
+
+Paralelamente a los Transformers, han surgido redes profundas especializadas en análisis de series como el algoritmo \textit{Neural Hierarchical Interpolation for Time Series Forecasting} (N-HiTS). Esta arquitectura se fundamenta en bloques de interpolación jerárquica y retropropagación de base polinomial, ofreciendo predicciones de altísima eficiencia a largo plazo y sirviendo como contraparte predictiva de última generación frente a los modelos puramente atencionales.
+
+\begin{figure}[hbt!]
+  \centering
+  % \includegraphics[width=0.7\textwidth]{ruta/al/diagrama_tft.png}
+  \framebox(300,200){\textit{Placeholder: Diagrama Arquitectónico del TFT}}
+  \caption{\label{fig:arquitectura_tft} Arquitectura del Temporal Fusion Transformer, destacando sus compuertas Gated Residual Networks (GRN) y su bloque de atención multipunto.}
+\end{figure}
+
+\subsection{Transfer Learning y Aprendizaje Multi-Sitio}
+El aprendizaje por transferencia (\textit{Transfer Learning}) es una técnica metodológica de redes neuronales donde el conocimiento extraído de la resolución de una tarea con abundancia de datos se transfiere y se ajusta para resolver un problema análogo en un dominio con escasez de datos.
+
+En la predicción de generación solar, esta concepción se aplica bajo la técnica de aprendizaje multi-sitio (\textit{Cross-Site Learning}). Consiste en el entrenamiento de un modelo de Deep Learning unificado (como el TFT) mediante la ingesta simultánea de datos correspondientes a un clúster de plantas fotovoltaicas distribuidas geográficamente. Al correlacionar atributos estáticos de las plantas junto con variables dinámicas globales, el modelo abstrae el comportamiento termodinámico fundamental subyacente. Posteriormente, este modelo pre-entrenado es capaz de emitir pronósticos certeros para un nuevo dominio (nueva planta solar) reduciendo la exigencia inicial de poseer una base de datos local sustancial.
+
+\begin{figure}[hbt!]
+  \centering
+  % \includegraphics[width=0.7\textwidth]{ruta/al/esquema_cross_site.png}
+  \framebox(300,150){\textit{Placeholder: Local Training vs Cross-Site Learning}}
+  \caption{\label{fig:cross_site} Flujo conceptual de transferencia de conocimiento global inter-plantas versus el entrenamiento local y aislado.}
+\end{figure}
+
+\subsection{Conclusión acerca de las Herramientas Seleccionadas}
+A partir de la revisión de estos conceptos, queda sustentada la definición del arreglo metodológico final de este proyecto. El \textit{Temporal Fusion Transformer} (TFT) y la red \textit{N-HiTS} han sido seleccionados como las arquitecturas globales de \textit{Deep Learning} predilectas para ejecutar el paradigma \textit{Cross-Site Learning}. Contrastar estas potentes metodologías globalizadas en contraposición a las herramientas locales predictivas clásicas (\textit{XGBoost} y \textit{LSTM}) provee el marco analítico riguroso y necesario para cuantificar empíricamente cómo se mitiga el problema del \textit{Cold-Start} en escenarios de escasez informativa extrema.

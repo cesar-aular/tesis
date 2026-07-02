@@ -1,0 +1,14 @@
+{
+    "model": "lstm_day1_invierno",
+    "planta": "alto_solar",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.7499545271719513,
+        "MAE": 0.4990928295786337,
+        "sMAPE": 152.69802587210822,
+        "rRMSE": 108.52917124911554,
+        "Coverage_90": 0.2916666666666667,
+        "Pinball_P05": 0.055395212460522696,
+        "Pinball_P95": 0.0415312306417036
+    }
+}

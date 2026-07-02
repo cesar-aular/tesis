@@ -1,0 +1,85 @@
+\section{Metodología y Propuesta de Solución}
+
+\subsection{Propuesta de Solución}
+La propuesta de solución consiste en el diseño e implementación de un modelo predictivo global basado en una arquitectura Transformer, el cual es pre-entrenado mediante un enfoque \textit{Cross-Site Learning} sobre un conglomerado de plantas solares consolidadas. El propósito central es transferir este conocimiento climático hacia instalaciones nuevas que sufren de escasez de datos e intermitencias operativas (\textit{Cold-Start}), logrando proyecciones estables desde sus primeros días de conexión a la red.
+
+Con base en los requerimientos técnicos de integridad informativa, el alcance empírico abarca instalaciones solares consolidadas y agrupadas estratégicamente por Macrozona. En lugar de limitar la muestra a un número fijo de plantas en una única región, el enfoque \textit{Cross-Site} capitaliza la diversidad geográfica y climática disponible, empleando algoritmos de imputación robustos para aquellos vacíos operativos manejables. Esta configuración garantiza que el modelo asimile una correlación termodinámica auténtica y representativa, permitiendo transferir el aprendizaje a nuevas instalaciones independientemente de su ubicación, siempre que compartan el perfil macrozonal.
+Desde la perspectiva algorítmica, el proyecto adopta la arquitectura \textit{Temporal Fusion Transformer} (TFT) debido a su capacidad innata para procesar de forma asimétrica datos multimodales: asimilando variables dinámicas meteorológicas temporales en conjunto con características estáticas geográficas. Para dictaminar la efectividad de esta red frente a la problemática de arranque en frío, se contrastará su rendimiento de extrapolación (\textit{Zero-Shot}) frente al algoritmo profundo \textit{N-HiTS} y contra las herramientas locales tradicionales (\textit{XGBoost} y \textit{LSTM}).
+
+\begin{figure}[hbt!]
+  \centering
+  \framebox(350,200){\textit{Placeholder: Diagrama General de la Solución (Arquitectura del Proyecto)}}
+  \caption{\label{fig:diagrama_solucion} Representación esquemática de la propuesta de solución predictiva.}
+\end{figure}
+
+\subsection{\label{p:adaptacion}Adaptación Metodológica (Pipeline de Trabajo)}
+Para sistematizar la ejecución del proyecto y asegurar la replicabilidad de los experimentos, la investigación se apoya en un \textit{pipeline} de \textit{Machine Learning Operations} (MLOps) segmentado en cuatro fases metodológicas secuenciales implementadas en lenguaje Python.
+
+\subsubsection{Fase 0: Extracción, Transformación y Carga (ETL)}
+La fase fundacional del orquestador aborda el acondicionamiento integral de los datos estructurando el proceso en un modelo de capas secuenciales \textit{Medallion} (Landing, Bronze, Silver y Gold). Para mitigar los cortes de sensores y evitar el \textit{Data Leakage}, se definieron reglas estrictas:
+\begin{enumerate}
+    \item \textbf{Variables Exógenas y Agrupación:} La imputación de variables meteorológicas se realiza escalonadamente (interpolación lineal y \textit{ffill}/\textit{bfill} por grupos temporales), y se incorpora una variable indicadora booleana (\textit{dummy}) para señalar registros imputados. Además, se aplican características cíclicas (\textit{seno/coseno}) para capturar estacionalidad y se impone un forzamiento a cero en la irradiancia global durante períodos nocturnos garantizados.
+    \item \textbf{Manejo Estricto del Target (Intocable):} A diferencia de las variables exógenas, la variable objetivo (generación de energía) no es sometida a ningún tipo de imputación ni se rellena con ceros lógicos. Si un registro horario está ausente, permanece como NaN en el vector final. Los modelos administran estas intermitencias mediante la reindexación de la grilla horaria, y las métricas penalizan exclusivamente sobre observaciones reales y existentes. Esta decisión asegura que el \textit{Performance Ratio} no se distorsione sintéticamente.
+\end{enumerate}
+
+\begin{figure}[hbt!]
+  \centering
+  \framebox(300,150){\textit{Placeholder: Flujograma del proceso ETL e Imputación}}
+  \caption{\label{fig:etl_flow} Algoritmia del proceso de preparación de datos y control de calidad.}
+\end{figure}
+
+\subsubsection{Fase 1: Sintonización de Hiperparámetros (Tuning)}
+Para garantizar una comparativa justa (\textit{Benchmarking}) entre las redes profundas globales y los algoritmos tradicionales locales, es imperativo descubrir la configuración óptima de la topología de las redes. En esta etapa, el orquestador emplea heurísticas de búsqueda y validación cruzada para sintonizar los hiperparámetros críticos (tasa de aprendizaje, profundidad del codificador, número de cabezales de atención en el TFT y tamaño de la ventana temporal) maximizando el rendimiento predictivo inicial sobre el corpus histórico general antes de someter a los modelos al estrés del arranque en frío.
+
+\subsubsection{Fase 2: Simulación Cold-Start (Estrategia LOPO)}
+El núcleo de la experimentación reside en la aplicación de la metodología de retención espacial \textit{Leave-One-Plant-Out} (LOPO). En lugar de dividir el set de datos cronológicamente, el orquestador aísla dinámicamente y oculta por completo el historial operativo de una de las plantas (capa \textit{Gold} de validación). 
+El modelo \textit{Cross-Site} es entrenado exclusivamente con los años de experiencia del resto de la flota operativa. Para emular el arranque en frío (\textit{Cold-Start}) de la planta seleccionada, el contexto histórico (\textit{seed}) previo al horizonte de pronóstico se inicializa de forma 100\% sintética ($y = \text{capacidad} \times \text{PR regional} \times \text{perfil solar}$), garantizando así que no exista \textit{Data Leakage}. Dicho coeficiente de \textit{Performance Ratio (PR) regional} se calcula como un agrupamiento histórico estratificado por Macrozona y Estación del Año, computado empleando única y estrictamente el conjunto de entrenamiento. Una vez consolidados los pesos sinápticos, la red es forzada a inferir el comportamiento energético futuro de la planta oculta utilizando únicamente sus coordenadas estáticas y el clima entrante. Este procedimiento se repite iterativamente rotando la instalación objetivo. Asimismo, la orquestación de esta fase admite la ejecución bajo distintas escalas (\textit{Toy}, \textit{Half} y \textit{Total}) que modulan la fracción de la muestra analizada, agilizando el \textit{benchmarking}.
+
+\begin{figure}[hbt!]
+  \centering
+  \framebox(350,180){\textit{Placeholder: Diagrama del esquema LOPO (Leave-One-Plant-Out)}}
+  \caption{\label{fig:lopo_strategy} Visualización iterativa del aislamiento espacial para simulación de arranque en frío.}
+\end{figure}
+
+\subsubsection{Fase 3: Extracción de Resultados y Métricas de Rendimiento}
+La fase final consolida los vectores predictivos generados por cada una de las arquitecturas sometidas a prueba (TFT, Informer, N-HiTS, XGBoost Global/Local, LSTM) contrastándolos unificadamente contra la producción energética empírica de los parques solares aplicando 2 estrategias de testeo diferenciadas según la ventana temporal proyectada (\textit{day1} para predicción a 24 horas y \textit{rollout7d} para proyección expandida iterativa a una semana).
+Adicionalmente, los resultados y desvíos son evaluados de manera estratificada según la \textbf{Estación del Año}, lo que permite medir el impacto de la variabilidad meteorológica cíclica en las redes. El proyecto computa métricas clásicas de pronóstico, entre las cuales destacan:
+\begin{itemize}
+    \item \textbf{Error Absoluto Medio (MAE):} Para cuantificar la magnitud promedio lineal del error en la escala energética real (MW).
+    \item \textbf{Error Cuadrático Medio (RMSE):} Para penalizar logarítmicamente las desviaciones más grandes generadas por los sesgos del modelo durante picos de inyección.
+    \item \textbf{Error Porcentual Absoluto Medio Simétrico (sMAPE):} Empleado como estándar de industria para dimensionar la falla en términos relativos porcentuales, independientemente de la capacidad instalada de la planta.
+    \item \textbf{Pronóstico Probabilístico y MQLoss:} Las redes profundas evalúan también intervalos de confianza (90\% CI) para reportar la incertidumbre esperada y la cobertura del intervalo (\textit{Pinball Loss}), sumando fiabilidad a la predicción puntual. Las predicciones finales son ajustadas para cumplir leyes físicas (mínimo de cero general y cero estricto de noche).
+\end{itemize}
+La consolidación de estas métricas se tabulará y graficará para facilitar el análisis comparativo financiero y operativo entre el modelo Transformer global y las líneas bases locales.
+
+\begin{figure}[hbt!]
+  \centering
+  \framebox(300,200){\textit{Placeholder: Gráficos de barra comparativos y proyecciones temporales de salida}}
+  \caption{\label{fig:metrics_visual} Esquema comparativo de métricas de precisión entre arquitecturas locales y globales.}
+\end{figure}
+
+\begin{figure}[hbt!]
+  \centering
+  \framebox(300,200){\textit{Placeholder: Carta Gantt del Proyecto (Capítulo 4)}}
+  \caption{\label{fig:gantt_cap4} Cronograma metodológico de actividades para la ejecución de la propuesta.}
+\end{figure}
+
+\subsection{Estudio de Factibilidad}
+
+\subsubsection{Factibilidad técnica}
+La factibilidad técnica de este proyecto está garantizada por la disponibilidad de herramientas de \textit{software} de código abierto (\textit{Open Source}) y librerías especializadas en \textit{Machine Learning} y \textit{Deep Learning}. Toda la orquestación del pipeline (ETL, entrenamiento y validación) se encuentra programada en \textit{Python}, utilizando el ecosistema \textit{Nixtla} (específicamente \textit{NeuralForecast}) para la ejecución de los algoritmos atencionales de última generación (TFT y N-HiTS), así como \textit{XGBoost} para las líneas base locales. Adicionalmente, el procesamiento matricial intensivo requerido por el paradigma \textit{Cross-Site Learning} se aborda mediante el uso de aceleración por hardware computacional (GPUs), recursos que son accesibles a través de entornos de desarrollo estándar.
+
+\subsubsection{Factibilidad operativa}
+No aplica.
+
+\subsubsection{Factibilidad económica}
+No aplica.
+
+\subsubsection{Factibilidad legal}
+No aplica.
+
+\subsubsection{Factibilidad Social}
+No aplica.
+
+\subsubsection{Factibilidad Ambiental}
+No aplica.

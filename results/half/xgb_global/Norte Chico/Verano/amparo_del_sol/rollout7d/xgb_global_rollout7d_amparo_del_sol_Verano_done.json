@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_rollout7d",
+    "planta": "amparo_del_sol",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.5946339042610392,
+        "MAE": 0.42479233669751876,
+        "sMAPE": 76.90789404013871,
+        "rRMSE": 55.21535372884906
+    }
+}

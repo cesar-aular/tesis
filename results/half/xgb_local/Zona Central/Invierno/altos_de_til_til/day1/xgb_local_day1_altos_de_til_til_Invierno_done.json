@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_day1",
+    "planta": "altos_de_til_til",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.2199961329404333,
+        "MAE": 0.10061281779780984,
+        "sMAPE": 131.44943534611443,
+        "rRMSE": 74.25388157509501
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_rollout7d_primavera",
+    "planta": "altos_de_til_til",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.5022443099629216,
+        "MAE": 0.41274162603630904,
+        "sMAPE": 138.1951985284546,
+        "rRMSE": 92.39288496948194
+    }
+}

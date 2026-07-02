@@ -1,0 +1,313 @@
+Proyecto de Título – Anteproyecto
+Análisis comparativo de un enfoque multi-sitio frente a modelos
+locales para la proyección a corto plazo de generación fotovoltaica
+bajo escasez de datos.
+Nombre Estudiante:
+César David Aular Muñoz
+Rut Estudiante:
+26.271.734-8
+Año de Ingreso:
+2026
+Carrera:
+Ingeniería Civil Informática
+Email Institucional:
+cesar.aular@alumnos.ucm.cl
+Teléfono:
++569 951 666 48
+Actividad Curricular:
+INF613 – Módulo Integrador de Formación Profesional
+Académico/a:
+Dr. Sergio Hernández Álvarez
+1
+
+Índice de Contenidos
+Introducción
+3
+1.
+Problemática
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+4
+2.
+Cliente y/o Público objetivo . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+4
+3.
+Carta de Compromiso . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+5
+4.
+Propuesta de Solución . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+6
+5.
+Objetivos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+7
+5.1.
+Objetivo General . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+7
+5.2.
+Objetivos Específicos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+7
+6.
+Alcance del Proyecto . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+8
+7.
+Planificación del proyecto . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+9
+2
+
+Introducción
+En las últimas décadas, la energía solar ha cobrado una gran relevancia, llegando a repre-
+sentar una parte sustancial de la generación de energía renovable a nivel mundial gracias a los
+avances en las tecnologías fotovoltaicas y a la creciente demanda energética. La expansión de
+la infraestructura de energía solar es un pilar fundamental para la electrificación, la transición
+energética global y el cumplimiento de los compromisos de cero emisiones netas para mitigar
+los efectos del cambio climático. Sin embargo, la generación fotovoltaica está sujeta a una alta
+variabilidad e intermitencia, ya que depende directamente de factores meteorológicos dinámi-
+cos como la Irradiancia Horizontal Global (GHI), la temperatura, la nubosidad y la velocidad del
+viento. Por lo tanto, la estimación precisa de la productividad en plantas de energía renovable es
+un desafío crítico para la planificación, operación y optimización de los sistemas energéticos de
+la red.
+Tradicionalmente, los modelos predictivos de generación solar se han abordado mediante
+técnicas estadísticas y algoritmos clásicos que se entrenan de manera local utilizando los datos
+históricos específicos de cada planta. Este enfoque presenta dos limitaciones fundamentales. En
+primer lugar, dependen fuertemente de la disponibilidad de un volumen considerable de datos
+históricos locales, lo cual dificulta enormemente su aplicación en escenarios de puesta en mar-
+cha de nuevas instalaciones (el problema de *cold-start* o arranque en frío). En segundo lugar,
+omiten el aprovechamiento de los patrones meteorológicos y operativos que son compartidos
+entre distintas plantas y regiones climáticas, los cuales poseen un alto valor para mejorar la ca-
+pacidad predictiva y la generalización de los modelos.
+Para superar estas barreras de disponibilidad de datos, la investigación reciente ha comenza-
+do a integrar técnicas avanzadas de Deep Learning, donde arquitecturas como los Transformers
+(ej. Temporal Fusion Transformer, Informer o PatchTST) han demostrado una capacidad superior
+para procesar secuencias largas y extraer dependencias temporales complejas a partir de datos
+meteorológicos multivariados. Complementariamente, el uso de enfoques de *Transfer Learning*
+(aprendizaje por transferencia) permite que un modelo pre-entrenado a partir de bases de datos
+a gran escala y de múltiples regiones transfiera características y patrones climáticos generales
+hacia instalaciones locales con escasez de datos.
+El presente proyecto busca abordar el problema del *cold-start* a través del desarrollo y vali-
+dación de una arquitectura de "*Cross-Site Learning*"(aprendizaje multi-sitio). Mediante el uso
+de un modelo Transformer de estado del arte, el proceso de entrenamiento se adaptará para
+aprender simultáneamente de múltiples series temporales de distintas plantas solares, integran-
+do variables exógenas dinámicas (clima) y características estáticas (ubicación geográfica).
+El desarrollo de este proyecto aporta valor empírico y metodológico en dos frentes princi-
+pales. En primer lugar, proporciona una herramienta validada para la industria, permitiendo a
+los operadores estimar con mayor precisión la producción de nuevos parques solares desde sus
+etapas iniciales sin depender de recolecciones de datos locales prolongadas. En segundo lugar,
+aporta evidencia sólida sobre la eficacia de aplicar técnicas de *Transfer Learning* y arquitectu-
+ras Transformer en series de tiempo energéticas, estableciendo un marco de evaluación riguroso
+frente a modelos tradicionales de Machine Learning (como XGBoost o LSTM) entrenados de ma-
+nera estrictamente local.
+3
+
+Desarrollo
+1.
+Problemática
+La transición hacia una matriz energética sostenible ha impulsado una expansión acelerada
+de proyectos fotovoltaicos. Tal como indica la Comisión Nacional de Energía (2026), el 75% de los
+5.333 MW de nueva capacidad eléctrica actualmente en etapa de construcción en el país corres-
+ponde a parques solares. Sin embargo, esta inyección masiva de energía choca con una barrera
+crítica para la toma de decisiones: la escasez de datos meteorológicos y operativos durante las
+etapas iniciales de un proyecto. Para generar proyecciones confiables y superar el problema del
+Cold-Start, los algoritmos predictivos tradicionales —entrenados de manera aislada para cada
+instalación— requieren de un mínimo de un año ininterrumpido de registros locales (Zhaoyang
+Zhu, 2023). Esto fomenta un profundo aislamiento del aprendizaje técnico, impidiendo que el
+conocimiento atmosférico generalizado (enfoque Multi-Sitio) se transfiera, lo que condena a los
+nuevos actores del mercado a operar con altos niveles de incertidumbre algorítmica desde su
+puesta en marcha.
+Esta falta de predictibilidad a corto plazo desencadena severas ineficiencias operativas y un
+alto riesgo financiero a lo largo de la red. A nivel sistémico, Coordinador Eléctrico Nacional (2025)
+reporta que las imprecisiones en los pronósticos de inyección renovable han introducido un error
+financiero del 4,62% sobre la estimación de los costos operativos totales del Sistema Eléctrico
+Nacional. Más grave aún, la incapacidad de anticipar con exactitud la generación exacerba los
+cuellos de botella en la transmisión, derivando en niveles críticos de vertimiento de energía lim-
+pia (curtailment). Durante 2025, el vertimiento físico alcanzó los 6.084 GWh (Asociación Chilena
+de Energías Renovables y Almacenamiento (ACERA), 2025), lo que se ha traducido en pérdidas
+de ingresos para las generadoras equivalentes a 562 millones de dólares acumulados en los úl-
+timos tres años (Ember, 2025). Finalmente, en el ecosistema a menor escala, esta incertidumbre
+algorítmica expone directamente a los Pequeños Medios de Generación Distribuida (PMGD) a un
+riesgo de mermas financieras estimado en hasta 7.400 millones de dólares anuales ante la falta
+de certeza horaria en sus esquemas de inyección (Energía Estratégica, 2025).
+2.
+Cliente y/o Público objetivo
+El público objetivo y los principales beneficiarios de esta solución abarcan un espectro am-
+plio dentro del ecosistema de generación de energía renovable. En primer lugar, la herramienta se
+orienta a operadores, administradores de parques solares a gran escala y coordinadores de redes
+eléctricas, quienes requieren sistemas predictivos robustos para minimizar la incertidumbre en
+la toma de decisiones, optimizando la planificación energética y reduciendo el riesgo financiero
+ante desvíos en el despacho durante las etapas iniciales de una planta.
+En segundo lugar, esta propuesta integra a los actores del segmento de Pequeños Medios de
+Generación Distribuida (PMGD) y a los desarrolladores de sistemas de autoconsumo fotovoltaico
+a pequeña y mediana escala (comercial e industrial). Para este nicho, donde la instalación de sen-
+sórica avanzada o la recopilación de años de datos locales resulta económicamente inviable, un
+modelo multi-sitio pre-entrenado les permitirá acceder a proyecciones a corto plazo continuas
+y confiables desde su puesta en marcha, permitiendo rentabilizar sus operaciones y gestionar su
+inyección a la red sin la barrera de entrada que supone el modelado de datos aislado y tradicional
+4
+
+3.
+Carta de Compromiso
+Dada la naturaleza de la presente investigación, el desarrollo del modelo no se encuentra au-
+nado a la intervención o patrocinio exclusivo de una entidad privada específica para su ejecución
+técnica. El acceso a los activos de datos necesarios para el cumplimiento de los objetivos plan-
+teados ha sido gestionado bajo protocolos internos, lo que garantiza la viabilidad y autonomía
+del estudio en sus etapas de entrenamiento y validación. No obstante, se mantiene la disposición
+para formalizar vínculos de colaboración técnica con organismos del sector en fases posteriores,
+con el fin de robustecer la transferencia tecnológica de los resultados obtenidos.
+5
+
+4.
+Propuesta de Solución
+La propuesta de solución consiste en el diseño e implementación de un modelo global pre-
+entrenado mediante un enfoque multi-sitio, capaz de extraer patrones atmosféricos generaliza-
+bles a partir de un conjunto diverso de plantas de generación consolidadas. El objetivo es transfe-
+rir este conocimiento hacia instalaciones nuevas que sufren de escasez de datos e intermitencias
+(Cold-Start), logrando proyecciones de generación continuas y robustas a pesar de la deficiencia
+inicial en sus registros.
+Figura 1: Diseño arquitectónico integral del flujo predictivo. (a) El protocolo de datos ingiere in-
+formación multimodal de plantas consolidadas y de la instalación Cold-Start (1), logrando series
+consolidadas (2). (b) La arquitectura Transformer (Cross-Site Learning) procesa esta información
+consolidad, transfiriendo patrones atmosféricos para generar proyecciones robustas, normaliza-
+das y continuas de la Potencia Activa (3), superando las intermitencias de la entrada.
+6
+
+Desde el punto de vista algorítmico, el núcleo del proyecto recae en la parametrización y va-
+lidación de una arquitectura de redes neuronales basada en mecanismos de atención (Transfor-
+mers) de estado del arte. A diferencia del entrenamiento local tradicional que requiere series de
+tiempo impecables y extensas, el proceso de entrenamiento de esta arquitectura se adaptará para
+procesar simultáneamente múltiples series temporales de diferentes parques solares (Cross-Site
+Learning).
+El flujo de procesamiento integrará datos multimodales: por un lado, se ingerirán variables
+exógenas dinámicas (condiciones meteorológicas con intermitencias, valores nulos o lecturas en
+cero) y, por otro, características estáticas (coordenadas espaciales de cada estación). La red Trans-
+former se encargará de imputar tácitamente estas intermitencias a través del contexto aprendi-
+do, entregando como salida una proyección continua y completa. Para validar la eficacia de este
+enfoque global, se desarrollará un benchmark riguroso que contrastará su rendimiento frente a
+modelos tradicionales de aprendizaje automático (algoritmos basados en árboles de decisión y
+redes neuronales recurrentes) entrenados bajo el paradigma estrictamente local.
+5.
+Objetivos
+5.1.
+Objetivo General
+Analizar y comparar el desempeño de un modelo global de aprendizaje multi-sitio frente a
+modelos locales entrenados con datos históricos, en la estimación de la productividad de plantas
+de energía renovable, considerando su capacidad de generalización y su rendimiento en escena-
+rios de escasez de datos e intermitencia.
+5.2.
+Objetivos Específicos
+1. Seleccionar y configurar una arquitectura Transformer preexistente que sea adecuada para
+el pronóstico de series de tiempo. Posteriormente, adaptar su proceso de entrenamiento
+con el fin de que el modelo sea capaz de procesar y aprender de manera simultánea a partir
+de múltiples series temporales provenientes de diferentes plantas solares, reemplazando
+así el tradicional enfoque de entrenamiento aislado.
+2. Evaluar la efectividad del modelo global pre-entrenado durante la puesta en marcha de
+una nueva planta renovable que cuente con una escasa cantidad de datos con respecto a
+modelos tradicionales (como XGBoost o LSTM) entrenados de manera estrictamente local.
+3. Integrar datos multimodales para dotar al modelo de la capacidad de procesar diversas
+fuentes de información, integrando de manera conjunta tanto variables exógenas dinámi-
+cas, que representan las condiciones meteorológicas, como características estáticas refe-
+rentes a la ubicación espacial y geográfica de cada estación.
+7
+
+6.
+Alcance del Proyecto
+Con el propósito de analizar y comparar el desempeño predictivo de modelos globales fren-
+te a modelos locales , el alcance de este proyecto se focaliza en el dominio de la producción de
+energía solar mediante el estudio de una muestra de 10 a 15 instalaciones geográficamente dis-
+tribuidas. Esta configuración experimental permite integrar series de tiempo de producción y
+variables meteorológicas para evaluar la capacidad de generalización y la respuesta del mode-
+lo ante la escasez de datos. Técnicamente, el trabajo se concentra en la parametrización, el en-
+trenamiento multi-sitio y la validación de arquitecturas de estado del arte, empleando modelos
+XGBoost y LSTM únicamente como líneas base comparativas. Finalmente, para mantener el foco
+en la evaluación del rendimiento del modelado, se excluyen explícitamente el desarrollo de nue-
+vas estrategias o metodologías desde cero, el despliegue en entornos de producción (MLOps), la
+integración con sistemas SCADA y cualquier análisis de viabilidad financiera o rentabilidad ope-
+rativa sobre los activos estudiados. De manera que el proyecto se compone de la recopilación y
+preprocesado de datos, la configuración de la estratégia de orquestación para el testeo, el entre-
+namiento de los modelos base, la ejecución y posterior comparación entre el modelo globalmen-
+te entrenado y las baseline en situaciones de Çold-Start". Todo circunscrito por un repositorio
+con los pipelines de datos, entrenamiento y posterior testeo.
+8
+
+7.
+Planificación del proyecto
+Semanas de ejecución
+1
+2
+3
+4
+5
+6
+Procesamiento de datos multimodales
+Entrenamiento algoritmos clásicos
+Parametrización arquitectura Transformer
+Entrenamiento simultáneo Cross-Site
+Simulación Cold-Start
+Benchmark comparativo y métricas
+Redacción y entrega final
+Obj 1: Arq. Transformer
+Obj 2: Eval. Cold-Start
+Obj 3: Datos Multimodales
+Tareas transversales
+9
+
+Bibliografía
+Arslan, Z., Sahin, M. E., & Ulutas, H. (2025). Comparative Evaluation of Machine Learning and
+Transformer-Based Deep Learning for Solar Energy Forecasting on a Real-World Dataset.
+Arabian Journal for Science and Engineering, 51, 6833-6863.
+Asociación Chilena de Energías Renovables y Almacenamiento (ACERA). (2025, diciembre). Bo-
+letín Estadístico ACERA. https://cdn.acera.cl/wp-content/uploads/2026/01/2025-12-
+Boletin-Estadisticas-ACERA.pdf
+Bai, S., Kolter, J. Z., & Koltun, V. (2018). An empirical evaluation of generic convolutional and
+recurrent networks for sequence modeling. arXiv preprint arXiv:1803.01271.
+Bak, S., Choi, S., Yang, D., Kim, D., Rho, H., & Lee, K. (2025). Transfer Learning for Photovoltaic
+Power Forecasting Across Regions Using Large-Scale Datasets. IEEE Access. https://doi.
+org/10.1109/ACCESS.2025.3591040
+Benidis, K., Rangapuram, S. S., Flunkert, V., Wang, Y., Maddix, D., Turkmen, A. C., Gasthaus, J.,
+Bohlke-Schneider, M., Salinas, D., & Stella, L. (2022). Deep learning for time series fore-
+casting: Tutorial and literature survey. ACM Computing Surveys, 55(6), 1-36.
+Comisión Nacional de Energía. (2026, marzo). Reporte Mensual Sector Energético (inf. téc.). Go-
+bierno de Chile. https://www.cne.cl/wp-content/uploads/2026/03/RMensual_v202603.
+pdf
+Coordinador Eléctrico Nacional. (2025). Informe del Coordinador Independiente del Sistema Eléc-
+trico Nacional (inf. téc.). CEN. https://www.coordinador.cl/wp-content/uploads/2025/
+02/IE-Coordinador-Independiente-Sistema-Electrico-Nacional-2024-114.pdf
+Damato, S., Rubattu, N., Azzimonti, D., & Corani, G. (2026). Intermittent time series forecasting:
+local vs global models. arXiv preprint arXiv:2601.14031.
+El-Saieed, A. M. (2025). An Adaptive Transformer Model for Long-Term Time-Series Forecasting of
+Temperature and Radiation in Photovoltaic Energy Generation. Applied Computational
+Intelligence and Soft Computing, 2025. https://doi.org/10.1155/2025/3691929
+Ember. (2025, julio). Reducing curtailment in Chile: Key to unlocking the full potential of renewa-
+ble energy. https://ember-energy.org/app/uploads/2025/09/EN-Report-Reducing-
+curtailment-in-Chile-key-to-unlocking-the-full-potential-of-renewable-energy.pdf
+Energía Estratégica. (2025). Alertan que los PMGD podrían enfrentar pérdidas por 7400 millones
+anuales si avanza la bolsa PYME en Chile. https://www.energiaestrategica.com/alertan-
+que-los-pmgd-podrian-enfrentar-perdidas-por-7400-millones-anuales-si-avanza-la-
+bolsa-pyme-en-chile
+Gu, A., & Dao, T. (2023). Mamba: Linear-time sequence modeling with selective state spaces. arXiv
+preprint arXiv:2312.00752.
+Hochreiter, S., & Schmidhuber, J. (1997). Long short-term memory. Neural Computation, 9(8),
+1735-1780.
+Li, R., Wang, D., Wang, Z., Liang, S., Li, Z., Xie, Y., & He, J. (2024). Transformer approach to now-
+casting solar energy using geostationary satellite data. Applied Energy, 353, 122112.
+López Santos, M., García-Santiago, X., Echevarría Camarero, F., Blázquez Gil, G., & Carrasco Orte-
+ga, P. (2022). Application of Temporal Fusion Transformer for Day-Ahead PV Power Fore-
+casting. Energies, 15(14), 5232.
+10
+
+Mishra, A., et al. (2025). SPIRIT: Short-term Prediction of solar IRradIance for zero-shot Transfer
+learning using Foundation Models. arXiv preprint arXiv:2502.10307.
+Nie, Y., Nguyen, N. H., Sinthong, P., & Kalagnanam, J. (2022). A time series is worth 64 words:
+Long-term forecasting with transformers. arXiv preprint arXiv:2211.14730.
+Oreshkin, B. N., Carpov, D., Chapados, N., & Bengio, Y. (2020). N-BEATS: Neural basis expansion
+analysis for interpretable time series forecasting. arXiv preprint arXiv:1905.10437.
+Salinas, D., Flunkert, V., Gasthaus, J., & Stella, L. (2020). DeepAR: Probabilistic forecasting with
+autoregressive recurrent networks. International Journal of Forecasting, 36(3), 1181-1191.
+Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, Ł., & Polosukhin,
+I. (2017). Attention is all you need. Advances in Neural Information Processing Systems, 30.
+Zeng, A., Chen, M., Zhang, L., & Xu, Q. (2023). Are transformers effective for time series forecas-
+ting? Proceedings of the AAAI Conference on Artificial Intelligence, 37(9), 11121-11128.
+Zhaoyang Zhu, e. a. (2023). Energy forecasting with robust, flexible, and explainable machine lear-
+ning algorithms. AI Magazine. https://www.researchgate.net/publication/374680104_
+Energy_forecasting_with_robust_flexible_and_explainable_machine_learning_algorithms
+Zhou, H., Zhang, S., Peng, J., Zhang, S., Li, J., Xiong, H., & Zhang, W. (2021). Informer: Beyond
+efficient transformer for long sequence time-series forecasting. Proceedings of the AAAI
+Conference on Artificial Intelligence, 35(12), 11106-11115.
+11

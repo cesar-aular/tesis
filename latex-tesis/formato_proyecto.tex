@@ -1,0 +1,184 @@
+\documentclass[12pt]{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage{graphicx}
+\usepackage[table]{xcolor}
+\usepackage{fourier}
+\usepackage{multirow}
+\usepackage{stackengine,amsmath,amsfonts,amssymb,braket}
+\usepackage{gensymb,wrapfig,enumitem}
+\usepackage{pgfgantt,rotating,array}
+\definecolor{ucmblue}{RGB}{0,85,150}
+\definecolor{obj1}{HTML}{1F77B4}
+\definecolor{obj2}{HTML}{FF7F0E}
+\definecolor{obj3}{HTML}{2CA02C}
+\definecolor{general}{HTML}{7F7F7F}
+\usepackage[pdfborder={0 0 0}]{hyperref}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage[letterpaper,top=1.36in,left=1.18in,headheight=2in]{geometry}
+% --- ABOUT -----
+% Formato proyrcto de título para ICI-UCM
+% ver.0.1 -by Javier Rojas (jerojas@ucm.cl)
+
+\fancyhf{}
+%\fancyhead[L]{\includegraphics[height=0.8in]{logos_UCM_Fac_Cs_de_la_Ingenieria.png}}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand\thetable{\thesection.\arabic{table}}
+\renewcommand\thefigure{\thesection.\arabic{figure}}  
+\counterwithout*{section}{chapter}
+
+% --- Rellenar datos del encabezado
+\title{Análisis comparativo de un enfoque multi-sitio frente a modelos locales para la proyección a corto plazo de generación fotovoltaica bajo escasez de datos} % Título del trabajo
+\date{Junio 2026} % Fecha del trabajo
+\newcommand{\estudiante}{César David Aular Muñoz} % Nombre del estudiante
+\newcommand{\guia}{Dr. Sergio Hernández Álvarez} % Nombre del profesor Guia
+\newcommand{\revis}{PROFESOR COMISIÓN}
+\newcommand{\reviss}{PROFESOR COMISIÓN}
+%\newcommand{\revisss}{PROFESOR COMISIÓN} %Si requirere agregar más, descomente esta linea
+\newcommand{\carrera}{INGENIERÍA CIVIL INFORMÁTICA} % Carrera
+%\includeonly{cap1,cap2} % En caso de querer compilar solo ciertos capitulos
+
+%--- Sección de formato (NO MODIFICAR)
+
+\begin{document}
+\pagenumbering{Roman}
+{
+  \makeatletter
+  \newcommand{\motivo}{Proyecto de título para optar al Título de Ingenirero Civil Informático}
+  \ \vspace{-1cm}\\
+  {\centering\includegraphics[width=4cm]{logo_ucm}\\}
+  \vspace{0.5cm}
+  \begin{center}
+    {\large
+    \textbf{UNIVERSIDAD CATÓLICA DEL MAULE}\\
+    FACULTAD DE CIENCIAS DE LA INGENIERÍA\\
+    ESCUELA \carrera\\\vspace{1.5cm}
+    \textbf{\LARGE\@title}\\\vspace{3cm}
+    \estudiante\\
+    \guia\\\vspace{\fill}
+    \motivo\\\vspace{1cm}
+    \textbf{TALCA, \@date}}
+  \end{center}
+  \newpage
+  {\ \vspace{-2.5cm}\\
+    \begin{center}
+      \includegraphics[width=4cm]{logo_ucm}\\
+      {%
+        \vspace{0.5cm}\textbf{UNIVERSIDAD CATÓLICA DEL MAULE}\\\vspace{10pt}
+        FACULTAD DE CIENCIAS DE LA INGENIERÍA\\
+        ESCUELA INGENIERÍA CIVIL INFORMÁTICA\\\vspace{0.7cm}}
+      \motivo\\\vspace{0.5cm}
+      {\bf
+        \@title\\\vspace{7pt}
+        \estudiante
+      }
+    \end{center}\vspace{1.0cm}
+  }
+  {%
+    \noindent\begin{tabular}{p{0.7\textwidth}c}
+      \textbf{COMISIÓN EXAMINADORA}&
+                                     \begin{minipage}{0.3\textwidth}
+                                       \centering\textbf{FIRMA}
+                                     \end{minipage}\\
+      \vspace{10pt}PROFESOR GUÍA\vspace{5pt}\newline\guia &\\\cline{2-2}
+      \vspace{10pt}PROFESOR COMISIÓN\vspace{5pt}\newline\revis &\\\cline{2-2}
+      \vspace{10pt}PROFESOR COMISIÓN\vspace{5pt}\newline\reviss &\\\cline{2-2}
+%      \vspace{10pt}PROFESOR COMISIÓN\vspace{5pt}\newline\revisss &\\\cline{2-2} % Quitar comentario en caso de agregar otro miembro a la comision
+    \end{tabular}\vspace{\fill}\\
+    \begin{tabular}{p{0.7\textwidth}c}
+      NOTA FINAL EXAMEN DE TÍTULO:&
+                                    \begin{minipage}{0.3\textwidth}
+                                      \
+                                    \end{minipage}\\\cline{2-2}
+    \end{tabular}
+    \begin{center}
+      \vspace{10pt}TALCA, \@date
+    \end{center}
+  }
+  \makeatother
+}
+\newpage
+\section*{AGRADECIMIENTOS}
+\input{agradecimientos}
+
+\newpage
+\section*{RESUMEN}
+\input{resumen}
+\section*{ABSTRACT}
+\input{abstract}
+
+\renewcommand{\contentsname}{ÍNDICE DE CONTENIDOS}
+\tableofcontents
+
+\renewcommand{\listfigurename}{LISTA DE FIGURAS}
+\renewcommand{\listtablename}{LISTA DE TABLAS}
+
+\listoffigures
+
+\listoftables
+
+\chapter*{Capítulo I\\Introducción y Objetivos}
+\pagenumbering{arabic}
+\renewcommand{\headwidth}{\textwidth}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand\thesection{\arabic{section}}
+\addcontentsline{toc}{chapter}{\chaptername{} I}
+\fancyhead[L]{\chaptername{} \rightmark}
+\fancyhead[R]{\thepage}
+\fancyfoot{}
+
+%--- FIN: Sección de formato (EVITAR MODIFICAR)
+\include{chp1}
+
+\chapter*{Capítulo II\\Marco Teórico}
+\addcontentsline{toc}{chapter}{\chaptername{} II}
+\include{chp2}
+
+\chapter*{Capítulo III\\Estado del Arte / Bechmarking}
+\addcontentsline{toc}{chapter}{\chaptername{} III}
+  
+\include{chp3}
+
+\chapter*{Capítulo IV\\Metodología y Propuesta de Solución}
+\addcontentsline{toc}{chapter}{\chaptername{} IV}
+
+\include{chp4}
+
+\chapter*{Capítulo V\\Desarrollo de la Propuesta y Resultados}
+\addcontentsline{toc}{chapter}{\chaptername{} V}
+\include{chp5}
+
+\chapter*{Capítulo VI\\Conclusiones y Trabajo Futuro}
+\addcontentsline{toc}{chapter}{\chaptername{} VI}
+
+\include{chp6}
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{Bibliografía}
+\fancyhead[L]{BIBLIOGRAFÍA}
+\nocite{*}
+\bibliographystyle{apalike}
+\begingroup
+\makeatletter
+% Eliminar el espacio gigante del título usando comportamiento de sección
+\let\chapter\section
+% Forzar viñeta de punto para cada entrada
+\def\@lbibitem[#1]#2{\item[\textbullet]\if@filesw
+      {\let\protect\noexpand
+       \immediate
+       \write\@auxout{\string\bibcite{#2}{#1}}}\fi\ignorespaces}
+\makeatother
+\bibliography{bibliografia}
+\endgroup
+
+\chapter*{Anexos}
+\addcontentsline{toc}{chapter}{Anexos}
+\fancyhead[L]{ANEXOS}
+\renewcommand\thesection{\Alph{section}}
+\setcounter{section}{0}
+\include{anexos}
+
+\end{document}

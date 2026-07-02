@@ -35,6 +35,9 @@ import gc
 import json
 from pathlib import Path
 
+from src.ml.utils.quiet import silence_noise
+silence_noise()
+
 import pandas as pd
 import torch
 from neuralforecast import NeuralForecast
@@ -94,6 +97,7 @@ def _static_df(df: pd.DataFrame, spec):
 def _trainer_kwargs(force_fp32: bool = False):
     """Config Lightning para velocidad: fp16 en GPU, sin logger ni progress bar."""
     kw = {"logger": False, "enable_progress_bar": False, "enable_checkpointing": False,
+          "enable_model_summary": False,  # sin tabla de modulos por cada fit
           "gradient_clip_val": 1.0}  # estabilidad numerica, costo ~0
     if torch.cuda.is_available() and not force_fp32:
         kw["precision"] = "16-mixed"  # tensor cores Turing: ~1.5-2x mas rapido

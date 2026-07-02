@@ -1,0 +1,15 @@
+\documentclass{report}
+\begin{document}
+\bibliographystyle{apalike}
+\nocite{*}
+\begingroup
+\makeatletter
+\let\chapter\section
+\def\@lbibitem[#1]#2{\item[\textbullet]\if@filesw
+      {\let\protect\noexpand
+       \immediate
+       \write\@auxout{\string\bibcite{#2}{#1}}}\fi\ignorespaces}
+\makeatother
+\bibliography{bibliografia}
+\endgroup
+\end{document}

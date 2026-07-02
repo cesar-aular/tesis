@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1_operational",
+    "planta": "alto_solar",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.3159673412950146,
+        "MAE": 0.9005694252458246,
+        "sMAPE": 167.1230845039579,
+        "rRMSE": 146.400228489051,
+        "Coverage_90": 0.625,
+        "Pinball_P05": 0.045375053058281385,
+        "Pinball_P95": 0.3735093310150357
+    }
+}
