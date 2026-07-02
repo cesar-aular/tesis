@@ -42,7 +42,7 @@ El modelo \textit{Cross-Site} es entrenado exclusivamente con los años de exper
 \end{figure}
 
 \subsubsection{Fase 3: Extracción de Resultados y Métricas de Rendimiento}
-La fase final consolida los vectores predictivos generados por cada una de las arquitecturas sometidas a prueba (TFT, Informer, N-HiTS, XGBoost Global/Local, LSTM) contrastándolos unificadamente contra la producción energética empírica de los parques solares aplicando 2 estrategias de testeo diferenciadas según la ventana temporal proyectada (\textit{day1} para predicción a 24 horas y \textit{rollout7d} para proyección expandida iterativa a una semana).
+La fase final consolida los vectores predictivos generados por cada una de las arquitecturas sometidas a prueba —modelos globales \textit{Cross-Site} (TFT, Informer, N-HiTS, LSTM y XGBoost Global) y líneas base estrictamente locales entrenadas con la historia propia de cada planta (XGBoost, LSTM y N-HiTS locales)— contrastándolos unificadamente contra la producción energética empírica de los parques solares aplicando 2 estrategias de testeo diferenciadas según la ventana temporal proyectada (\textit{day1} para predicción a 24 horas y \textit{rollout7d} para proyección expandida iterativa a una semana).
 Adicionalmente, los resultados y desvíos son evaluados de manera estratificada según la \textbf{Estación del Año}, lo que permite medir el impacto de la variabilidad meteorológica cíclica en las redes. El proyecto computa métricas clásicas de pronóstico, entre las cuales destacan:
 \begin{itemize}
     \item \textbf{Error Absoluto Medio (MAE):} Para cuantificar la magnitud promedio lineal del error en la escala energética real (MW).

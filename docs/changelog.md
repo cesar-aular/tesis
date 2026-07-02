@@ -1,5 +1,20 @@
 # Changelog
 
+## [2026-07-02] - Baselines DL estrictamente locales (lstm_local, nhits_local)
+- Resuelve la discrepancia con el anteproyecto (LSTM debía ser línea base LOCAL):
+  nuevo `src/ml/utils/dl_local.py` entrena LSTM y N-HiTS por planta usando SOLO su
+  historia propia, con TODAS las ventanas de evaluación excluidas (anti train-on-test)
+  y contexto de inferencia real (el paradigma local dispone de sus sensores; huecos
+  puntuales del contexto se interpolan solo como input del modelo, nunca para train
+  ni métricas).
+- Hiperparámetros reutilizados del modelo global de la estrategia (tunear 2×47
+  modelos locales es prohibitivo); tope 300 steps + early stopping.
+- Integrado al orquestador con idempotencia propia (`{modelo}_local`): una segunda
+  pasada tras la corrida half agrega solo los locales sin repetir lo completado.
+- TDD: exclusión de ventanas y no-imputación del target (13 tests verdes).
+- Ruido de ejecución silenciado (`quiet.py`) + fix segfault pyarrow/lightning (DLL
+  Windows) que mataba la corrida half al cargar Silver.
+
 ## [2026-07-02] - Optimizaciones de rendimiento (rama `perf-optimizations`)
 - **CAUSA RAÍZ de los tiempos absurdos en `half`**: la fórmula heredada de steps
   (`filas/batch × épocas`) ignoraba que cada step de NeuralForecast procesa

@@ -1,0 +1,14 @@
+{
+    "model": "lstm_day1_invierno",
+    "planta": "altos_de_til_til",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.32068571577515137,
+        "MAE": 0.2701920766072969,
+        "sMAPE": 143.87866268332343,
+        "rRMSE": 108.23898967551446,
+        "Coverage_90": 0.4583333333333333,
+        "Pinball_P05": 0.04801327256330599,
+        "Pinball_P95": 0.03618018154520545
+    }
+}

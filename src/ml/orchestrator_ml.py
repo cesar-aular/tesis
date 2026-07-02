@@ -17,6 +17,7 @@ from src.ml.lstm import train as lstm_train, test as lstm_test, tune as lstm_tun
 from src.ml.nhits import train as nhits_train, test as nhits_test, tune as nhits_tune
 from src.ml.tft import train as tft_train, test as tft_test, tune as tft_tune
 from src.ml.informer import train as informer_train, test as informer_test, tune as informer_tune
+from src.ml.utils.dl_local import run_local_dl
 from src.ml.visualize import generate_global_metrics_report
 
 XGB_MODELS = ("xgb_local", "xgb_global")
@@ -26,6 +27,9 @@ DL_MODELS = {
     "tft": (tft_tune, tft_train, tft_test),
     "informer": (informer_tune, informer_train, informer_test),
 }
+# Baselines DL ESTRICTAMENTE locales (anteproyecto: LSTM local; NHITS agregado
+# por simetria). Entrenan solo con la historia de la planta objetivo.
+LOCAL_DL_MODELS = ("lstm", "nhits")
 
 
 def _load_silver_unified(path: Path) -> pd.DataFrame:
@@ -92,7 +96,9 @@ def run_ml_pipeline(strategy: str = "toy", force: bool = False):
                        if force or not check_plant_model_done(results_dir, m, planta)]
         pending_dl = [m for m in DL_MODELS
                       if force or not check_plant_model_done(results_dir, m, planta)]
-        if not pending_xgb and not pending_dl:
+        pending_local_dl = [m for m in LOCAL_DL_MODELS
+                            if force or not check_plant_model_done(results_dir, f"{m}_local", planta)]
+        if not pending_xgb and not pending_dl and not pending_local_dl:
             print(f"[SKIP] Todos los modelos ya evaluados para {planta} (idempotencia).")
             continue
 
@@ -136,7 +142,7 @@ def run_ml_pipeline(strategy: str = "toy", force: bool = False):
         gc.collect()
 
         # ---- Modelos Deep Learning (NeuralForecast) ----
-        if pending_dl:
+        if pending_dl or pending_local_dl:
             train_dl, test_dl = load_lopo_split(silver_dl, planta)
 
             for model_name in pending_dl:
@@ -151,6 +157,19 @@ def run_ml_pipeline(strategy: str = "toy", force: bool = False):
                     # Un modelo fallido no debe matar una corrida de horas.
                     # Sin marker de completitud -> la idempotencia lo reintenta.
                     print(f"[ERROR] {model_name.upper()} fallo para {planta}: {e}. Continuando.")
+                gc.collect()
+                import torch
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+
+            # ---- Baselines DL estrictamente locales (historia propia) ----
+            for model_name in pending_local_dl:
+                print(f"[INFO] {model_name.upper()}_LOCAL para {planta}...")
+                try:
+                    run_local_dl(model_name, test_dl, results_dir, macrozona,
+                                 estacion, planta, strategy)
+                except Exception as e:
+                    print(f"[ERROR] {model_name.upper()}_LOCAL fallo para {planta}: {e}. Continuando.")
                 gc.collect()
                 import torch
                 if torch.cuda.is_available():

@@ -87,8 +87,11 @@ Medallion ETL, all Parquet, single entry point `src/orchestrator.py`:
   label-encoded macrozona/estacion, float32. **Never** include `PR` or any y-derived col.
 - **Gold** (`silver_to_gold_split.py`): per-plant LOPO test partitions under
   `data/gold/{macrozona}/{estacion}/{id}_test.parquet` — validation only, never training.
-- **ML** (`ml/orchestrator_ml.py`): per target plant, per model (`xgb_local`, `xgb_global`,
-  `lstm`, `nhits`, `tft`, `informer`), tune→train→test at `day1` and `rollout7d` horizons.
+- **ML** (`ml/orchestrator_ml.py`): per target plant — global LOPO models (`xgb_global`,
+  `lstm`, `nhits`, `tft`, `informer`: tune→train→test) plus strictly-local baselines
+  (`xgb_local`, `lstm_local`, `nhits_local` via `utils/dl_local.py`: trained ONLY on the
+  target plant's own history, ALL eval windows excluded, real-history inference context).
+  Horizons `day1`/`rollout7d` × windows raw/operational/seasonal.
   Strategies: `toy` (2 plants, tiny steps), `half` (1yr history), `total` (2yr history).
 
 ## Engineering Rules
