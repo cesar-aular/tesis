@@ -8,7 +8,8 @@ def run_train(train_df: pd.DataFrame, strategy: str = "toy"):
     print("[XGB Global] Iniciando TRAIN global...")
             
     models_dir = Path("models/xgb_global")
-    
+    models_dir.mkdir(parents=True, exist_ok=True)
+
     params_path = models_dir / "best_params.json"
     if params_path.exists():
         with open(params_path, "r") as f:

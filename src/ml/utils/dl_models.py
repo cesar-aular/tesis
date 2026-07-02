@@ -114,6 +114,7 @@ def run_dl_train(model_name: str, train_df: pd.DataFrame, strategy: str = "toy")
     print(f"[{label}] Iniciando TRAIN global probabilistico con variables exogenas...")
 
     models_dir = Path(f"models/{strategy}/{model_name}")
+    models_dir.mkdir(parents=True, exist_ok=True)
     params_path = models_dir / "best_params.json"
     params = json.loads(params_path.read_text()) if params_path.exists() else {}
 
