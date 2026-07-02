@@ -3,8 +3,8 @@
     "planta": "alto_solar",
     "estacion": "Verano",
     "metrics": {
-        "RMSE": 0.520369291305542,
-        "MAE": 0.4928298890590668,
+        "RMSE": 0.4633425176143646,
+        "MAE": 0.4627799987792969,
         "sMAPE": 200.0,
         "rRMSE": 0.0
     }
