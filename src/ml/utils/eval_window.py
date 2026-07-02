@@ -46,16 +46,47 @@ def find_operational_start(y: pd.Series, capacity: float,
     return int(sustained.to_numpy().argmax())
 
 
-def eval_window_variants(y: pd.Series, capacity: float) -> dict:
+# Estaciones del año (hemisferio sur) -> sufijo de ventana ASCII-safe
+SEASON_MONTHS = {
+    "_verano": (12, 1, 2),
+    "_otono": (3, 4, 5),
+    "_invierno": (6, 7, 8),
+    "_primavera": (9, 10, 11),
+}
+
+
+def eval_window_variants(y: pd.Series, capacity: float, dates: pd.Series = None) -> dict:
     """Variantes de ventana para el análisis de sensibilidad.
 
-    Devuelve {sufijo: índice_inicio}. ``raw`` siempre existe (inicio 0);
-    ``operational`` solo si hay producción sostenida, difiere del raw en más de
-    un día y deja largo suficiente para contexto + evaluación.
+    Devuelve {sufijo: índice_inicio}:
+    - ``''`` (raw): inicio 0, siempre presente.
+    - ``'_operational'``: primera producción sostenida (si difiere >24h del raw).
+    - ``'_verano'/'_otono'/'_invierno'/'_primavera'``: primera ventana sostenida
+      cuyo inicio cae en esa estación (requiere ``dates``; posterior al inicio
+      operacional para no evaluar sobre la rampa). Permite comparar el Cold-Start
+      en las 4 estaciones del año por planta.
     """
     variants = {"": 0}  # raw (sin sufijo: compatibilidad con resultados previos)
     start_op = find_operational_start(y, capacity)
     if (start_op is not None and start_op > 24
             and start_op + WINDOW_HOURS <= len(y)):
         variants["_operational"] = start_op
+
+    if dates is None or start_op is None:
+        return variants
+
+    # Máscara de "inicio sostenido válido" (misma definición que operational)
+    productive = (y.fillna(0).reset_index(drop=True) > PROD_THRESHOLD * capacity).astype(int)
+    fwd_count = productive[::-1].rolling(LOOKAHEAD_HOURS, min_periods=1).sum()[::-1]
+    sustained = ((productive == 1) & (fwd_count >= MIN_PROD_HOURS)).to_numpy()
+
+    months = pd.Series(dates).dt.month.to_numpy()
+    n = len(y)
+    for suffix, season_months in SEASON_MONTHS.items():
+        in_season = pd.Series(months).isin(season_months).to_numpy()
+        candidates = sustained & in_season
+        candidates[:start_op] = False                     # nunca sobre la rampa
+        candidates[max(0, n - WINDOW_HOURS) + 1:] = False  # debe caber completa
+        if candidates.any():
+            variants[suffix] = int(candidates.argmax())
     return variants

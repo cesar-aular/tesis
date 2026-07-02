@@ -155,7 +155,8 @@ def run_dl_test(model_label: str, test_df: pd.DataFrame, results_dir: Path,
     # ANALISIS DE SENSIBILIDAD: dos definiciones de ventana Cold-Start.
     # '' (raw): desde la primera hora registrada (incluye rampa de puesta en marcha).
     # '_operational': desde la primera produccion sostenida (planta ya operando).
-    variants = eval_window_variants(grid['y'].reset_index(drop=True), capacidad)
+    variants = eval_window_variants(grid['y'].reset_index(drop=True), capacidad,
+                                    dates=grid['ds'])
     for suffix, start_idx in variants.items():
         if start_idx + needed > len(grid):
             continue

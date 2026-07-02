@@ -132,12 +132,20 @@ def generate_global_metrics_report(strategy: str = "toy"):
             if planta and macrozona != "unknown":
                 plantas_evaluadas.add((planta, macrozona, estacion))
                 
-            # Ventana de sensibilidad: '_operational' = desde produccion sostenida
+            # Ventana de sensibilidad: '_operational' = desde produccion sostenida;
+            # '_verano'/'_otono'/'_invierno'/'_primavera' = ventana en esa estacion
+            season_windows = {"_verano": "Verano", "_otono": "Otoño",
+                              "_invierno": "Invierno", "_primavera": "Primavera"}
+            window = "Raw"
             if model_name.endswith("_operational"):
                 window = "Operational"
                 model_name = model_name[:-len("_operational")]
             else:
-                window = "Raw"
+                for sfx, nombre in season_windows.items():
+                    if model_name.endswith(sfx):
+                        window = nombre
+                        model_name = model_name[:-len(sfx)]
+                        break
 
             if "day1" in model_name:
                 base_model = model_name.replace("_day1", "").upper()

@@ -45,8 +45,8 @@ def run_test(test_df: pd.DataFrame, results_dir: Path, macrozona: str, estacion:
                               output_path=out_dir / "forecast_plot.png",
                               model_name=f"xgb_global ({horizon})", planta=planta)
 
-    # Sensibilidad: ventana raw ('') y operacional ('_operational')
-    for suffix, start in eval_window_variants(test_df['y'], capacidad).items():
+    # Sensibilidad: raw, operacional y las 4 estaciones del año
+    for suffix, start in eval_window_variants(test_df['y'], capacidad, dates=test_df['ds']).items():
         if start + WINDOW_HOURS > len(test_df):
             continue
         _evaluate(test_df.iloc[start + 168:start + 168 + 24].copy(), f"day1{suffix}")

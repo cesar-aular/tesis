@@ -31,7 +31,7 @@ def run_train(silver_df: pd.DataFrame, planta: str, strategy: str = "toy"):
     # Excluir TODAS las ventanas de evaluacion (los targets evaluados no se entrenan)
     capacidad = float(plant_df['potencia_neta_mw'].iloc[0])
     excluded = pd.Series(False, index=plant_df.index)
-    for _, start in eval_window_variants(plant_df['y'], capacidad).items():
+    for _, start in eval_window_variants(plant_df['y'], capacidad, dates=plant_df['ds']).items():
         excluded.iloc[start:start + WINDOW_HOURS] = True
 
     train_df = plant_df[~excluded].copy()
