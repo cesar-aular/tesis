@@ -132,6 +132,13 @@ def generate_global_metrics_report(strategy: str = "toy"):
             if planta and macrozona != "unknown":
                 plantas_evaluadas.add((planta, macrozona, estacion))
                 
+            # Ventana de sensibilidad: '_operational' = desde produccion sostenida
+            if model_name.endswith("_operational"):
+                window = "Operational"
+                model_name = model_name[:-len("_operational")]
+            else:
+                window = "Raw"
+
             if "day1" in model_name:
                 base_model = model_name.replace("_day1", "").upper()
                 horizon = "Day 1"
@@ -145,10 +152,11 @@ def generate_global_metrics_report(strategy: str = "toy"):
                     base_model = "XGB LOCAL"
                 elif "global" in model_name:
                     base_model = "XGB GLOBAL"
-                    
+
             row = {
                 "Model": base_model,
                 "Horizon": horizon,
+                "Window": window,
                 "Macrozona": macrozona,
                 "Estacion": estacion,
                 "Planta": planta,
@@ -181,26 +189,28 @@ def generate_global_metrics_report(strategy: str = "toy"):
     visuals_dir.mkdir(parents=True, exist_ok=True)
     df_metrics.to_csv(visuals_dir / "all_metrics_summary.csv", index=False)
     
-    # Grouped RMSE barplots por Macrozona y Estacion
+    # Grouped RMSE barplots por Macrozona, Estacion y Ventana (sensibilidad)
     for macrozona in df_metrics["Macrozona"].unique():
         for estacion in df_metrics["Estacion"].unique():
             df_subset = df_metrics[(df_metrics["Macrozona"] == macrozona) & (df_metrics["Estacion"] == estacion)]
             if df_subset.empty: continue
-            
-            plt.figure(figsize=(12, 6))
-            sns.barplot(data=df_subset, x="Model", y="RMSE", hue="Horizon", errorbar=None)
-            plt.title(f"Comparacion de RMSE - {macrozona} ({estacion}) [Todos los modelos]")
-            plt.ylabel("RMSE")
-            plt.grid(axis='y', alpha=0.3)
-            plt.tight_layout()
-            
+
             out_dir = visuals_dir / macrozona / estacion
             out_dir.mkdir(parents=True, exist_ok=True)
-            out_path = out_dir / "unified_rmse_comparison.png"
-            plt.savefig(out_path, dpi=150)
-            plt.close()
-            
-            # Export sub-csv
+
+            for window in df_subset["Window"].unique():
+                df_w = df_subset[df_subset["Window"] == window]
+                if df_w.empty: continue
+                plt.figure(figsize=(12, 6))
+                sns.barplot(data=df_w, x="Model", y="RMSE", hue="Horizon", errorbar=None)
+                plt.title(f"Comparacion de RMSE - {macrozona} ({estacion}) [Ventana {window}]")
+                plt.ylabel("RMSE")
+                plt.grid(axis='y', alpha=0.3)
+                plt.tight_layout()
+                plt.savefig(out_dir / f"unified_rmse_comparison_{window.lower()}.png", dpi=150)
+                plt.close()
+
+            # Export sub-csv (ambas ventanas, columna Window)
             df_subset.to_csv(out_dir / "metrics_summary.csv", index=False)
             
     print(f"[Reporte] Graficas unificadas de RMSE y CSVs guardadas por zona y estacion en {visuals_dir}")

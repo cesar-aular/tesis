@@ -4,6 +4,7 @@ import joblib
 
 from src.ml.utils.metrics import calculate_metrics
 from src.ml.utils.idempotency import mark_run_completed
+from src.ml.utils.eval_window import eval_window_variants, WINDOW_HOURS
 from src.ml.utils.features import generate_lags
 from src.ml.visualize import plot_forecast_rollout
 
@@ -11,11 +12,12 @@ LAGS = [24, 168]
 
 
 def run_test(test_df: pd.DataFrame, results_dir: Path, macrozona: str, estacion: str, planta: str):
-    """Evalua el baseline local sobre la ventana Cold-Start (day1 + rollout7d).
+    """Evalua el baseline local sobre las ventanas Cold-Start (raw y operacional).
 
     Los lags se calculan sobre la serie real de la planta: el paradigma local
     observa sus propios datos en produccion (lag_24/lag_168 son pasado real al
-    momento de predecir cada dia). El modelo NUNCA entreno con estas filas.
+    momento de predecir cada dia). El modelo NUNCA entreno con estas filas
+    (ambas ventanas se excluyen en xgb_local/train.py).
     """
     print(f"[xgb_local] Testeando Planta: {planta} ({estacion}) con Day1 y 7-Day Rollout")
     model_path = Path(f"models/xgb_local/xgb_local_{planta}.joblib")
@@ -25,12 +27,15 @@ def run_test(test_df: pd.DataFrame, results_dir: Path, macrozona: str, estacion:
 
     model = joblib.load(model_path)
 
-    if len(test_df) < 168 + (7 * 24):
+    if len(test_df) < WINDOW_HOURS:
         print(f"[xgb_local] Planta {planta} no tiene suficientes datos. Saltando.")
         return
 
+    test_df = test_df.sort_values('ds').reset_index(drop=True)
+    capacidad = float(test_df['potencia_neta_mw'].iloc[0])
+
     # Lags sobre la serie completa, luego se recortan las ventanas de evaluacion
-    test_df = generate_lags(test_df.sort_values('ds'), LAGS)
+    test_df = generate_lags(test_df, LAGS)
 
     def _evaluate(window: pd.DataFrame, horizon: str):
         X = window.drop(columns=['unique_id', 'ds', 'y'])
@@ -53,7 +58,11 @@ def run_test(test_df: pd.DataFrame, results_dir: Path, macrozona: str, estacion:
                               output_path=out_dir / "forecast_plot.png",
                               model_name=f"xgb_local ({horizon})", planta=planta)
 
-    _evaluate(test_df.iloc[168:168 + 24].copy(), "day1")
-    _evaluate(test_df.iloc[168:168 + (7 * 24)].copy(), "rollout7d")
+    # Sensibilidad: ventana raw ('') y operacional ('_operational')
+    for suffix, start in eval_window_variants(test_df['y'], capacidad).items():
+        if start + WINDOW_HOURS > len(test_df):
+            continue
+        _evaluate(test_df.iloc[start + 168:start + 168 + 24].copy(), f"day1{suffix}")
+        _evaluate(test_df.iloc[start + 168:start + 168 + (7 * 24)].copy(), f"rollout7d{suffix}")
 
     print(f"[xgb_local] Completado.")

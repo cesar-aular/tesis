@@ -15,6 +15,7 @@ from neuralforecast import NeuralForecast
 
 from src.ml.utils.metrics import calculate_metrics
 from src.ml.utils.idempotency import mark_run_completed
+from src.ml.utils.eval_window import eval_window_variants
 from src.ml.visualize import plot_forecast_rollout
 
 HIST_HOURS = 168          # ventana de contexto (7 días)
@@ -126,9 +127,6 @@ def run_dl_test(model_label: str, test_df: pd.DataFrame, results_dir: Path,
     # Ground truth real (solo observaciones reales, para métricas honestas)
     real_y = test_df[['unique_id', 'ds', 'y']].copy()
 
-    # 1. Contexto histórico sintético (Cold-Start estricto)
-    hist_df = synthetic_context(grid.iloc[:HIST_HOURS], capacidad, regional_pr)
-
     def _predict_window(current_hist: pd.DataFrame, futr: pd.DataFrame) -> pd.DataFrame:
         futr_input = futr.drop(columns=['y'])
         preds = nf.predict(df=current_hist, futr_df=futr_input, static_df=static_df)
@@ -148,24 +146,36 @@ def run_dl_test(model_label: str, test_df: pd.DataFrame, results_dir: Path,
                               output_path=out_dir / "forecast_plot.png",
                               model_name=f"{model_label} ({horizon})", planta=planta)
 
-    # 2. Day 1 (24h)
-    futr_day1 = grid.iloc[HIST_HOURS:HIST_HOURS + 24].copy()
-    _save(_predict_window(hist_df, futr_day1), "day1")
+    # ANALISIS DE SENSIBILIDAD: dos definiciones de ventana Cold-Start.
+    # '' (raw): desde la primera hora registrada (incluye rampa de puesta en marcha).
+    # '_operational': desde la primera produccion sostenida (planta ya operando).
+    variants = eval_window_variants(grid['y'].reset_index(drop=True), capacidad)
+    for suffix, start_idx in variants.items():
+        if start_idx + needed > len(grid):
+            continue
+        window = grid.iloc[start_idx:].reset_index(drop=True)
 
-    # 3. Roll-out autorregresivo 7 días (realimenta la predicción, NUNCA la realidad)
-    current_hist = hist_df.copy()
-    all_preds = []
-    for day in range(ROLLOUT_DAYS):
-        start = HIST_HOURS + day * 24
-        futr_day = grid.iloc[start:start + 24].copy()
-        preds = _predict_window(current_hist, futr_day)
-        all_preds.append(preds)
+        # 1. Contexto histórico sintético (Cold-Start estricto)
+        hist_df = synthetic_context(window.iloc[:HIST_HOURS], capacidad, regional_pr)
 
-        new_tail = futr_day.copy()
-        new_tail['y'] = preds[f'{model_label}-median'].values
-        current_hist = pd.concat([current_hist.iloc[24:], new_tail], ignore_index=True)
+        # 2. Day 1 (24h)
+        futr_day1 = window.iloc[HIST_HOURS:HIST_HOURS + 24].copy()
+        _save(_predict_window(hist_df, futr_day1), f"day1{suffix}")
 
-    _save(pd.concat(all_preds, ignore_index=True), "rollout7d")
+        # 3. Roll-out autorregresivo 7 días (realimenta la predicción, NUNCA la realidad)
+        current_hist = hist_df.copy()
+        all_preds = []
+        for day in range(ROLLOUT_DAYS):
+            start = HIST_HOURS + day * 24
+            futr_day = window.iloc[start:start + 24].copy()
+            preds = _predict_window(current_hist, futr_day)
+            all_preds.append(preds)
+
+            new_tail = futr_day.copy()
+            new_tail['y'] = preds[f'{model_label}-median'].values
+            current_hist = pd.concat([current_hist.iloc[24:], new_tail], ignore_index=True)
+
+        _save(pd.concat(all_preds, ignore_index=True), f"rollout7d{suffix}")
 
     del nf
     gc.collect()

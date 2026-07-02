@@ -5,9 +5,8 @@ import json
 from pathlib import Path
 
 from src.ml.utils.features import generate_lags
+from src.ml.utils.eval_window import eval_window_variants, WINDOW_HOURS
 
-# Ventana LOPO reservada para evaluacion Cold-Start: 168h de contexto + 7 dias
-TEST_WINDOW_HOURS = 168 + 7 * 24
 LAGS = [24, 168]
 
 
@@ -15,10 +14,10 @@ def run_train(silver_df: pd.DataFrame, planta: str, strategy: str = "toy"):
     """Baseline LOCAL: entrena SOLO con la historia de la planta objetivo.
 
     Rigor del benchmark:
-    - ANTI-LEAKAGE (train-on-test): las primeras TEST_WINDOW_HOURS horas de la
-      serie (contexto + ventana de evaluacion) se EXCLUYEN del entrenamiento.
-      El modelo local representa "lo que obtendrias tras esperar a recolectar
-      historia propia": entrena con los datos posteriores a la ventana evaluada.
+    - ANTI-LEAKAGE (train-on-test): se EXCLUYEN del entrenamiento TODAS las
+      ventanas de evaluacion (raw Y operacional, cada una = 168h contexto +
+      7 dias de evaluacion). El modelo local representa "lo que obtendrias tras
+      esperar a recolectar historia propia".
     - Lags autorregresivos [24h, 168h]: el paradigma local SI dispone de la
       serie real de la planta, a diferencia del modelo global Cold-Start.
     """
@@ -26,12 +25,18 @@ def run_train(silver_df: pd.DataFrame, planta: str, strategy: str = "toy"):
 
     plant_df = (silver_df[silver_df['unique_id'] == planta]
                 .sort_values('ds')
+                .reset_index(drop=True)
                 .copy())
 
-    # Excluir la ventana de test (los targets de evaluacion no se entrenan)
-    train_df = plant_df.iloc[TEST_WINDOW_HOURS:].copy()
+    # Excluir TODAS las ventanas de evaluacion (los targets evaluados no se entrenan)
+    capacidad = float(plant_df['potencia_neta_mw'].iloc[0])
+    excluded = pd.Series(False, index=plant_df.index)
+    for _, start in eval_window_variants(plant_df['y'], capacidad).items():
+        excluded.iloc[start:start + WINDOW_HOURS] = True
+
+    train_df = plant_df[~excluded].copy()
     if train_df.empty:
-        print(f"[XGB Local] {planta} sin historia suficiente tras excluir ventana de test.")
+        print(f"[XGB Local] {planta} sin historia suficiente tras excluir ventanas de test.")
         return
 
     # Lags calculados DENTRO del slice de entrenamiento (sin tocar la ventana de test)

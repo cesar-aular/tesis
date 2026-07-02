@@ -1,5 +1,21 @@
 # Changelog
 
+## [2026-07-01] - Análisis de Sensibilidad: Ventana Cold-Start Raw vs Operacional
+- **Contexto**: la ventana LOPO comenzaba en la primera hora registrada de cada planta,
+  que suele caer en la *rampa de puesta en marcha* (ej. alto_solar: primeras 336h = 100%
+  ceros; producción sostenida recién un mes después). Métricas degeneradas (sMAPE 200%,
+  rRMSE indefinido) al evaluar sobre una planta que aún no opera.
+- **Decisión (César)**: evaluar AMBAS definiciones como análisis de sensibilidad.
+- **Nuevo** `src/ml/utils/eval_window.py`: `find_operational_start` (primera hora
+  productiva que inaugura >10h productivas en las siguientes 72h, umbral 5% capacidad)
+  + `eval_window_variants` (raw siempre; operacional solo si difiere >24h y hay largo
+  suficiente). TDD: `tests/test_ml_eval_window.py` (3 tests).
+- Los 6 modelos evalúan ahora `day1`/`rollout7d` (raw) y `day1_operational`/
+  `rollout7d_operational` cuando la planta tiene rampa.
+- `xgb_local/train.py` excluye AMBAS ventanas del entrenamiento (anti train-on-test).
+- Reporte con columna `Window` (Raw/Operational) y barplots RMSE separados por ventana.
+- La generación jamás se modifica: la utilidad solo ELIGE dónde empieza la ventana.
+
 ## [2026-07-01] - Auditoría Claude: Leakage crítico, crash Roll-Out, Informer (rama `claude-focused`)
 - **🔴 LEAKAGE ELIMINADO**: `PR = y/capacidad` era el target disfrazado (`corr(PR,y)=1.0`);
   alimentado a XGBoost producía rRMSE falso de 0.83% (real: ~56%). Eliminado de Silver.
