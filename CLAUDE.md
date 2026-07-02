@@ -46,6 +46,16 @@ for the full audit procedure.
 
 ## Scientific Mandates
 
+- **Generation (`y`) is untouchable.** Never impute, interpolate, or zero-fill missing
+  generation. If an hour is missing, it stays missing (NaN / absent row); models handle
+  gaps via the hourly-grid reindex (y=NaN) and metrics only score real observations.
+  The ONLY allowed transformations of y: (a) summing multiple physical units of the
+  same plant at the same hour (e.g. PFV Jama = Jama 1 + Jama 2 — real readings, matches
+  the maestro's combined capacity), and (b) the synthetic Cold-Start seed
+  (capacity × PR_regional × profile), which is the thesis methodology, not imputation.
+  Weather/exogenous MAY be imputed (ffill/bfill + `_is_imputed` dummy) — it is
+  forecast-knowable information.
+
 - **Probabilistic forecasting:** models output P10/P50/P90 via `MQLoss(level=[90])`
   (90% CI → `lo-90`/`hi-90`). Do NOT use `quantiles=[.1,.5,.9]` (that's 80% CI and breaks
   the visualizers/metrics). Report interval coverage and pinball loss, not just point error.

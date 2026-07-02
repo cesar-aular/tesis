@@ -87,14 +87,22 @@ def parse_raw_csv_gen(csv_file, valid_plants_lower):
         safe_name = re.sub(r'[<>:"/\\|?*\']', '', safe_name).replace(' ', '_')
         
         group['unique_id'] = safe_name
-        
+
         # Select final columns
         cols_to_keep = ['unique_id', 'ds', 'generacion_mwh']
         final_cols = [c for c in cols_to_keep if c in group.columns]
-        
+
         # Sort and dropna
         group = group.dropna(subset=['ds', 'generacion_mwh']).sort_values('ds')
-        
+
+        # MULTI-UNIDAD: una central puede tener varias unidades fisicas reportando
+        # por separado (ej. PFV JAMA = SOLAR JAMA 1 + SOLAR JAMA 2; el maestro
+        # lista la capacidad COMBINADA). La generacion de la planta es la SUMA
+        # de sus unidades por hora. Sin esto se subcuenta (~50% en Jama).
+        # Nota: tambien colapsa la hora repetida del cambio DST (abril, 01:00),
+        # que para solar es 0+0=0.
+        group = group.groupby(['unique_id', 'ds'], as_index=False)['generacion_mwh'].sum()
+
         result[safe_name] = group[final_cols]
         
     return result

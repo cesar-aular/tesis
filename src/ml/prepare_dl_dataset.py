@@ -12,9 +12,18 @@ def prepare_dl_dataset():
         return
         
     df = pd.read_parquet(silver_path)
-    
-    # Manejar nulos si existieran para evitar errores en PyTorch
-    df = df.fillna(0)
+
+    # REGLA: la generacion (y) NO se toca. Si y viniera con NaN, esas filas se
+    # ELIMINAN (dato que no esta, no esta) en lugar de fabricar un 0.
+    n_nan_y = df['y'].isna().sum()
+    if n_nan_y:
+        print(f"[DL Dataset] WARNING: {n_nan_y} filas sin y eliminadas (no se imputa generacion).")
+        df = df.dropna(subset=['y'])
+
+    # Nulos residuales SOLO en exogenas/features (Silver ya imputo con ffill/bfill
+    # + dummies _is_imputed; esto es un cinturon de seguridad para PyTorch).
+    feature_cols = [c for c in df.columns if c not in ('unique_id', 'ds', 'y')]
+    df[feature_cols] = df[feature_cols].fillna(0)
     
     le_macrozona = LabelEncoder()
     le_estacion = LabelEncoder()
