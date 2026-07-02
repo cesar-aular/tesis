@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1_operational",
+    "planta": "alto_solar",
+    "estacion": "Y",
+    "metrics": {
+        "RMSE": 1.1280978114713855,
+        "MAE": 1.0227792579389643,
+        "sMAPE": 141.7751719000629,
+        "rRMSE": 125.49990579164754,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.502728066596804,
+        "Pinball_P95": 0.5136555974357179
+    }
+}

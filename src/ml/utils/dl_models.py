@@ -54,6 +54,8 @@ MODEL_SPECS = {
         "cls": LSTM, "label": "LSTM",
         "arch": lambda h: {"encoder_hidden_size": h},
         "exog": "full", "hidden_choices": [32, 64, 128],
+        # Los RNN divergen (loss NaN) en fp16 aun con AMP; LSTM entrena en fp32
+        "fp32": True,
     },
     "nhits": {
         "cls": NHITS, "label": "NHITS",
@@ -69,6 +71,9 @@ MODEL_SPECS = {
         "cls": Informer, "label": "Informer",
         "arch": lambda h: {"hidden_size": h},
         "exog": "futr_only", "hidden_choices": [32, 64, 128],
+        # La atencion prob-sparse desborda fp16 con outliers del robust scaler
+        # (diverge a NaN a escala half); se mantiene en fp32
+        "fp32": True,
     },
 }
 
@@ -86,10 +91,11 @@ def _static_df(df: pd.DataFrame, spec):
     return df[['unique_id'] + STAT_EXOG].drop_duplicates('unique_id')
 
 
-def _trainer_kwargs():
+def _trainer_kwargs(force_fp32: bool = False):
     """Config Lightning para velocidad: fp16 en GPU, sin logger ni progress bar."""
-    kw = {"logger": False, "enable_progress_bar": False, "enable_checkpointing": False}
-    if torch.cuda.is_available():
+    kw = {"logger": False, "enable_progress_bar": False, "enable_checkpointing": False,
+          "gradient_clip_val": 1.0}  # estabilidad numerica, costo ~0
+    if torch.cuda.is_available() and not force_fp32:
         kw["precision"] = "16-mixed"  # tensor cores Turing: ~1.5-2x mas rapido
     return kw
 
@@ -112,7 +118,7 @@ def _build(spec, hidden: int, lr: float, max_steps: int, batch_size: int,
         loss=MQLoss(level=[90]),
         **spec["arch"](hidden),
         **_exog_kwargs(spec),
-        **_trainer_kwargs(),
+        **_trainer_kwargs(force_fp32=spec.get("fp32", False)),
     )
 
 
@@ -171,9 +177,10 @@ def run_dl_train(model_name: str, train_df: pd.DataFrame, strategy: str = "toy")
     # Early stopping requiere ventana de validacion por serie
     val_size = 0 if patience < 0 else 168
 
+    usa_fp16 = torch.cuda.is_available() and not spec.get("fp32", False)
     print(f"[{label}] steps={max_steps} (epocas={epochs}, batch={batch_size}x{windows_batch}, "
           f"early_stop={'off' if patience < 0 else f'patience={patience}'}, "
-          f"fp16={'on' if torch.cuda.is_available() else 'off'})")
+          f"fp16={'on' if usa_fp16 else 'off'})")
 
     model_obj = _build(spec,
                        hidden=params.get('hidden_size', 64),
@@ -258,7 +265,9 @@ def run_dl_tune(model_name: str, train_df: pd.DataFrame, strategy: str = "toy"):
             col = f"{label}-median"
             if col not in merged.columns or merged.empty:
                 return 9999.0
-            return float(((merged['y'] - merged[col]) ** 2).mean() ** 0.5)
+            rmse = float(((merged['y'] - merged[col]) ** 2).mean() ** 0.5)
+            # NaN (divergencia numerica) no es aceptable para Optuna
+            return 9999.0 if math.isnan(rmse) else rmse
         except Exception as e:
             print(f"[{label}] Trial fallido: {e}")
             return 9999.0
@@ -268,10 +277,17 @@ def run_dl_tune(model_name: str, train_df: pd.DataFrame, strategy: str = "toy"):
     study = optuna.create_study(direction='minimize')
     study.optimize(objective, n_trials=n_trials)
 
+    # Si todos los trials fallaron (divergencia, OOM), usar defaults razonables
+    try:
+        chosen = study.best_params
+    except ValueError:
+        print(f"[{label}] WARNING: ningun trial completo; usando hiperparametros por defecto.")
+        chosen = {}
+
     best_params = {
         'input_size': 168,
-        'hidden_size': study.best_params.get('hidden_size', 64),
-        'learning_rate': study.best_params.get('learning_rate', 1e-3),
+        'hidden_size': chosen.get('hidden_size', 64),
+        'learning_rate': chosen.get('learning_rate', 1e-3),
     }
     (out_dir / "best_params.json").write_text(json.dumps(best_params))
     print(f"[{label}] TUNE completado: {best_params}")

@@ -139,10 +139,15 @@ def run_ml_pipeline(strategy: str = "toy", force: bool = False):
             for model_name in pending_dl:
                 tune_mod, train_mod, test_mod = DL_MODELS[model_name]
                 print(f"[INFO] {model_name.upper()} para {planta}...")
-                tune_mod.run_tune(train_dl, strategy)
-                train_mod.run_train(train_dl, strategy)
-                test_mod.run_test(test_dl, silver_dl, results_dir, macrozona,
-                                  estacion, planta, strategy, regional_pr=regional_pr)
+                try:
+                    tune_mod.run_tune(train_dl, strategy)
+                    train_mod.run_train(train_dl, strategy)
+                    test_mod.run_test(test_dl, silver_dl, results_dir, macrozona,
+                                      estacion, planta, strategy, regional_pr=regional_pr)
+                except Exception as e:
+                    # Un modelo fallido no debe matar una corrida de horas.
+                    # Sin marker de completitud -> la idempotencia lo reintenta.
+                    print(f"[ERROR] {model_name.upper()} fallo para {planta}: {e}. Continuando.")
                 gc.collect()
                 import torch
                 if torch.cuda.is_available():

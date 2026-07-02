@@ -131,6 +131,12 @@ def run_dl_test(model_label: str, test_df: pd.DataFrame, results_dir: Path,
         futr_input = futr.drop(columns=['y'])
         preds = nf.predict(df=current_hist, futr_df=futr_input, static_df=static_df)
         preds = preds.reset_index()
+        # Guard: un modelo divergente (NaN) no debe matar una corrida de horas;
+        # se aborta SOLO este modelo/planta (sin marker -> idempotencia reintenta)
+        if preds[f'{model_label}-median'].isna().any():
+            raise RuntimeError(
+                f"{model_label} produjo predicciones NaN (modelo divergente). "
+                "Revisar precision/lr; este modelo/planta se omite.")
         return _apply_physics(preds, futr, pred_cols)
 
     def _save(preds: pd.DataFrame, horizon: str):

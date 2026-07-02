@@ -20,15 +20,18 @@ def run_train(train_df: pd.DataFrame, strategy: str = "toy"):
     params['enable_categorical'] = True
     params['tree_method'] = 'hist'
     params['n_jobs'] = -1
-    
-    if strategy == "toy":
-        pass # No downsampling on data, just limited plants in orchestrator
-        
+
     X_train = train_df.drop(columns=['y', 'ds', 'unique_id'])
     y_train = train_df['y']
-    
-    model = xgb.XGBRegressor(**params, random_state=42)
-    model.fit(X_train, y_train)
+
+    # GPU (xgboost 3.x): ~5-10x mas rapido sobre los 4.3M de filas N-1
+    try:
+        model = xgb.XGBRegressor(**params, device='cuda', random_state=42)
+        model.fit(X_train, y_train)
+    except Exception as e:
+        print(f"[XGB Global] GPU no disponible ({e}); usando CPU.")
+        model = xgb.XGBRegressor(**params, random_state=42)
+        model.fit(X_train, y_train)
     
     joblib.dump(model, models_dir / "xgb_global_model.joblib")
     print("[XGB Global] Entrenamiento completado y guardado.")

@@ -60,8 +60,14 @@ def run_train(silver_df: pd.DataFrame, planta: str, strategy: str = "toy"):
     X_train = train_df.drop(columns=['y', 'ds', 'unique_id'])
     y_train = train_df['y']
 
-    model = xgb.XGBRegressor(**params, random_state=42)
-    model.fit(X_train, y_train)
+    # GPU (xgboost 3.x) con fallback a CPU
+    try:
+        model = xgb.XGBRegressor(**params, device='cuda', random_state=42)
+        model.fit(X_train, y_train)
+    except Exception as e:
+        print(f"[XGB Local] GPU no disponible ({e}); usando CPU.")
+        model = xgb.XGBRegressor(**params, random_state=42)
+        model.fit(X_train, y_train)
 
     joblib.dump(model, models_dir / f"xgb_local_{planta}.joblib")
     print(f"[XGB Local] Entrenamiento finalizado para {planta} ({len(train_df)} filas, lags={LAGS}).")
