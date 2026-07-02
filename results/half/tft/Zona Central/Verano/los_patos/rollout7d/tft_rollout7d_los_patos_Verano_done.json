@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d",
+    "planta": "los_patos",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.35076936383128665,
+        "MAE": 0.3476293822306962,
+        "sMAPE": 200.0,
+        "rRMSE": 0.0,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.27666890389241633,
+        "Pinball_P95": 0.012116344248698592
+    }
+}

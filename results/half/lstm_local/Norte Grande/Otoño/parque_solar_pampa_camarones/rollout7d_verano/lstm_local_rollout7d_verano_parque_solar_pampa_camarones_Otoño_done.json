@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d_verano",
+    "planta": "parque_solar_pampa_camarones",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 1.3559630777152334,
+        "MAE": 0.8932777376002854,
+        "sMAPE": 116.02769493591639,
+        "rRMSE": 55.43566958693887,
+        "Coverage_90": 0.7440476190476191,
+        "Pinball_P05": 0.10427564275340134,
+        "Pinball_P95": 0.18272079075797515
+    }
+}

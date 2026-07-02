@@ -1,0 +1,14 @@
+{
+    "model": "informer_rollout7d_primavera",
+    "planta": "amparo_del_sol",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.9757457068134917,
+        "MAE": 0.5735819959843925,
+        "sMAPE": 181.12307664673804,
+        "rRMSE": 182.51173496867042,
+        "Coverage_90": 0.041666666666666664,
+        "Pinball_P05": 0.07063953376941713,
+        "Pinball_P95": 0.40105179745220243
+    }
+}

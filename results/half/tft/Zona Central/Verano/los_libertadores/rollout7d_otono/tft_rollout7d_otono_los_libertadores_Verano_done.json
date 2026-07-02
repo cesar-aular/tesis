@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d_otono",
+    "planta": "los_libertadores",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 2.999554498983551,
+        "MAE": 2.2335040794902334,
+        "sMAPE": 159.90872497430374,
+        "rRMSE": 141.82557368479826,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.49815292865102295,
+        "Pinball_P95": 1.755556343923121
+    }
+}

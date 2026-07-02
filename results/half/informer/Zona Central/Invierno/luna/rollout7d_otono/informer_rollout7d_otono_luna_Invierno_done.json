@@ -1,0 +1,14 @@
+{
+    "model": "informer_rollout7d_otono",
+    "planta": "luna",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.8262053493560565,
+        "MAE": 0.6681178231317179,
+        "sMAPE": 154.82837628184686,
+        "rRMSE": 127.87019084960858,
+        "Coverage_90": 0.27380952380952384,
+        "Pinball_P05": 0.1346892621157241,
+        "Pinball_P95": 0.24273082632390425
+    }
+}

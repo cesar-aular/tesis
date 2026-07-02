@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1",
+    "planta": "peralillo",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.5709342237781998,
+        "MAE": 0.47787281538175347,
+        "sMAPE": 145.843115534297,
+        "rRMSE": 125.69967853026984,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.11241413763719758,
+        "Pinball_P95": 0.38222189887557273
+    }
+}

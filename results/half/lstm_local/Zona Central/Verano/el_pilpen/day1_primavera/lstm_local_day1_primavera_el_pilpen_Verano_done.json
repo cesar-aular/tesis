@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_day1_primavera",
+    "planta": "el_pilpen",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.0170844103594459,
+        "MAE": 0.6107737312037594,
+        "sMAPE": 196.60706503097785,
+        "rRMSE": 166.233518682916,
+        "Coverage_90": 0.4583333333333333,
+        "Pinball_P05": 0.0305828433209778,
+        "Pinball_P95": 0.5775691740676393
+    }
+}

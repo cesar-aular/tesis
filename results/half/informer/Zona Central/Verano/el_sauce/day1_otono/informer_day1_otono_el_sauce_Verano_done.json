@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1_otono",
+    "planta": "el_sauce",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.3046679360448667,
+        "MAE": 0.9453359873283868,
+        "sMAPE": 174.66360006114593,
+        "rRMSE": 139.00980289600707,
+        "Coverage_90": 0.125,
+        "Pinball_P05": 0.06984676286623047,
+        "Pinball_P95": 0.22212140488718438
+    }
+}

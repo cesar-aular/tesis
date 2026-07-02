@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_day1_verano",
+    "planta": "el_roble",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 2.4865657682513125,
+        "MAE": 1.2980070837462943,
+        "sMAPE": 136.32337630685763,
+        "rRMSE": 154.9095940433861
+    }
+}

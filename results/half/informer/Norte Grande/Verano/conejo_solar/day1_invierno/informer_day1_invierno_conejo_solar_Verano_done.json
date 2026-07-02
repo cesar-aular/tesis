@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1_invierno",
+    "planta": "conejo_solar",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 37.87156950143861,
+        "MAE": 24.90126569569111,
+        "sMAPE": 162.2006677152993,
+        "rRMSE": 153.89733639208842,
+        "Coverage_90": 0.16666666666666666,
+        "Pinball_P05": 1.8913316515584786,
+        "Pinball_P95": 10.039694473892451
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_rollout7d_primavera",
+    "planta": "la_frontera",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.5534532014530171,
+        "MAE": 0.7372018926813985,
+        "sMAPE": 178.4338907820941,
+        "rRMSE": 211.45689806367534,
+        "Coverage_90": 0.08928571428571429,
+        "Pinball_P05": 0.04166867480858786,
+        "Pinball_P95": 0.6971888113759301
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d_verano",
+    "planta": "el_sauce",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.8526278122522478,
+        "MAE": 0.6440666271394418,
+        "sMAPE": 133.52770833390127,
+        "rRMSE": 98.26585829001479,
+        "Coverage_90": 0.4107142857142857,
+        "Pinball_P05": 0.08140299108653423,
+        "Pinball_P95": 0.14378111085066594
+    }
+}

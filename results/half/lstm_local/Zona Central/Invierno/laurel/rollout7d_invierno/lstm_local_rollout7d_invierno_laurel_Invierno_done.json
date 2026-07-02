@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d_invierno",
+    "planta": "laurel",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.067553975594666,
+        "MAE": 0.509064057918258,
+        "sMAPE": 73.96779792321503,
+        "rRMSE": 180.63610132066665,
+        "Coverage_90": 0.8511904761904762,
+        "Pinball_P05": 0.02954985099295117,
+        "Pinball_P95": 0.13045451690785534
+    }
+}

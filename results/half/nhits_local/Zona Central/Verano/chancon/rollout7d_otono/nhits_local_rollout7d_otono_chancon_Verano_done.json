@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_rollout7d_otono",
+    "planta": "chancon",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.2339805641673514,
+        "MAE": 0.8037632594365667,
+        "sMAPE": 193.54605147761805,
+        "rRMSE": 153.83317004153574,
+        "Coverage_90": 0.06547619047619048,
+        "Pinball_P05": 0.045060602603263895,
+        "Pinball_P95": 0.7600950520426641
+    }
+}

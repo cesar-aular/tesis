@@ -1,0 +1,14 @@
+{
+    "model": "lstm_rollout7d_verano",
+    "planta": "las_codornices",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.3607843525744716,
+        "MAE": 0.9679075013015054,
+        "sMAPE": 144.64108403834726,
+        "rRMSE": 112.62390872616916,
+        "Coverage_90": 0.19047619047619047,
+        "Pinball_P05": 0.0659309028856136,
+        "Pinball_P95": 0.4846594649502874
+    }
+}

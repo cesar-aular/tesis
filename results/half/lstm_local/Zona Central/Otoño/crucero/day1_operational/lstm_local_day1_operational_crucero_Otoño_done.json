@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_day1_operational",
+    "planta": "crucero",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.44079828429210915,
+        "MAE": 0.25329403944003087,
+        "sMAPE": 74.961272172931,
+        "rRMSE": 302.7904055364537,
+        "Coverage_90": 0.875,
+        "Pinball_P05": 0.009239393744307258,
+        "Pinball_P95": 0.0613628097887462
+    }
+}

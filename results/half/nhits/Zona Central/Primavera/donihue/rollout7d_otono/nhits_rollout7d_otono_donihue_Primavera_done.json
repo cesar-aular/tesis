@@ -1,0 +1,14 @@
+{
+    "model": "nhits_rollout7d_otono",
+    "planta": "donihue",
+    "estacion": "Primavera",
+    "metrics": {
+        "RMSE": 2.994456178761112,
+        "MAE": 2.75322315434321,
+        "sMAPE": 145.23749218324582,
+        "rRMSE": 119.07783395061062,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 1.2122598064215881,
+        "Pinball_P95": 1.5440752748490747
+    }
+}

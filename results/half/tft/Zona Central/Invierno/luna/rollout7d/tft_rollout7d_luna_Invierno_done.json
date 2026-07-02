@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d",
+    "planta": "luna",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.5767611124581299,
+        "MAE": 0.5020703414042467,
+        "sMAPE": 102.7677351188379,
+        "rRMSE": 97.10205062718701,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.18150901147291237,
+        "Pinball_P95": 0.37686178855166874
+    }
+}

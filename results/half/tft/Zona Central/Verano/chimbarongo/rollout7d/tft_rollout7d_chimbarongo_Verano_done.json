@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d",
+    "planta": "chimbarongo",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.0348071690520348,
+        "MAE": 0.7754520727668845,
+        "sMAPE": 150.03450691203608,
+        "rRMSE": 134.37850611616142,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.16707163233327915,
+        "Pinball_P95": 0.619618144850431
+    }
+}

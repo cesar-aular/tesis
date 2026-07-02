@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1_verano",
+    "planta": "pfv_jose_soler_mallafre",
+    "estacion": "Primavera",
+    "metrics": {
+        "RMSE": 0.4950100573881397,
+        "MAE": 0.31298282866676647,
+        "sMAPE": 181.31220012555795,
+        "rRMSE": 194.64172480849635,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.06788476830503593,
+        "Pinball_P95": 0.22952687088400126
+    }
+}

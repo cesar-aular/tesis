@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_day1_otono",
+    "planta": "la_frontera",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 2.13684614471184,
+        "MAE": 1.320926478326631,
+        "sMAPE": 138.61034651860192,
+        "rRMSE": 143.3489795977506,
+        "Coverage_90": 0.5833333333333334,
+        "Pinball_P05": 0.07375426780781709,
+        "Pinball_P95": 0.828812120872317
+    }
+}

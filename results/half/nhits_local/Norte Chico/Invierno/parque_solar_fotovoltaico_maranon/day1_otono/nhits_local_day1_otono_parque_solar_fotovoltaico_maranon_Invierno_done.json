@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_day1_otono",
+    "planta": "parque_solar_fotovoltaico_maranon",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 3.050131740521934,
+        "MAE": 2.68851307494333,
+        "sMAPE": 138.3747755592503,
+        "rRMSE": 114.62079809329224,
+        "Coverage_90": 0.041666666666666664,
+        "Pinball_P05": 0.9772277721737433,
+        "Pinball_P95": 1.7230880727186255
+    }
+}

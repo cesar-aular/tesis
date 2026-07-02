@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1_otono",
+    "planta": "lalackama_2",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 8.83111692470156,
+        "MAE": 6.270987978515525,
+        "sMAPE": 184.2955907691221,
+        "rRMSE": 140.64154395753977,
+        "Coverage_90": 0.08333333333333333,
+        "Pinball_P05": 0.41179132382385425,
+        "Pinball_P95": 3.067026301644121
+    }
+}

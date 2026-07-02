@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_day1_primavera",
+    "planta": "parque_solar_finis_terrae",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 55.18430391503682,
+        "MAE": 37.77781209349632,
+        "sMAPE": 183.05977865948748,
+        "rRMSE": 147.54010737669486,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 4.1782601694266,
+        "Pinball_P95": 33.75438369562229
+    }
+}

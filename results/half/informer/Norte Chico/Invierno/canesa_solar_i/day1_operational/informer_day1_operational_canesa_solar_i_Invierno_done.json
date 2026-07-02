@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1_operational",
+    "planta": "canesa_solar_i",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.522220245302448,
+        "MAE": 0.9680374963209033,
+        "sMAPE": 181.97233731880874,
+        "rRMSE": 157.95540452132735,
+        "Coverage_90": 0.08333333333333333,
+        "Pinball_P05": 0.05837655699967096,
+        "Pinball_P95": 0.6959153212451686
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_rollout7d_otono",
+    "planta": "fotovolt_solar_i",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.09969365421635662,
+        "MAE": 0.055541245871111755,
+        "sMAPE": 93.97692131844889,
+        "rRMSE": 70.59417718023815
+    }
+}

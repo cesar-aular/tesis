@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_verano",
+    "planta": "fotovolt_solar_i",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.46874353236235705,
+        "MAE": 0.25205784927432734,
+        "sMAPE": 48.765975418472266,
+        "rRMSE": 197.29330980247374
+    }
+}

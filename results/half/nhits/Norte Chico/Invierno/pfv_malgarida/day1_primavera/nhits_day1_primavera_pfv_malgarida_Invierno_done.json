@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1_primavera",
+    "planta": "pfv_malgarida",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 109.32059153848896,
+        "MAE": 75.30396449938416,
+        "sMAPE": 166.5803526871932,
+        "rRMSE": 144.84824580039393,
+        "Coverage_90": 0.08333333333333333,
+        "Pinball_P05": 7.242705732149382,
+        "Pinball_P95": 67.77354882974178
+    }
+}

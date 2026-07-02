@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d",
+    "planta": "lipangue",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.7563633949294075,
+        "MAE": 0.552983732735394,
+        "sMAPE": 123.45336175634213,
+        "rRMSE": 124.787371563187,
+        "Coverage_90": 0.029411764705882353,
+        "Pinball_P05": 0.15089410457036198,
+        "Pinball_P95": 0.4171679918567992
+    }
+}

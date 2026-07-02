@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1_operational",
+    "planta": "la_acacia",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 3.6806498988111516,
+        "MAE": 2.931596097225944,
+        "sMAPE": 167.91756937551276,
+        "rRMSE": 131.93728551200877,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.40732128685340285,
+        "Pinball_P95": 2.5059572556056082
+    }
+}

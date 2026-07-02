@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_rollout7d_primavera",
+    "planta": "fotovolt_solar_i",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.3011917401460996,
+        "MAE": 0.15224384414701067,
+        "sMAPE": 174.17159586831391,
+        "rRMSE": 200.73676635212766,
+        "Coverage_90": 0.1130952380952381,
+        "Pinball_P05": 0.010969461051986752,
+        "Pinball_P95": 0.14109876351265882
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d",
+    "planta": "donihue",
+    "estacion": "Primavera",
+    "metrics": {
+        "RMSE": 1.2697687923922354,
+        "MAE": 1.086545722726398,
+        "sMAPE": 159.0252876027191,
+        "rRMSE": 175.87632343011956,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.5230220513842152,
+        "Pinball_P95": 0.5403146608225153
+    }
+}

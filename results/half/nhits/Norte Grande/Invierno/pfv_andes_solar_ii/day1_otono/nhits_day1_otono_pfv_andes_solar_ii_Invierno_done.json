@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1_otono",
+    "planta": "pfv_andes_solar_ii",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 17.46379650351968,
+        "MAE": 14.262730110591898,
+        "sMAPE": 148.0411508328032,
+        "rRMSE": 126.17970511622244,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 4.89885738438461,
+        "Pinball_P95": 9.329816126272393
+    }
+}

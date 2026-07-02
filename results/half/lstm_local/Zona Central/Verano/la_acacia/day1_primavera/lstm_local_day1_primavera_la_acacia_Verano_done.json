@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_day1_primavera",
+    "planta": "la_acacia",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.7711589327628197,
+        "MAE": 0.3797962101743906,
+        "sMAPE": 53.28647969365781,
+        "rRMSE": 269.50954998913994,
+        "Coverage_90": 1.0,
+        "Pinball_P05": 0.014306708849350494,
+        "Pinball_P95": 0.13517318480771803
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d_invierno",
+    "planta": "gr_santa_rosa",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 1.9764088309339147,
+        "MAE": 1.6717294028821925,
+        "sMAPE": 151.72531190856265,
+        "rRMSE": 198.88721687702932,
+        "Coverage_90": 0.03571428571428571,
+        "Pinball_P05": 0.904126685014654,
+        "Pinball_P95": 0.7557612358370447
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_rollout7d",
+    "planta": "gr_santa_rosa",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 1.4174907554810765,
+        "MAE": 0.7562371349567911,
+        "sMAPE": 129.2460390728857,
+        "rRMSE": 85.82854220344768
+    }
+}

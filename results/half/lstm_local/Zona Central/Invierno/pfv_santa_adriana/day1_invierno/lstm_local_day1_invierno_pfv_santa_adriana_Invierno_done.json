@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_day1_invierno",
+    "planta": "pfv_santa_adriana",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.17779960176610463,
+        "MAE": 0.08200042976871676,
+        "sMAPE": 32.25884952561169,
+        "rRMSE": 92.0596209747653,
+        "Coverage_90": 1.0,
+        "Pinball_P05": 0.00913537321551606,
+        "Pinball_P95": 0.027381502307859313
+    }
+}

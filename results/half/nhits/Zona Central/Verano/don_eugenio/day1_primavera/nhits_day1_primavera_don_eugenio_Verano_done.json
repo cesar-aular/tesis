@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1_primavera",
+    "planta": "don_eugenio",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.7552337758940728,
+        "MAE": 0.5729580981036028,
+        "sMAPE": 151.63256494592036,
+        "rRMSE": 150.272263320278,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.2337323303023974,
+        "Pinball_P95": 0.3381019378701846
+    }
+}

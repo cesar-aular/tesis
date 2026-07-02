@@ -1,0 +1,14 @@
+{
+    "model": "nhits_rollout7d_otono",
+    "planta": "la_acacia",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 2.4449018932250297,
+        "MAE": 2.171156972108119,
+        "sMAPE": 155.55198094392932,
+        "rRMSE": 135.91321166762282,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 1.0004149436091514,
+        "Pinball_P95": 1.1666625112735431
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d",
+    "planta": "el_roble",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 3.7943045940122833,
+        "MAE": 2.8024575305406914,
+        "sMAPE": 161.2306414211639,
+        "rRMSE": 140.2639697999859,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.5494790153879356,
+        "Pinball_P95": 2.2687792343908635
+    }
+}

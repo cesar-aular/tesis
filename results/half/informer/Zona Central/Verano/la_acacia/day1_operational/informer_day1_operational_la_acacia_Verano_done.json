@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1_operational",
+    "planta": "la_acacia",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 3.6704672481464784,
+        "MAE": 2.746723993991812,
+        "sMAPE": 168.57050321232865,
+        "rRMSE": 131.57227625414703,
+        "Coverage_90": 0.25,
+        "Pinball_P05": 0.1913172555156052,
+        "Pinball_P95": 0.6322491231995325
+    }
+}

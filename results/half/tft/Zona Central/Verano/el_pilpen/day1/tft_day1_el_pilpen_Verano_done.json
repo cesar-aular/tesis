@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1",
+    "planta": "el_pilpen",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.609890127623242,
+        "MAE": 1.152219446445694,
+        "sMAPE": 162.39330086262086,
+        "rRMSE": 141.25486782831888,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.1409755482224682,
+        "Pinball_P95": 1.0304796040869102
+    }
+}

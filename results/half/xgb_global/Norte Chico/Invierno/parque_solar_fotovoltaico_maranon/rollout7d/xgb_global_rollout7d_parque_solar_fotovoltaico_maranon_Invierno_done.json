@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_rollout7d",
+    "planta": "parque_solar_fotovoltaico_maranon",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.7583886260274972,
+        "MAE": 1.192664899317558,
+        "sMAPE": 121.22736717323524,
+        "rRMSE": 463.6511664234396
+    }
+}

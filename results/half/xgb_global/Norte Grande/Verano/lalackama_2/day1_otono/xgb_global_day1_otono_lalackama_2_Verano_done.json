@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_otono",
+    "planta": "lalackama_2",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 5.465552892794526,
+        "MAE": 3.919218121406933,
+        "sMAPE": 130.6857291288414,
+        "rRMSE": 87.04264749050381
+    }
+}

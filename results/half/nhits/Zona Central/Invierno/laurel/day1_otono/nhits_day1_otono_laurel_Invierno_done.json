@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1_otono",
+    "planta": "laurel",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 3.5153824367608557,
+        "MAE": 2.953815432781615,
+        "sMAPE": 117.58437500977108,
+        "rRMSE": 166.98608189780347,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 2.6425365574905335,
+        "Pinball_P95": 0.3391256974336823
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d_primavera",
+    "planta": "chancon",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.7594050026644756,
+        "MAE": 0.3996192590954403,
+        "sMAPE": 116.50586664521387,
+        "rRMSE": 220.71959991174893,
+        "Coverage_90": 0.7678571428571429,
+        "Pinball_P05": 0.01719803125136726,
+        "Pinball_P95": 0.26341184567950443
+    }
+}

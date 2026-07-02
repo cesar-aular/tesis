@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1",
+    "planta": "pfv_andes_solar_ii",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.2286367943255336,
+        "MAE": 0.12179404404014349,
+        "sMAPE": 108.33333333333333,
+        "rRMSE": 772.8567523575068,
+        "Coverage_90": 0.4166666666666667,
+        "Pinball_P05": 0.21328076436184343,
+        "Pinball_P95": 0.034539441562568156
+    }
+}

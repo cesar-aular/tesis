@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d_verano",
+    "planta": "conejo_solar",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 31.814312612977076,
+        "MAE": 24.53201142379216,
+        "sMAPE": 124.72072752953397,
+        "rRMSE": 74.55439420284785,
+        "Coverage_90": 0.7559523809523809,
+        "Pinball_P05": 2.231299042701721,
+        "Pinball_P95": 4.465269056955975
+    }
+}

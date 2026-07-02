@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_day1_otono",
+    "planta": "cachiyuyo_solar_2",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 3.5536317437211813,
+        "MAE": 2.3311384347580315,
+        "sMAPE": 184.6470969610174,
+        "rRMSE": 152.36839298749467,
+        "Coverage_90": 0.08333333333333333,
+        "Pinball_P05": 0.11671318395086323,
+        "Pinball_P95": 2.1874087640228024
+    }
+}

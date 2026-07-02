@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_day1_invierno",
+    "planta": "don_eugenio",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.36944921776910994,
+        "MAE": 0.21227692820927282,
+        "sMAPE": 133.305128154595,
+        "rRMSE": 63.521367384030405
+    }
+}

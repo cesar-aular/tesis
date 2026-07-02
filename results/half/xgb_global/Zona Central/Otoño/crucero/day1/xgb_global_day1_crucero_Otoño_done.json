@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1",
+    "planta": "crucero",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.8003653163177392,
+        "MAE": 0.5425726572672526,
+        "sMAPE": 116.66666666666667,
+        "rRMSE": 0.0
+    }
+}

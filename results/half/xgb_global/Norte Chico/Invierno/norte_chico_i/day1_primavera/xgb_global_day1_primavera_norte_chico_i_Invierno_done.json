@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_primavera",
+    "planta": "norte_chico_i",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.43832101639680027,
+        "MAE": 0.4038822995803457,
+        "sMAPE": 147.41108436582914,
+        "rRMSE": 227.27586804908418
+    }
+}

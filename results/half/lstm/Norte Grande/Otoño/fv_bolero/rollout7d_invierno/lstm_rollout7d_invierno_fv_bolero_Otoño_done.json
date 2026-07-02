@@ -1,0 +1,14 @@
+{
+    "model": "lstm_rollout7d_invierno",
+    "planta": "fv_bolero",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 10.380505528238974,
+        "MAE": 8.833830498513722,
+        "sMAPE": 200.0,
+        "rRMSE": 0.0,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 2.972572103355612,
+        "Pinball_P95": 0.7622966987746108
+    }
+}

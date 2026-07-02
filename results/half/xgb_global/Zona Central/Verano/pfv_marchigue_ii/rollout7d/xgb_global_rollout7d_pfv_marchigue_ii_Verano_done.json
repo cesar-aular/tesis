@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_rollout7d",
+    "planta": "pfv_marchigue_ii",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 2.5910952041618818,
+        "MAE": 1.7998262191346537,
+        "sMAPE": 106.78846204388994,
+        "rRMSE": 104.84949473115093
+    }
+}

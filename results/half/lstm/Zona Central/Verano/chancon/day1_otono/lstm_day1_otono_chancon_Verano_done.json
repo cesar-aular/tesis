@@ -1,0 +1,14 @@
+{
+    "model": "lstm_day1_otono",
+    "planta": "chancon",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.4618105349614183,
+        "MAE": 0.34020773469334625,
+        "sMAPE": 125.82555580755381,
+        "rRMSE": 60.0661345372516,
+        "Coverage_90": 0.875,
+        "Pinball_P05": 0.04207507169412566,
+        "Pinball_P95": 0.04976777572131449
+    }
+}

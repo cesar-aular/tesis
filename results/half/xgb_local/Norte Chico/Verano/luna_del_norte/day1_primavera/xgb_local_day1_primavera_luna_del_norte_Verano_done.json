@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_day1_primavera",
+    "planta": "luna_del_norte",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.2774756201045177,
+        "MAE": 0.17369624551186766,
+        "sMAPE": 125.35520460282407,
+        "rRMSE": 35.80834882755963
+    }
+}

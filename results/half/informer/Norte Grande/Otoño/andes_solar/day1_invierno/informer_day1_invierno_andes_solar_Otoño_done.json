@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1_invierno",
+    "planta": "andes_solar",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 7.514577187458185,
+        "MAE": 5.0227705736955,
+        "sMAPE": 177.26647554869206,
+        "rRMSE": 151.45268167343662,
+        "Coverage_90": 0.08333333333333333,
+        "Pinball_P05": 0.367633822063605,
+        "Pinball_P95": 2.3832725336154303
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1_invierno",
+    "planta": "don_eugenio",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.8828638203966569,
+        "MAE": 0.662112074055282,
+        "sMAPE": 170.51653001090716,
+        "rRMSE": 151.79546846552736,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.1524905050180678,
+        "Pinball_P95": 0.5258674171484017
+    }
+}

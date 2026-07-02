@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1_primavera",
+    "planta": "las_codornices",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.6261877243261539,
+        "MAE": 0.428713541351802,
+        "sMAPE": 156.33206736040697,
+        "rRMSE": 167.31292860629458,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.10442568298555367,
+        "Pinball_P95": 0.329192978789312
+    }
+}

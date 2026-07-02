@@ -1,0 +1,14 @@
+{
+    "model": "lstm_day1_verano",
+    "planta": "illapel_5x",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.600039202338042,
+        "MAE": 1.0449487039974201,
+        "sMAPE": 168.66322280481035,
+        "rRMSE": 141.19898818614655,
+        "Coverage_90": 0.125,
+        "Pinball_P05": 0.0609840953686008,
+        "Pinball_P95": 0.8085858343826184
+    }
+}

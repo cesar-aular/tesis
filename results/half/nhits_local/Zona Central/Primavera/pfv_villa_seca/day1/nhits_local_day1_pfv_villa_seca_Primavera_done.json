@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_day1",
+    "planta": "pfv_villa_seca",
+    "estacion": "Primavera",
+    "metrics": {
+        "RMSE": 1.4515030527437387,
+        "MAE": 0.9718304394627921,
+        "sMAPE": 154.9899584201735,
+        "rRMSE": 149.22817871784153,
+        "Coverage_90": 0.20833333333333334,
+        "Pinball_P05": 0.05111463805369567,
+        "Pinball_P95": 0.9178092019263809
+    }
+}

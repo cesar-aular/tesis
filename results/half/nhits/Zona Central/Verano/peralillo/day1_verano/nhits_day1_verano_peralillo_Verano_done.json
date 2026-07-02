@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1_verano",
+    "planta": "peralillo",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.5313574696772716,
+        "MAE": 0.471013661208076,
+        "sMAPE": 136.26891379113798,
+        "rRMSE": 116.99076102539814,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.20166481776357348,
+        "Pinball_P95": 0.2691976319865546
+    }
+}

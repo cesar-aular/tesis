@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_verano",
+    "planta": "lipangue",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.3499372871657633,
+        "MAE": 0.27586109755793586,
+        "sMAPE": 83.94805503877487,
+        "rRMSE": 41.68158522425437
+    }
+}

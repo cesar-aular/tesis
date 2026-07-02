@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_primavera",
+    "planta": "chancon",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.45998937971354714,
+        "MAE": 0.305281876353547,
+        "sMAPE": 86.57979685816102,
+        "rRMSE": 107.18737064732247
+    }
+}

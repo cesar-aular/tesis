@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1_invierno",
+    "planta": "chimbarongo",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.0461094877846142,
+        "MAE": 0.9844979626189646,
+        "sMAPE": 152.18925157938406,
+        "rRMSE": 359.1544261495781,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.9094545114177889,
+        "Pinball_P95": 0.07974582429851584
+    }
+}

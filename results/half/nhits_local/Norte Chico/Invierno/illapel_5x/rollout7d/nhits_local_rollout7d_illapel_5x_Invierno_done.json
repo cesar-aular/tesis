@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_rollout7d",
+    "planta": "illapel_5x",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.1536408608947943,
+        "MAE": 0.6971576291651196,
+        "sMAPE": 162.75195157457983,
+        "rRMSE": 165.4645989852761,
+        "Coverage_90": 0.1488095238095238,
+        "Pinball_P05": 0.03851721740170054,
+        "Pinball_P95": 0.6594939579731192
+    }
+}

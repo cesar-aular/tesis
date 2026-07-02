@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_day1_otono",
+    "planta": "fv_bolero",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 21.99524946919957,
+        "MAE": 20.282647455111146,
+        "sMAPE": 126.33384118796305,
+        "rRMSE": 140.06739101019866,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 15.228274448867888,
+        "Pinball_P95": 5.101975687562178
+    }
+}

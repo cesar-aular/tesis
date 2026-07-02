@@ -1,0 +1,14 @@
+{
+    "model": "lstm_day1_primavera",
+    "planta": "luna",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.7976344084119952,
+        "MAE": 0.5324243113767201,
+        "sMAPE": 146.73349565347823,
+        "rRMSE": 166.0020835989294,
+        "Coverage_90": 0.8333333333333334,
+        "Pinball_P05": 0.029518809365981724,
+        "Pinball_P95": 0.0924350971933261
+    }
+}

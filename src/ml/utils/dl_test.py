@@ -94,12 +94,16 @@ def _apply_physics(preds: pd.DataFrame, futr: pd.DataFrame, cols: list[str]) -> 
 
 def run_dl_test(model_label: str, test_df: pd.DataFrame, results_dir: Path,
                 macrozona: str, estacion: str, planta: str,
-                strategy: str = "toy", regional_pr: float = 0.75):
+                strategy: str = "toy", regional_pr: float | dict = 0.75):
     """Evaluación LOPO Cold-Start (day1 + rollout 7d) para un modelo NeuralForecast.
 
     model_label: nombre del modelo en NeuralForecast ("LSTM", "NHITS", "TFT", "Informer").
     regional_pr: Performance Ratio a priori de la macrozona+estación, calculado
                  EXCLUSIVAMENTE con plantas de entrenamiento (cero leakage).
+                 Puede ser un dict {sufijo_ventana: pr} para que cada ventana
+                 estacional se siembre con el PR de SU estación (una ventana
+                 _invierno usa el PR invernal de la macrozona, no el de la
+                 estación de puesta en marcha).
     """
     model_dir_name = model_label.lower()
     print(f"[{model_label}] Testeando Planta: {planta} ({estacion}) con Roll-Out a {ROLLOUT_DAYS} dias")
@@ -162,8 +166,14 @@ def run_dl_test(model_label: str, test_df: pd.DataFrame, results_dir: Path,
             continue
         window = grid.iloc[start_idx:].reset_index(drop=True)
 
+        # PR de la estación de ESTA ventana (dict) o escalar (compatibilidad)
+        if isinstance(regional_pr, dict):
+            pr_window = regional_pr.get(suffix, regional_pr.get("", 0.25))
+        else:
+            pr_window = regional_pr
+
         # 1. Contexto histórico sintético (Cold-Start estricto)
-        hist_df = synthetic_context(window.iloc[:HIST_HOURS], capacidad, regional_pr)
+        hist_df = synthetic_context(window.iloc[:HIST_HOURS], capacidad, pr_window)
 
         # 2. Day 1 (24h)
         futr_day1 = window.iloc[HIST_HOURS:HIST_HOURS + 24].copy()

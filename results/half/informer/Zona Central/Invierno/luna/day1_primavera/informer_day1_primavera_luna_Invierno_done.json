@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1_primavera",
+    "planta": "luna",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.7315019230237269,
+        "MAE": 0.5393788285922104,
+        "sMAPE": 152.21304583367913,
+        "rRMSE": 152.23872252491987,
+        "Coverage_90": 0.4166666666666667,
+        "Pinball_P05": 0.06128587196047495,
+        "Pinball_P95": 0.11722164156720598
+    }
+}

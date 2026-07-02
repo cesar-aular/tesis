@@ -1,0 +1,14 @@
+{
+    "model": "informer_rollout7d_verano",
+    "planta": "illapel_5x",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.4660588425360614,
+        "MAE": 0.8870641121464432,
+        "sMAPE": 188.64802061064617,
+        "rRMSE": 167.78399832012386,
+        "Coverage_90": 0.023809523809523808,
+        "Pinball_P05": 0.06902923327930954,
+        "Pinball_P95": 0.710765646876533
+    }
+}

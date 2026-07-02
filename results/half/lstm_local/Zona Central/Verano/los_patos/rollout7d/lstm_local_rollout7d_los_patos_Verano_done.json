@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d",
+    "planta": "los_patos",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.0,
+        "MAE": 0.0,
+        "sMAPE": 0.0,
+        "rRMSE": 0.0,
+        "Coverage_90": 1.0,
+        "Pinball_P05": 0.0,
+        "Pinball_P95": 0.002353813404763408
+    }
+}

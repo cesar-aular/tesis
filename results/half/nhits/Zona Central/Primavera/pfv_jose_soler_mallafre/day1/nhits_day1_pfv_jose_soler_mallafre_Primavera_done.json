@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1",
+    "planta": "pfv_jose_soler_mallafre",
+    "estacion": "Primavera",
+    "metrics": {
+        "RMSE": 0.31093583114287965,
+        "MAE": 0.16551478417671245,
+        "sMAPE": 128.74813857457778,
+        "rRMSE": 187.21682257168035,
+        "Coverage_90": 0.21739130434782608,
+        "Pinball_P05": 0.011111668197681075,
+        "Pinball_P95": 0.1561886620019441
+    }
+}

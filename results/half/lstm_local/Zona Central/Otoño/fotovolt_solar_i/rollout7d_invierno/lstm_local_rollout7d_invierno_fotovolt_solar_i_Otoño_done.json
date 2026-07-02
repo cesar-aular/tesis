@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d_invierno",
+    "planta": "fotovolt_solar_i",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.18591124834788908,
+        "MAE": 0.1490065074326709,
+        "sMAPE": 153.01087363334784,
+        "rRMSE": 211.56771807118423,
+        "Coverage_90": 0.48214285714285715,
+        "Pinball_P05": 0.026310054067281978,
+        "Pinball_P95": 0.020076759921588947
+    }
+}

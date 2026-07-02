@@ -1,0 +1,14 @@
+{
+    "model": "nhits_rollout7d_invierno",
+    "planta": "luna",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.6872817161579874,
+        "MAE": 1.5967672562733162,
+        "sMAPE": 128.99029267251683,
+        "rRMSE": 293.16032767869353,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 1.5302023334473598,
+        "Pinball_P95": 0.08269125832971846
+    }
+}

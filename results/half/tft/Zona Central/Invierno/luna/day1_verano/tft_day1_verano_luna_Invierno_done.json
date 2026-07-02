@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1_verano",
+    "planta": "luna",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.3132338550240925,
+        "MAE": 1.0572409841867436,
+        "sMAPE": 157.24111784013434,
+        "rRMSE": 128.45989840134013,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.18642395188083657,
+        "Pinball_P95": 0.8962881669449416
+    }
+}

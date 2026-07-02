@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_otono",
+    "planta": "luna_del_norte",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.44143481056126704,
+        "MAE": 0.33136855787597597,
+        "sMAPE": 96.42864396727336,
+        "rRMSE": 51.33444636954917
+    }
+}

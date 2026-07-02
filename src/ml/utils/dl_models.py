@@ -106,7 +106,9 @@ def _trainer_kwargs(force_fp32: bool = False):
 
 def _build(spec, hidden: int, lr: float, max_steps: int, batch_size: int,
            windows_batch_size: int, acc_grad: int = 1, input_size: int = 168,
-           early_stop_patience: int = -1):
+           early_stop_patience: int = -1, force_fp32: bool | None = None):
+    # force_fp32=None -> decide el spec; True -> override (retry anti-NaN, locales)
+    fp32 = spec.get("fp32", False) if force_fp32 is None else force_fp32
     return spec["cls"](
         h=24,
         input_size=input_size,
@@ -122,7 +124,7 @@ def _build(spec, hidden: int, lr: float, max_steps: int, batch_size: int,
         loss=MQLoss(level=[90]),
         **spec["arch"](hidden),
         **_exog_kwargs(spec),
-        **_trainer_kwargs(force_fp32=spec.get("fp32", False)),
+        **_trainer_kwargs(force_fp32=fp32),
     )
 
 
@@ -165,7 +167,8 @@ def _strategy_subset(train_df: pd.DataFrame, strategy: str):
     return train_df[train_df['ds'] >= min_date].copy(), 32, 512, 8, 1500, 5
 
 
-def run_dl_train(model_name: str, train_df: pd.DataFrame, strategy: str = "toy"):
+def run_dl_train(model_name: str, train_df: pd.DataFrame, strategy: str = "toy",
+                 force_fp32: bool = False):
     spec = MODEL_SPECS[model_name]
     label = spec["label"]
     print(f"[{label}] Iniciando TRAIN global probabilistico con variables exogenas...")
@@ -181,7 +184,8 @@ def run_dl_train(model_name: str, train_df: pd.DataFrame, strategy: str = "toy")
     # Early stopping requiere ventana de validacion por serie
     val_size = 0 if patience < 0 else 168
 
-    usa_fp16 = torch.cuda.is_available() and not spec.get("fp32", False)
+    fp32 = spec.get("fp32", False) or force_fp32
+    usa_fp16 = torch.cuda.is_available() and not fp32
     print(f"[{label}] steps={max_steps} (epocas={epochs}, batch={batch_size}x{windows_batch}, "
           f"early_stop={'off' if patience < 0 else f'patience={patience}'}, "
           f"fp16={'on' if usa_fp16 else 'off'})")
@@ -192,7 +196,7 @@ def run_dl_train(model_name: str, train_df: pd.DataFrame, strategy: str = "toy")
                        max_steps=max_steps, batch_size=batch_size,
                        windows_batch_size=windows_batch,
                        input_size=params.get('input_size', 168),
-                       early_stop_patience=patience)
+                       early_stop_patience=patience, force_fp32=fp32)
     nf = NeuralForecast(models=[model_obj], freq='h')
     static_df = _static_df(train_df, spec)
 
@@ -204,7 +208,7 @@ def run_dl_train(model_name: str, train_df: pd.DataFrame, strategy: str = "toy")
         _cleanup(nf, model_obj)
         model_obj = _build(spec, hidden=32, lr=1e-3, max_steps=min(300, max_steps),
                            batch_size=8, windows_batch_size=128, acc_grad=4,
-                           early_stop_patience=patience)
+                           early_stop_patience=patience, force_fp32=fp32)
         nf = NeuralForecast(models=[model_obj], freq='h')
         nf.fit(df=train_df, static_df=static_df, val_size=val_size)
 

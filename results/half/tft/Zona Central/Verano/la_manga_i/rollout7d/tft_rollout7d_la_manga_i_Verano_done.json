@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d",
+    "planta": "la_manga_i",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.8674733517183024,
+        "MAE": 0.67785827186715,
+        "sMAPE": 148.44372878485268,
+        "rRMSE": 132.34616338541173,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.1678083820978101,
+        "Pinball_P95": 0.518475065912986
+    }
+}

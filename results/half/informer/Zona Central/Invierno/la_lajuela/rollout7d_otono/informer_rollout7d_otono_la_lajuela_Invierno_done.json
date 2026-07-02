@@ -1,0 +1,14 @@
+{
+    "model": "informer_rollout7d_otono",
+    "planta": "la_lajuela",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 3.6149153256746613,
+        "MAE": 2.719522657858934,
+        "sMAPE": 167.00131437808386,
+        "rRMSE": 132.9063624896225,
+        "Coverage_90": 0.11904761904761904,
+        "Pinball_P05": 0.36859897484305076,
+        "Pinball_P95": 1.178283784822859
+    }
+}

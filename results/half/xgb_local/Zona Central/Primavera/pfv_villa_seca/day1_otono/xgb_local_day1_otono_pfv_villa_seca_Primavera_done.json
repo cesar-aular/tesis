@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_day1_otono",
+    "planta": "pfv_villa_seca",
+    "estacion": "Primavera",
+    "metrics": {
+        "RMSE": 0.22223989076687928,
+        "MAE": 0.14369520519782478,
+        "sMAPE": 96.1814726707496,
+        "rRMSE": 24.121721151960838
+    }
+}

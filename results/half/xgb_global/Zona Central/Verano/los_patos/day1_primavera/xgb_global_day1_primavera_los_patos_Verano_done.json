@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_primavera",
+    "planta": "los_patos",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.39664889946696763,
+        "MAE": 0.2569265104830265,
+        "sMAPE": 59.414391886341846,
+        "rRMSE": 76.48529828211346
+    }
+}

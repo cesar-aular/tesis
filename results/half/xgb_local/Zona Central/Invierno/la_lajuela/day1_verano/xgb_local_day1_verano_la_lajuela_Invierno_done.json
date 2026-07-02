@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_day1_verano",
+    "planta": "la_lajuela",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.842229824204919,
+        "MAE": 0.5073803938770046,
+        "sMAPE": 86.29454827753133,
+        "rRMSE": 26.611632109557306
+    }
+}

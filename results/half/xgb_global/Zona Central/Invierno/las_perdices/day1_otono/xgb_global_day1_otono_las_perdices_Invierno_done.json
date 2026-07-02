@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_otono",
+    "planta": "las_perdices",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.26771945332126035,
+        "MAE": 0.22002123475734456,
+        "sMAPE": 109.14349812043002,
+        "rRMSE": 29.520961475826635
+    }
+}

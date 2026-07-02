@@ -1,0 +1,14 @@
+{
+    "model": "informer_rollout7d_verano",
+    "planta": "parque_solar_finis_terrae",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 7.777189810189789,
+        "MAE": 7.261351979027192,
+        "sMAPE": 133.36426730798178,
+        "rRMSE": 112.31467904761523,
+        "Coverage_90": 0.2916666666666667,
+        "Pinball_P05": 2.387688774021254,
+        "Pinball_P95": 2.7018570215485647
+    }
+}

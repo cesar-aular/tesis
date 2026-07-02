@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_rollout7d",
+    "planta": "illapel_5x",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.2116964613045706,
+        "MAE": 0.12194598848833223,
+        "sMAPE": 116.22885739518192,
+        "rRMSE": 30.36323631012336
+    }
+}

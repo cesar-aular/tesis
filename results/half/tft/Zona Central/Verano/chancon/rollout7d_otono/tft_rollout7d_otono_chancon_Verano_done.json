@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d_otono",
+    "planta": "chancon",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.0631694384543966,
+        "MAE": 0.8330671996201263,
+        "sMAPE": 160.62623296595066,
+        "rRMSE": 132.53914182925385,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.1813016858094681,
+        "Pinball_P95": 0.6634842119315559
+    }
+}

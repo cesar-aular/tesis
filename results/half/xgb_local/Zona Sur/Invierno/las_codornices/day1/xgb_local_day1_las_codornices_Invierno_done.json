@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_day1",
+    "planta": "las_codornices",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.2233590451337349,
+        "MAE": 0.1357547806498284,
+        "sMAPE": 123.46854599475307,
+        "rRMSE": 33.35343442136286
+    }
+}

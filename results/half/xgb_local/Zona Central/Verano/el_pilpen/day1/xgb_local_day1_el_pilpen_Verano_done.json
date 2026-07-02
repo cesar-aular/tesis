@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_day1",
+    "planta": "el_pilpen",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.386691778782053,
+        "MAE": 0.25980145553270023,
+        "sMAPE": 109.93762846285777,
+        "rRMSE": 33.929083211906914
+    }
+}

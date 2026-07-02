@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d",
+    "planta": "la_frontera",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.4804265583170964,
+        "MAE": 1.1136831177633728,
+        "sMAPE": 151.07146157433237,
+        "rRMSE": 139.7499879071917,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.27977151158903285,
+        "Pinball_P95": 0.8442951299399365
+    }
+}

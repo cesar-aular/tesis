@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_day1_invierno",
+    "planta": "la_manga_i",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.6891602955135677,
+        "MAE": 0.386552501731785,
+        "sMAPE": 99.82839317177871,
+        "rRMSE": 129.31880150048966,
+        "Coverage_90": 0.75,
+        "Pinball_P05": 0.025474121472507254,
+        "Pinball_P95": 0.0894567805104695
+    }
+}

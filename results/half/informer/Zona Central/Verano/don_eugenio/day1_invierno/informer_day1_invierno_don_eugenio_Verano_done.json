@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1_invierno",
+    "planta": "don_eugenio",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.885287884076629,
+        "MAE": 0.6272583114187,
+        "sMAPE": 173.23664294897122,
+        "rRMSE": 152.21225061628567,
+        "Coverage_90": 0.2916666666666667,
+        "Pinball_P05": 0.056671278101809254,
+        "Pinball_P95": 0.06847842087760612
+    }
+}

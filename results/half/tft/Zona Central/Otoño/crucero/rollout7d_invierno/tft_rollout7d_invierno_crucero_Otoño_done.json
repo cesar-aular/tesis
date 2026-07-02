@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d_invierno",
+    "planta": "crucero",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.5718387711946183,
+        "MAE": 0.5045416273213631,
+        "sMAPE": 149.98274546745952,
+        "rRMSE": 203.21204780538267,
+        "Coverage_90": 0.047619047619047616,
+        "Pinball_P05": 0.27569419945719575,
+        "Pinball_P95": 0.18708782619416034
+    }
+}

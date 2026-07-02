@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_otono",
+    "planta": "la_frontera",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.2466577460528323,
+        "MAE": 0.7647023891331628,
+        "sMAPE": 61.217086160195755,
+        "rRMSE": 83.63125077889235
+    }
+}

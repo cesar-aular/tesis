@@ -1,0 +1,14 @@
+{
+    "model": "lstm_day1_verano",
+    "planta": "chimbarongo",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.3245256190449966,
+        "MAE": 0.23896790218229094,
+        "sMAPE": 120.13348839320794,
+        "rRMSE": 108.33562951267925,
+        "Coverage_90": 0.4583333333333333,
+        "Pinball_P05": 0.051003489744228615,
+        "Pinball_P95": 0.047541641529339096
+    }
+}

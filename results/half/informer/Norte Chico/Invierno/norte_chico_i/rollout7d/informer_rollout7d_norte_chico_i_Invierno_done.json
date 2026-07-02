@@ -1,0 +1,14 @@
+{
+    "model": "informer_rollout7d",
+    "planta": "norte_chico_i",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.21977086613763577,
+        "MAE": 0.161463088168728,
+        "sMAPE": 139.8804993475911,
+        "rRMSE": 125.87706864861714,
+        "Coverage_90": 0.3706896551724138,
+        "Pinball_P05": 0.01216764358367637,
+        "Pinball_P95": 0.08485691047773548
+    }
+}

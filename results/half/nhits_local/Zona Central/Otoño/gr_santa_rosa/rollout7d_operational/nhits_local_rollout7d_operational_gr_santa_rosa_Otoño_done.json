@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_rollout7d_operational",
+    "planta": "gr_santa_rosa",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 2.4227907295293347,
+        "MAE": 1.259286454838903,
+        "sMAPE": 186.8676403405618,
+        "rRMSE": 195.6693686664029,
+        "Coverage_90": 0.09523809523809523,
+        "Pinball_P05": 0.09789801057593736,
+        "Pinball_P95": 1.1607042970069286
+    }
+}

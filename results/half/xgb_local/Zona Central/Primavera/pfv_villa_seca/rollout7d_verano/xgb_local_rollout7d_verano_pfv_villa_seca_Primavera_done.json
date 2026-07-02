@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_rollout7d_verano",
+    "planta": "pfv_villa_seca",
+    "estacion": "Primavera",
+    "metrics": {
+        "RMSE": 0.6123707855788155,
+        "MAE": 0.37347470938803307,
+        "sMAPE": 107.78406020045279,
+        "rRMSE": 71.5866783392913
+    }
+}

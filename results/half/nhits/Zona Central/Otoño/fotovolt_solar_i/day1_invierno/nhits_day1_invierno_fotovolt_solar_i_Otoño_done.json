@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1_invierno",
+    "planta": "fotovolt_solar_i",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.5589093477936226,
+        "MAE": 0.5060102655455315,
+        "sMAPE": 149.43371268783423,
+        "rRMSE": 347.8616104946105,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.47376942518021675,
+        "Pinball_P95": 0.03353971125664735
+    }
+}

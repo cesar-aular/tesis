@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1_invierno",
+    "planta": "pfv_andes_solar_ii",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 3.6416714523682936,
+        "MAE": 3.4065520499522486,
+        "sMAPE": 183.17428106038648,
+        "rRMSE": 6511.030532531327,
+        "Coverage_90": 0.08333333333333333,
+        "Pinball_P05": 2.3039375364935646,
+        "Pinball_P95": 0.1259115635572623
+    }
+}

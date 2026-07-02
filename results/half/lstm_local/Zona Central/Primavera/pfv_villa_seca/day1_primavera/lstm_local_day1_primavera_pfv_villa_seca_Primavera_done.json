@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_day1_primavera",
+    "planta": "pfv_villa_seca",
+    "estacion": "Primavera",
+    "metrics": {
+        "RMSE": 1.4355044137983457,
+        "MAE": 0.9588259382289834,
+        "sMAPE": 180.97940064666886,
+        "rRMSE": 147.5743225052944,
+        "Coverage_90": 0.5,
+        "Pinball_P05": 0.04863665946177207,
+        "Pinball_P95": 0.7856353562228225
+    }
+}

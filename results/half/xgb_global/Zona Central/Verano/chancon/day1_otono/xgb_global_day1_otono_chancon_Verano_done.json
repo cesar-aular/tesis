@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_otono",
+    "planta": "chancon",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.18969792358352514,
+        "MAE": 0.13326123939380827,
+        "sMAPE": 41.95011412458194,
+        "rRMSE": 24.673367402407212
+    }
+}

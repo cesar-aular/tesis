@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_day1_verano",
+    "planta": "el_pilpen",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.7432535210306952,
+        "MAE": 1.149274172305013,
+        "sMAPE": 184.70896676075714,
+        "rRMSE": 152.9476910395277,
+        "Coverage_90": 0.041666666666666664,
+        "Pinball_P05": 0.08249762448370651,
+        "Pinball_P95": 1.0651211309845772
+    }
+}

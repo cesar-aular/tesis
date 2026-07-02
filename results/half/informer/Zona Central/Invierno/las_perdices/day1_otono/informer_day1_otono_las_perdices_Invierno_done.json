@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1_otono",
+    "planta": "las_perdices",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.1605967701041708,
+        "MAE": 0.903900512115797,
+        "sMAPE": 161.56710838033402,
+        "rRMSE": 127.97700022978948,
+        "Coverage_90": 0.5,
+        "Pinball_P05": 0.09119007562355062,
+        "Pinball_P95": 0.09456774874561243
+    }
+}

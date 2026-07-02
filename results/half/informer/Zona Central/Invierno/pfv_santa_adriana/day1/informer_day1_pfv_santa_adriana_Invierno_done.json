@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1",
+    "planta": "pfv_santa_adriana",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.3109438065954727,
+        "MAE": 0.3022435484454036,
+        "sMAPE": 176.6535274155947,
+        "rRMSE": 653.9509089026599,
+        "Coverage_90": 0.16666666666666666,
+        "Pinball_P05": 0.044901363411918284,
+        "Pinball_P95": 0.15994314944061155
+    }
+}

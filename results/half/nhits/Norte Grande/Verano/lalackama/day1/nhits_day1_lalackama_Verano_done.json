@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1",
+    "planta": "lalackama",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 32.322791740313505,
+        "MAE": 22.640483637650807,
+        "sMAPE": 129.17819101300807,
+        "rRMSE": 142.32584075750214,
+        "Coverage_90": 0.25,
+        "Pinball_P05": 1.195204309622447,
+        "Pinball_P95": 21.49378280962507
+    }
+}

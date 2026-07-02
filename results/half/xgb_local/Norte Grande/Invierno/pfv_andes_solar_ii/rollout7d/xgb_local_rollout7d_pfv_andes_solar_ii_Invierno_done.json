@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_rollout7d",
+    "planta": "pfv_andes_solar_ii",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 6.017605125198899,
+        "MAE": 2.6083768337876316,
+        "sMAPE": 95.57504046562306,
+        "rRMSE": 74.04287437643433
+    }
+}

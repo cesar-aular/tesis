@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d_verano",
+    "planta": "andes_solar",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 9.643037091104341,
+        "MAE": 6.215033379316862,
+        "sMAPE": 182.79323890099366,
+        "rRMSE": 165.949298319556,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.9956401634041131,
+        "Pinball_P95": 5.279134601867936
+    }
+}

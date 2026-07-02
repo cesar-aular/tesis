@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d_invierno",
+    "planta": "amparo_del_sol",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.5673605337399985,
+        "MAE": 0.3645170394433773,
+        "sMAPE": 168.14940212803683,
+        "rRMSE": 201.89829516663016,
+        "Coverage_90": 0.041666666666666664,
+        "Pinball_P05": 0.12098347203649437,
+        "Pinball_P95": 0.24024480174834717
+    }
+}

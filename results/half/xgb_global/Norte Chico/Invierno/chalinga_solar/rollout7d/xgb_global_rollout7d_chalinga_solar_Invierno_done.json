@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_rollout7d",
+    "planta": "chalinga_solar",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.36472824995841063,
+        "MAE": 0.22898414801221362,
+        "sMAPE": 96.60434275978201,
+        "rRMSE": 60.87277808595035
+    }
+}

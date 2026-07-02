@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d_invierno",
+    "planta": "parque_solar_finis_terrae",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 30.89674617283668,
+        "MAE": 27.030296524088563,
+        "sMAPE": 146.59889431059634,
+        "rRMSE": 120.61581477592121,
+        "Coverage_90": 0.8392857142857143,
+        "Pinball_P05": 1.9038973432971122,
+        "Pinball_P95": 18.856113078041083
+    }
+}

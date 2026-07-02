@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_day1_verano",
+    "planta": "el_roble",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 3.121816767337037,
+        "MAE": 1.6268769539892673,
+        "sMAPE": 142.6012422913897,
+        "rRMSE": 194.98003953137732,
+        "Coverage_90": 0.2916666666666667,
+        "Pinball_P05": 0.14106898127744594,
+        "Pinball_P95": 1.4783237962052225
+    }
+}

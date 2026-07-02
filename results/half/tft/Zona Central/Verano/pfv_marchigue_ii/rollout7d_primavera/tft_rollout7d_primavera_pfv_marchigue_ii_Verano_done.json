@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d_primavera",
+    "planta": "pfv_marchigue_ii",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 3.0543781852469443,
+        "MAE": 2.0809701437449,
+        "sMAPE": 170.41869650832706,
+        "rRMSE": 182.39018124222784,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.650331645529545,
+        "Pinball_P95": 1.3991539478801325
+    }
+}

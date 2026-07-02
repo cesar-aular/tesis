@@ -1,0 +1,14 @@
+{
+    "model": "informer_rollout7d_primavera",
+    "planta": "los_libertadores",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 2.7140341555621816,
+        "MAE": 1.6846771581320357,
+        "sMAPE": 161.22236685006516,
+        "rRMSE": 169.86870788599586,
+        "Coverage_90": 0.125,
+        "Pinball_P05": 0.26451027870734245,
+        "Pinball_P95": 0.9492686376354799
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_day1_invierno",
+    "planta": "el_sauce",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.9378257931737253,
+        "MAE": 0.5321992936078459,
+        "sMAPE": 180.1808893400028,
+        "rRMSE": 179.24778612855255,
+        "Coverage_90": 0.125,
+        "Pinball_P05": 0.040969545483433956,
+        "Pinball_P95": 0.49100843456496174
+    }
+}

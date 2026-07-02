@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1",
+    "planta": "fotovolt_solar_i",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.15221350411945328,
+        "MAE": 0.1470518576388713,
+        "sMAPE": 155.00588885859904,
+        "rRMSE": 189.45040026364154,
+        "Coverage_90": 0.3333333333333333,
+        "Pinball_P05": 0.029863630640223463,
+        "Pinball_P95": 0.05779925078046901
+    }
+}

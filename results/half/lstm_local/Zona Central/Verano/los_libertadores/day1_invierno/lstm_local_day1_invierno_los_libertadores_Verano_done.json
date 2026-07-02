@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_day1_invierno",
+    "planta": "los_libertadores",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.18709724120301213,
+        "MAE": 0.0985807500158747,
+        "sMAPE": 66.66666666666666,
+        "rRMSE": 0.0,
+        "Coverage_90": 1.0,
+        "Pinball_P05": 0.0,
+        "Pinball_P95": 0.02011753713401657
+    }
+}

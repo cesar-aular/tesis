@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_day1_otono",
+    "planta": "norte_chico_i",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.0313189282892803,
+        "MAE": 0.6615128821188895,
+        "sMAPE": 159.8425659103908,
+        "rRMSE": 143.31979053839987,
+        "Coverage_90": 0.5833333333333334,
+        "Pinball_P05": 0.03591828846401768,
+        "Pinball_P95": 0.47178962092390675
+    }
+}

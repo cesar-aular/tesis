@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1_otono",
+    "planta": "parque_solar_pampa_camarones",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 1.70486164218457,
+        "MAE": 1.226311483963703,
+        "sMAPE": 181.69667482531463,
+        "rRMSE": 148.57182018212453,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.19007603706559165,
+        "Pinball_P95": 1.0549826245560932
+    }
+}

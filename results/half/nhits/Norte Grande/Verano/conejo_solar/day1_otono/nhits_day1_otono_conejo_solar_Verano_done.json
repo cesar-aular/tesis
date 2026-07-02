@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1_otono",
+    "planta": "conejo_solar",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 53.30867413415293,
+        "MAE": 40.80723646469414,
+        "sMAPE": 162.55449452494946,
+        "rRMSE": 131.3291089320218,
+        "Coverage_90": 0.041666666666666664,
+        "Pinball_P05": 8.659571610173831,
+        "Pinball_P95": 32.07824283201868
+    }
+}

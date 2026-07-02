@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_invierno",
+    "planta": "luna_del_norte",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.577728490522666,
+        "MAE": 0.3725463519282736,
+        "sMAPE": 57.94966908115641,
+        "rRMSE": 90.27713230997108
+    }
+}

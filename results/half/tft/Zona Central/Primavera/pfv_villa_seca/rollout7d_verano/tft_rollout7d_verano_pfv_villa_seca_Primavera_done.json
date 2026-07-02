@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d_verano",
+    "planta": "pfv_villa_seca",
+    "estacion": "Primavera",
+    "metrics": {
+        "RMSE": 1.1587797969422957,
+        "MAE": 0.8667582845411873,
+        "sMAPE": 153.69492480781705,
+        "rRMSE": 135.46236780608288,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.17681724913803204,
+        "Pinball_P95": 0.7038544130791371
+    }
+}

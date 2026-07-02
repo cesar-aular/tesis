@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1_invierno",
+    "planta": "lalackama",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 19.88172795253676,
+        "MAE": 13.941501120726267,
+        "sMAPE": 161.01372213032388,
+        "rRMSE": 147.5635426049918,
+        "Coverage_90": 0.08333333333333333,
+        "Pinball_P05": 1.8344281002879141,
+        "Pinball_P95": 12.354573797931272
+    }
+}

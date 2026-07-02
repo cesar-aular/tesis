@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_rollout7d_verano",
+    "planta": "laurel",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 3.763228546314723,
+        "MAE": 2.5458795098044598,
+        "sMAPE": 189.29267671556974,
+        "rRMSE": 148.12305593107885,
+        "Coverage_90": 0.07142857142857142,
+        "Pinball_P05": 0.1451458451529366,
+        "Pinball_P95": 2.4004471427830314
+    }
+}

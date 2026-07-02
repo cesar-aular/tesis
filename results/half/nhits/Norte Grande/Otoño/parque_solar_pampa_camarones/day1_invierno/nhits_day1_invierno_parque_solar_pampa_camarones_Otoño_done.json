@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1_invierno",
+    "planta": "parque_solar_pampa_camarones",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 2.342298504917786,
+        "MAE": 1.7372540479991585,
+        "sMAPE": 163.5312463844616,
+        "rRMSE": 142.35291176205092,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.44639376588553814,
+        "Pinball_P95": 1.2934530481502102
+    }
+}

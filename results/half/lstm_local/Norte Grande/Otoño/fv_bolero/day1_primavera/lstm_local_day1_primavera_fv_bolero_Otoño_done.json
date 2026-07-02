@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_day1_primavera",
+    "planta": "fv_bolero",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 65.66966376593221,
+        "MAE": 46.68078996737798,
+        "sMAPE": 170.97006883895247,
+        "rRMSE": 135.6916369777197,
+        "Coverage_90": 0.625,
+        "Pinball_P05": 2.418818580110868,
+        "Pinball_P95": 14.43036825656891
+    }
+}

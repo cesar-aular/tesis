@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_day1_primavera",
+    "planta": "crucero",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.7251312103867483,
+        "MAE": 0.4209442000913744,
+        "sMAPE": 174.4376853790712,
+        "rRMSE": 180.93588951696233,
+        "Coverage_90": 0.08333333333333333,
+        "Pinball_P05": 0.05506051982520147,
+        "Pinball_P95": 0.36564607576389485
+    }
+}

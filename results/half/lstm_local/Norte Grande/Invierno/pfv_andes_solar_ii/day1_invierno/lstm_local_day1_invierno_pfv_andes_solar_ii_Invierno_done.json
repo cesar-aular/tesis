@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_day1_invierno",
+    "planta": "pfv_andes_solar_ii",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 3.0060838186271064,
+        "MAE": 2.602732080655793,
+        "sMAPE": 183.14262216490908,
+        "rRMSE": 5374.648367496388,
+        "Coverage_90": 0.9583333333333334,
+        "Pinball_P05": 0.0027965399902313945,
+        "Pinball_P95": 3.6441387014308355
+    }
+}

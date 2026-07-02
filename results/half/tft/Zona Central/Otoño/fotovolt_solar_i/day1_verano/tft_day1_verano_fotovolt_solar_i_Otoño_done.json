@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1_verano",
+    "planta": "fotovolt_solar_i",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.32030051293182266,
+        "MAE": 0.2805977161042392,
+        "sMAPE": 149.96861032380338,
+        "rRMSE": 134.81390987790434,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.08288774196213732,
+        "Pinball_P95": 0.19949932668823744
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1_verano",
+    "planta": "las_perdices",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.4401987626271329,
+        "MAE": 1.1955084633082151,
+        "sMAPE": 159.75970163229152,
+        "rRMSE": 119.87258078413068,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.19299475842465955,
+        "Pinball_P95": 1.0633226508585116
+    }
+}

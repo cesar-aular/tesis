@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_primavera",
+    "planta": "luna",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.594351491743492,
+        "MAE": 0.40985713455787237,
+        "sMAPE": 96.2459246585948,
+        "rRMSE": 123.69524807233456
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "informer_rollout7d",
+    "planta": "fv_bolero",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 10.683574263655194,
+        "MAE": 8.212665952476007,
+        "sMAPE": 155.68296087850914,
+        "rRMSE": 154.4998728866332,
+        "Coverage_90": 0.19047619047619047,
+        "Pinball_P05": 2.124719144984902,
+        "Pinball_P95": 3.870457625819283
+    }
+}

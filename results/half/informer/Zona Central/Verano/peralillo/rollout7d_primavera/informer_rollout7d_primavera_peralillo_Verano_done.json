@@ -1,0 +1,14 @@
+{
+    "model": "informer_rollout7d_primavera",
+    "planta": "peralillo",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.9268429164700727,
+        "MAE": 0.5456469854685191,
+        "sMAPE": 173.27785024759768,
+        "rRMSE": 200.64410536393257,
+        "Coverage_90": 0.07142857142857142,
+        "Pinball_P05": 0.09844494225499568,
+        "Pinball_P95": 0.31403802214229937
+    }
+}

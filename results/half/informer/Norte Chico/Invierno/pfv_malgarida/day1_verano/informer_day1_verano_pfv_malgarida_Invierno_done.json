@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1_verano",
+    "planta": "pfv_malgarida",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 123.70829657454603,
+        "MAE": 89.49473620516558,
+        "sMAPE": 185.91097172636043,
+        "rRMSE": 137.16029346743431,
+        "Coverage_90": 0.041666666666666664,
+        "Pinball_P05": 5.110166252745937,
+        "Pinball_P95": 66.8564035242113
+    }
+}

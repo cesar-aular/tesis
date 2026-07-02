@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_rollout7d_primavera",
+    "planta": "chimbarongo",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.5791522196830425,
+        "MAE": 0.3466749713200624,
+        "sMAPE": 159.69108426458106,
+        "rRMSE": 201.92796785079352
+    }
+}

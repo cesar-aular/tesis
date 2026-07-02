@@ -1,0 +1,14 @@
+{
+    "model": "lstm_day1_otono",
+    "planta": "pfv_malgarida",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 112.44081467334367,
+        "MAE": 77.48928162874654,
+        "sMAPE": 166.10407989093574,
+        "rRMSE": 136.89964789688437,
+        "Coverage_90": 0.08333333333333333,
+        "Pinball_P05": 4.787804079063547,
+        "Pinball_P95": 64.95399979522917
+    }
+}

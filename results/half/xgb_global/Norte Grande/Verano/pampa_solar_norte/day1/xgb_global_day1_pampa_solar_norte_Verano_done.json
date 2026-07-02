@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1",
+    "planta": "pampa_solar_norte",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 16.312650237447816,
+        "MAE": 11.583668539921442,
+        "sMAPE": 96.63296291453837,
+        "rRMSE": 54.95095935529278
+    }
+}

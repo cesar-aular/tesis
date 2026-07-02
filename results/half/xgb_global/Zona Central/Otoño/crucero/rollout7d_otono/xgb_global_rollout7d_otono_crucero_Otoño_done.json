@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_rollout7d_otono",
+    "planta": "crucero",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.2733185326873219,
+        "MAE": 0.19964053998219675,
+        "sMAPE": 101.7953372690425,
+        "rRMSE": 36.34666635290239
+    }
+}

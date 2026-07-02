@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_rollout7d_otono",
+    "planta": "las_codornices",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.5519424365346444,
+        "MAE": 1.021527018135419,
+        "sMAPE": 196.12996955838688,
+        "rRMSE": 152.20670602033817,
+        "Coverage_90": 0.05952380952380952,
+        "Pinball_P05": 0.05770986601166356,
+        "Pinball_P95": 0.9661553161035477
+    }
+}

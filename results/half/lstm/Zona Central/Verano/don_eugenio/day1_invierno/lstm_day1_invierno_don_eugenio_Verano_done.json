@@ -1,0 +1,14 @@
+{
+    "model": "lstm_day1_invierno",
+    "planta": "don_eugenio",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.46049968648284584,
+        "MAE": 0.3486162120680092,
+        "sMAPE": 143.33576137466258,
+        "rRMSE": 79.17615834170924,
+        "Coverage_90": 0.5833333333333334,
+        "Pinball_P05": 0.03660448639105501,
+        "Pinball_P95": 0.04977129089747908
+    }
+}

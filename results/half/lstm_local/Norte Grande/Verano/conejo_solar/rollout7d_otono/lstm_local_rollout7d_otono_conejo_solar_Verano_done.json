@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d_otono",
+    "planta": "conejo_solar",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 58.945742942825866,
+        "MAE": 39.13447795506744,
+        "sMAPE": 189.61218552154105,
+        "rRMSE": 146.2025690763811,
+        "Coverage_90": 0.375,
+        "Pinball_P05": 2.0236696010366795,
+        "Pinball_P95": 34.366977306597285
+    }
+}

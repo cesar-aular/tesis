@@ -1,0 +1,14 @@
+{
+    "model": "informer_rollout7d",
+    "planta": "el_pilpen",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.5881758436653608,
+        "MAE": 1.1496708870320078,
+        "sMAPE": 166.61616417122863,
+        "rRMSE": 134.87429246429642,
+        "Coverage_90": 0.13095238095238096,
+        "Pinball_P05": 0.1111810531918158,
+        "Pinball_P95": 0.6886254479134508
+    }
+}

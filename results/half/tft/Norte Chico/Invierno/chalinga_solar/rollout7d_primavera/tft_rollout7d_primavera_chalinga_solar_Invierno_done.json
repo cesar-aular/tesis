@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d_primavera",
+    "planta": "chalinga_solar",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.1527824197744023,
+        "MAE": 0.7748961184110201,
+        "sMAPE": 177.9951143500748,
+        "rRMSE": 151.76081794412403,
+        "Coverage_90": 0.005952380952380952,
+        "Pinball_P05": 0.09034252962069657,
+        "Pinball_P95": 0.6884232854170294
+    }
+}

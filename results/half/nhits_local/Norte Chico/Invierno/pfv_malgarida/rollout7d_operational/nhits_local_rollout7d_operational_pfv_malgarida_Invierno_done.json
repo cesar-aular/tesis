@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_rollout7d_operational",
+    "planta": "pfv_malgarida",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 98.49586563687215,
+        "MAE": 63.56041231414392,
+        "sMAPE": 175.38407825662443,
+        "rRMSE": 156.7190422903892,
+        "Coverage_90": 0.10714285714285714,
+        "Pinball_P05": 4.433959151360961,
+        "Pinball_P95": 58.717132940036905
+    }
+}

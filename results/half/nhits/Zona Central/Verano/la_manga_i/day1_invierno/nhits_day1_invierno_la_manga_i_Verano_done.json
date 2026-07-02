@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1_invierno",
+    "planta": "la_manga_i",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.7969143877582751,
+        "MAE": 0.7194419917553508,
+        "sMAPE": 153.17680284362717,
+        "rRMSE": 149.53852419283447,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.40349877079182384,
+        "Pinball_P95": 0.32334920896634384
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_rollout7d_verano",
+    "planta": "la_blanquina",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 4.457986914055905,
+        "MAE": 2.848542325132127,
+        "sMAPE": 187.74945557909365,
+        "rRMSE": 156.81393447297967,
+        "Coverage_90": 0.08333333333333333,
+        "Pinball_P05": 0.1669343269499396,
+        "Pinball_P95": 2.6831883032911543
+    }
+}

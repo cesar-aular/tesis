@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1_otono",
+    "planta": "luna_del_norte",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.3011037430593198,
+        "MAE": 0.8677967408827195,
+        "sMAPE": 165.3009210331051,
+        "rRMSE": 151.30533143585942,
+        "Coverage_90": 0.041666666666666664,
+        "Pinball_P05": 0.09439654983968164,
+        "Pinball_P95": 0.788363169277242
+    }
+}

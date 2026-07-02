@@ -1,0 +1,14 @@
+{
+    "model": "lstm_rollout7d_verano",
+    "planta": "pfv_andes_solar_ii",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 17.621968281247746,
+        "MAE": 12.322211710847027,
+        "sMAPE": 111.25250881184883,
+        "rRMSE": 68.16961927566875,
+        "Coverage_90": 0.8035714285714286,
+        "Pinball_P05": 1.403735315341813,
+        "Pinball_P95": 1.9981174943891056
+    }
+}

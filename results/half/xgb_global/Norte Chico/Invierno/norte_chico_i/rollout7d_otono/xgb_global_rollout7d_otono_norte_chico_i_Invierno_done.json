@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_rollout7d_otono",
+    "planta": "norte_chico_i",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.6452544162021061,
+        "MAE": 0.45146834542789466,
+        "sMAPE": 119.95751665284882,
+        "rRMSE": 94.72685480021487
+    }
+}

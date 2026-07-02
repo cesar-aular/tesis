@@ -1,0 +1,14 @@
+{
+    "model": "informer_rollout7d_otono",
+    "planta": "crucero",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.9695635200467736,
+        "MAE": 0.7672373615401046,
+        "sMAPE": 160.74794707817662,
+        "rRMSE": 128.93528084098455,
+        "Coverage_90": 0.26785714285714285,
+        "Pinball_P05": 0.13477020320080468,
+        "Pinball_P95": 0.28175139139903405
+    }
+}

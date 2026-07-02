@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d_primavera",
+    "planta": "lipangue",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.0999492827945014,
+        "MAE": 0.6320906092422601,
+        "sMAPE": 183.20457745463457,
+        "rRMSE": 169.88805770553873,
+        "Coverage_90": 0.47619047619047616,
+        "Pinball_P05": 0.03350915222596801,
+        "Pinball_P95": 0.5067482052021736
+    }
+}

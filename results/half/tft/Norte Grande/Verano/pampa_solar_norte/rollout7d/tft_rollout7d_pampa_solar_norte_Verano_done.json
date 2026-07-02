@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d",
+    "planta": "pampa_solar_norte",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 40.73363775036299,
+        "MAE": 30.224574768117495,
+        "sMAPE": 172.30853265609755,
+        "rRMSE": 134.26616667336927,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 3.363486565862383,
+        "Pinball_P95": 27.080835365787856
+    }
+}

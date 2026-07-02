@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1",
+    "planta": "luna_del_norte",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.2448078275453807,
+        "MAE": 0.8222162648259351,
+        "sMAPE": 159.11614444227135,
+        "rRMSE": 149.6981809426964,
+        "Coverage_90": 0.25,
+        "Pinball_P05": 0.049444961769040674,
+        "Pinball_P95": 0.42687386177713055
+    }
+}

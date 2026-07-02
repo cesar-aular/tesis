@@ -1,0 +1,14 @@
+{
+    "model": "informer_rollout7d_verano",
+    "planta": "chalinga_solar",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.448858486471059,
+        "MAE": 1.0086947777911388,
+        "sMAPE": 167.34615890216756,
+        "rRMSE": 141.59449162524402,
+        "Coverage_90": 0.10119047619047619,
+        "Pinball_P05": 0.06718987183318989,
+        "Pinball_P95": 0.8295733046426557
+    }
+}

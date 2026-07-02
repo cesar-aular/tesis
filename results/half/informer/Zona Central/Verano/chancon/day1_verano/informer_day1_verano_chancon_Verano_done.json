@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1_verano",
+    "planta": "chancon",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.185157970577052,
+        "MAE": 0.8748870004589359,
+        "sMAPE": 162.28939193733876,
+        "rRMSE": 131.21887196812622,
+        "Coverage_90": 0.2916666666666667,
+        "Pinball_P05": 0.06627245435180763,
+        "Pinball_P95": 0.15991171364051607
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_rollout7d",
+    "planta": "parque_solar_pampa_camarones",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.9070661628539527,
+        "MAE": 0.6538525570871397,
+        "sMAPE": 131.1102538073728,
+        "rRMSE": 150.72909490615584
+    }
+}

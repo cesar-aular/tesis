@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1",
+    "planta": "gr_santa_rosa",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 1.264895763760582,
+        "MAE": 1.1981923923076465,
+        "sMAPE": 157.6361194166004,
+        "rRMSE": 230.73184166340832,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.6534524609443755,
+        "Pinball_P95": 0.4334166964276695
+    }
+}

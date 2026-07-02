@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_rollout7d_verano",
+    "planta": "fv_bolero",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 5.775212749375758,
+        "MAE": 3.7692853358042027,
+        "sMAPE": 93.88316098811545,
+        "rRMSE": 13.769103415007605
+    }
+}

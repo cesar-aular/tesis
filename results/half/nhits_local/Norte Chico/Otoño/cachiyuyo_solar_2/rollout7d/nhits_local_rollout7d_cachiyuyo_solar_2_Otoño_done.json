@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_rollout7d",
+    "planta": "cachiyuyo_solar_2",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 3.015182397058818,
+        "MAE": 1.8948756507779763,
+        "sMAPE": 180.3435836222176,
+        "rRMSE": 159.17708734728572,
+        "Coverage_90": 0.25595238095238093,
+        "Pinball_P05": 0.0994876939553121,
+        "Pinball_P95": 1.776639316704374
+    }
+}

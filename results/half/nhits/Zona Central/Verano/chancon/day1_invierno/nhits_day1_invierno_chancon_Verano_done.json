@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1_invierno",
+    "planta": "chancon",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.6967255401601312,
+        "MAE": 0.6720235044291863,
+        "sMAPE": 153.33928202051806,
+        "rRMSE": 148.00424215772668,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.410255074854164,
+        "Pinball_P95": 0.2692503629601561
+    }
+}

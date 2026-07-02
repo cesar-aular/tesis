@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d_verano",
+    "planta": "parque_solar_finis_terrae",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 9.454255640152207,
+        "MAE": 8.805066763467732,
+        "sMAPE": 124.82278309925807,
+        "rRMSE": 136.53410984859175,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 5.0915238632421405,
+        "Pinball_P95": 3.632169756887569
+    }
+}

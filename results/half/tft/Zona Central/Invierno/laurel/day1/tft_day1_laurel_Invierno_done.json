@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1",
+    "planta": "laurel",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.8840894516021074,
+        "MAE": 1.6406346328246098,
+        "sMAPE": 162.94809844373532,
+        "rRMSE": 145.30097038353892,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.5692998561464871,
+        "Pinball_P95": 1.1298314434398586
+    }
+}

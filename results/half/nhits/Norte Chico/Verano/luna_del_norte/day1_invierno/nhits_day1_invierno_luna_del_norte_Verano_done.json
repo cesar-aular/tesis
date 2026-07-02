@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1_invierno",
+    "planta": "luna_del_norte",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.0055915446362456,
+        "MAE": 0.707455783564607,
+        "sMAPE": 156.12599619878537,
+        "rRMSE": 157.13595990875388,
+        "Coverage_90": 0.041666666666666664,
+        "Pinball_P05": 0.2152504622363267,
+        "Pinball_P95": 0.49391497290277275
+    }
+}

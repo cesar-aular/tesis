@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1_invierno",
+    "planta": "conejo_solar",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 37.60808825380408,
+        "MAE": 25.706013177831966,
+        "sMAPE": 161.75840672696603,
+        "rRMSE": 152.82663711202088,
+        "Coverage_90": 0.08333333333333333,
+        "Pinball_P05": 3.440339799473683,
+        "Pinball_P95": 22.58944598113497
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1_verano",
+    "planta": "chimbarongo",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.4393657732419305,
+        "MAE": 0.32104634602243703,
+        "sMAPE": 142.40196438120387,
+        "rRMSE": 146.67244999196768,
+        "Coverage_90": 0.4583333333333333,
+        "Pinball_P05": 0.03910131060983985,
+        "Pinball_P95": 0.07778977840983627
+    }
+}

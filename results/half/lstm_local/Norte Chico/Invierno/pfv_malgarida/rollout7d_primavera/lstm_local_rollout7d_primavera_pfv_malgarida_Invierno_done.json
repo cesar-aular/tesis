@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d_primavera",
+    "planta": "pfv_malgarida",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 117.20659567897071,
+        "MAE": 76.97586868738844,
+        "sMAPE": 178.4679104559492,
+        "rRMSE": 151.8800995623663,
+        "Coverage_90": 0.44047619047619047,
+        "Pinball_P05": 3.863322965978157,
+        "Pinball_P95": 69.89509706988576
+    }
+}

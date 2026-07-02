@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d",
+    "planta": "crucero",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.5026953601756702,
+        "MAE": 0.4936152696609497,
+        "sMAPE": 196.42857142857142,
+        "rRMSE": 0.0,
+        "Coverage_90": 0.017857142857142856,
+        "Pinball_P05": 0.391304203912261,
+        "Pinball_P95": 0.017005542027098808
+    }
+}

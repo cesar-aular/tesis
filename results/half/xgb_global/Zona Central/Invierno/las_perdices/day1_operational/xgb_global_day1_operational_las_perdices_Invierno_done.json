@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_operational",
+    "planta": "las_perdices",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.3353361093783122,
+        "MAE": 0.21708540350664407,
+        "sMAPE": 66.94810827808911,
+        "rRMSE": 80.2623265049413
+    }
+}

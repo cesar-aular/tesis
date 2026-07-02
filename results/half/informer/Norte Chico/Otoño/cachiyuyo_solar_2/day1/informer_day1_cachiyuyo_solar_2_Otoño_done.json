@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1",
+    "planta": "cachiyuyo_solar_2",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 3.387633009637881,
+        "MAE": 2.298983393403129,
+        "sMAPE": 156.1109979742602,
+        "rRMSE": 145.25615607398439,
+        "Coverage_90": 0.20833333333333334,
+        "Pinball_P05": 0.13160215396073907,
+        "Pinball_P95": 1.2224534907461324
+    }
+}

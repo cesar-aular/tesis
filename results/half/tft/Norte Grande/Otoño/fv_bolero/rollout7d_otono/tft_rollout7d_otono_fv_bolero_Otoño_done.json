@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d_otono",
+    "planta": "fv_bolero",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 23.41160729030745,
+        "MAE": 17.609797197549295,
+        "sMAPE": 164.45328741729597,
+        "rRMSE": 151.96938367757465,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 4.905316454667731,
+        "Pinball_P95": 12.667439652807523
+    }
+}

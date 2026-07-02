@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_day1_invierno",
+    "planta": "fv_bolero",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 2.0020434100265914,
+        "MAE": 1.264719423217078,
+        "sMAPE": 116.66666666666667,
+        "rRMSE": 0.0,
+        "Coverage_90": 0.4583333333333333,
+        "Pinball_P05": 2.1547217393914857,
+        "Pinball_P95": 0.0862283622846008
+    }
+}

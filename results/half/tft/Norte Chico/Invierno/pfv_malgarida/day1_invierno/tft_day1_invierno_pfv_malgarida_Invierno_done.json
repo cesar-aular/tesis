@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1_invierno",
+    "planta": "pfv_malgarida",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 91.01480639120503,
+        "MAE": 59.9266823468109,
+        "sMAPE": 183.61932847957289,
+        "rRMSE": 152.74037452174844,
+        "Coverage_90": 0.041666666666666664,
+        "Pinball_P05": 4.541719545486073,
+        "Pinball_P95": 54.872776796109974
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "lstm_rollout7d_primavera",
+    "planta": "pfv_jose_soler_mallafre",
+    "estacion": "Primavera",
+    "metrics": {
+        "RMSE": 0.38414479058412293,
+        "MAE": 0.25115392547775717,
+        "sMAPE": 147.4583810109202,
+        "rRMSE": 137.20778172380395,
+        "Coverage_90": 0.19047619047619047,
+        "Pinball_P05": 0.037295990725206576,
+        "Pinball_P95": 0.09697352502759411
+    }
+}

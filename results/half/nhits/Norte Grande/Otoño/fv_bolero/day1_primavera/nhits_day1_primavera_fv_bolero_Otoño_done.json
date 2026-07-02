@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1_primavera",
+    "planta": "fv_bolero",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 62.6530054918405,
+        "MAE": 49.077454249064125,
+        "sMAPE": 167.6572103134834,
+        "rRMSE": 129.458388991665,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 9.779887767632802,
+        "Pinball_P95": 39.18156128327052
+    }
+}

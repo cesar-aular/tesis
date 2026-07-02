@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_day1_primavera",
+    "planta": "chalinga_solar",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.691629607258812,
+        "MAE": 0.4480944126068304,
+        "sMAPE": 64.35862585877646,
+        "rRMSE": 87.33282666993044,
+        "Coverage_90": 1.0,
+        "Pinball_P05": 0.03959734464297071,
+        "Pinball_P95": 0.3476631117402578
+    }
+}

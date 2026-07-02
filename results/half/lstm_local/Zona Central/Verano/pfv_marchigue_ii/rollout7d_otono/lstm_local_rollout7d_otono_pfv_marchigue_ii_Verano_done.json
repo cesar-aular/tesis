@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d_otono",
+    "planta": "pfv_marchigue_ii",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 4.740018553642487,
+        "MAE": 3.1582936383125517,
+        "sMAPE": 184.11044993069322,
+        "rRMSE": 142.76010584695803,
+        "Coverage_90": 0.3392857142857143,
+        "Pinball_P05": 0.1658335194940654,
+        "Pinball_P95": 2.6600517153906584
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_invierno",
+    "planta": "la_manga_i",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.3386159783633222,
+        "MAE": 0.2121131263265852,
+        "sMAPE": 51.14041324741946,
+        "rRMSE": 63.540242779407855
+    }
+}

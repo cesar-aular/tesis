@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_otono",
+    "planta": "pfv_malgarida",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 63.72868479253454,
+        "MAE": 43.259707853974156,
+        "sMAPE": 56.640174543888975,
+        "rRMSE": 77.59134914110338
+    }
+}

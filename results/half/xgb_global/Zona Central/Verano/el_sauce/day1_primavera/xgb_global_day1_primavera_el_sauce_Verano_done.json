@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_primavera",
+    "planta": "el_sauce",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.6098125205070665,
+        "MAE": 0.4404329807293834,
+        "sMAPE": 120.9108904769173,
+        "rRMSE": 131.4238765246898
+    }
+}

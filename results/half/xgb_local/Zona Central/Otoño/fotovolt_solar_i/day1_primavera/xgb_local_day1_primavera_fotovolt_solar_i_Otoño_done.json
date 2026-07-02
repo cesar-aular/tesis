@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_day1_primavera",
+    "planta": "fotovolt_solar_i",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.09784279368205133,
+        "MAE": 0.05570769446057966,
+        "sMAPE": 129.55516446763673,
+        "rRMSE": 49.73464486161887
+    }
+}

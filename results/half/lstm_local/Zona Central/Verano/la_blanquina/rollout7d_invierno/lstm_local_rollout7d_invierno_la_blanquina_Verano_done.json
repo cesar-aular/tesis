@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d_invierno",
+    "planta": "la_blanquina",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.151759014605001,
+        "MAE": 0.637316208416797,
+        "sMAPE": 76.54942438442866,
+        "rRMSE": 188.16781956695286,
+        "Coverage_90": 0.8095238095238095,
+        "Pinball_P05": 0.05407415540694708,
+        "Pinball_P95": 0.11206099179576309
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1_invierno",
+    "planta": "los_patos",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.843300591118756,
+        "MAE": 0.8083870642197629,
+        "sMAPE": 152.58692415051104,
+        "rRMSE": 210.77021514712087,
+        "Coverage_90": 0.041666666666666664,
+        "Pinball_P05": 0.6376263696622725,
+        "Pinball_P95": 0.17490836621727798
+    }
+}

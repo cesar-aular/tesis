@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d",
+    "planta": "fotovolt_solar_i",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.2609575068085056,
+        "MAE": 0.24595717733781103,
+        "sMAPE": 156.74698280873395,
+        "rRMSE": 201.2684409936965,
+        "Coverage_90": 0.011904761904761904,
+        "Pinball_P05": 0.14260159883474413,
+        "Pinball_P95": 0.08453297551551134
+    }
+}

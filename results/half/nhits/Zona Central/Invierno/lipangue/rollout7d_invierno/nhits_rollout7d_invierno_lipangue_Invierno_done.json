@@ -1,0 +1,14 @@
+{
+    "model": "nhits_rollout7d_invierno",
+    "planta": "lipangue",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.9755780090839165,
+        "MAE": 0.8618588730769284,
+        "sMAPE": 115.45712290056444,
+        "rRMSE": 155.1098492588358,
+        "Coverage_90": 0.01020408163265306,
+        "Pinball_P05": 0.7203796147832601,
+        "Pinball_P95": 0.1466996201078753
+    }
+}

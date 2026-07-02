@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d_invierno",
+    "planta": "pfv_santa_adriana",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.5382733205480378,
+        "MAE": 0.49506088002159404,
+        "sMAPE": 145.45063681222007,
+        "rRMSE": 195.7705164084338,
+        "Coverage_90": 0.047619047619047616,
+        "Pinball_P05": 0.29795415124353897,
+        "Pinball_P95": 0.18515220692457834
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_day1_invierno",
+    "planta": "luna",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.6624270557095301,
+        "MAE": 0.5824725307524204,
+        "sMAPE": 106.42449400187016,
+        "rRMSE": 74.41019105053269,
+        "Coverage_90": 0.5,
+        "Pinball_P05": 0.04451185021549463,
+        "Pinball_P95": 0.05466300707310438
+    }
+}

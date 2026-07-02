@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_day1_primavera",
+    "planta": "cachiyuyo_solar_2",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 1.6187292611628448,
+        "MAE": 0.856479905982269,
+        "sMAPE": 126.08275693050233,
+        "rRMSE": 68.65882249891878
+    }
+}

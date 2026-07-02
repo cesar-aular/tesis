@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1_operational",
+    "planta": "la_blanquina",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 2.9735154580067986,
+        "MAE": 2.240378689370118,
+        "sMAPE": 161.99376798975652,
+        "rRMSE": 140.3995985570721,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.40010567290980054,
+        "Pinball_P95": 1.8796534045463584
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_rollout7d_otono",
+    "planta": "la_blanquina",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 2.2532059684681323,
+        "MAE": 1.3837413857133167,
+        "sMAPE": 108.55751848025284,
+        "rRMSE": 203.79209978501655
+    }
+}

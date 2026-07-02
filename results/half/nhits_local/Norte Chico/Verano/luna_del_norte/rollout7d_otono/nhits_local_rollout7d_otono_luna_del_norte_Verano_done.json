@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_rollout7d_otono",
+    "planta": "luna_del_norte",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.3642443823311197,
+        "MAE": 0.8501488803425905,
+        "sMAPE": 181.15538053913588,
+        "rRMSE": 160.81810165845687,
+        "Coverage_90": 0.09523809523809523,
+        "Pinball_P05": 0.04733218026061961,
+        "Pinball_P95": 0.8038673707219173
+    }
+}

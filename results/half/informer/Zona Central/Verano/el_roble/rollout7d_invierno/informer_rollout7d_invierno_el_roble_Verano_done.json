@@ -1,0 +1,14 @@
+{
+    "model": "informer_rollout7d_invierno",
+    "planta": "el_roble",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.6329484469763613,
+        "MAE": 1.0664074842197155,
+        "sMAPE": 167.08417476607735,
+        "rRMSE": 212.78017441661,
+        "Coverage_90": 0.11904761904761904,
+        "Pinball_P05": 0.31935415909483816,
+        "Pinball_P95": 0.21488468826357593
+    }
+}

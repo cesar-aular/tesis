@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1_primavera",
+    "planta": "cachiyuyo_solar_2",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 3.7026420272262057,
+        "MAE": 2.4183764672870893,
+        "sMAPE": 182.85639055222828,
+        "rRMSE": 157.04838939749848,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.25880673364581525,
+        "Pinball_P95": 2.1855909645760825
+    }
+}

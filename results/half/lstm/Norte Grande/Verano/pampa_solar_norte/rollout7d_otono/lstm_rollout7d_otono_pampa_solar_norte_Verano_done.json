@@ -1,0 +1,14 @@
+{
+    "model": "lstm_rollout7d_otono",
+    "planta": "pampa_solar_norte",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 31.6667179197647,
+        "MAE": 21.329557442826975,
+        "sMAPE": 158.54513612295358,
+        "rRMSE": 114.31315777590727,
+        "Coverage_90": 0.35714285714285715,
+        "Pinball_P05": 1.4191423314573643,
+        "Pinball_P95": 8.377128342000791
+    }
+}

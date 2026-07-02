@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1",
+    "planta": "altos_de_til_til",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.5446708162027107,
+        "MAE": 0.3654760089702904,
+        "sMAPE": 162.15391533270986,
+        "rRMSE": 183.83924182284204,
+        "Coverage_90": 0.375,
+        "Pinball_P05": 0.04047785783962657,
+        "Pinball_P95": 0.06681992864081021
+    }
+}

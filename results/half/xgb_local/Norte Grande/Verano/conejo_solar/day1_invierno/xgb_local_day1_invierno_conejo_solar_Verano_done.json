@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_day1_invierno",
+    "planta": "conejo_solar",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 3.8246365476797473,
+        "MAE": 2.263458326458931,
+        "sMAPE": 96.56032092523125,
+        "rRMSE": 15.542038133206676
+    }
+}

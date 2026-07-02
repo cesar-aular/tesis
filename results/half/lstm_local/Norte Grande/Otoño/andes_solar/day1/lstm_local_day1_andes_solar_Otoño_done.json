@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_day1",
+    "planta": "andes_solar",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 9.340984761913969,
+        "MAE": 6.227616796425234,
+        "sMAPE": 168.67594555798178,
+        "rRMSE": 139.5326595207821,
+        "Coverage_90": 0.5416666666666666,
+        "Pinball_P05": 0.334711361831675,
+        "Pinball_P95": 4.217168241832405
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1_otono",
+    "planta": "el_sauce",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.297580448406725,
+        "MAE": 0.9800286274342701,
+        "sMAPE": 172.92530460791883,
+        "rRMSE": 138.25464502603387,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.14460403983836537,
+        "Pinball_P95": 0.8509876715326755
+    }
+}

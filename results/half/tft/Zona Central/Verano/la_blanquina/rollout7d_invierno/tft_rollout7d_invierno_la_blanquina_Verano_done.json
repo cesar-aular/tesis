@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d_invierno",
+    "planta": "la_blanquina",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.5657132610952222,
+        "MAE": 1.2266879136921143,
+        "sMAPE": 167.28085686443396,
+        "rRMSE": 255.79730366459583,
+        "Coverage_90": 0.02976190476190476,
+        "Pinball_P05": 0.6818605910788391,
+        "Pinball_P95": 0.5001262655527864
+    }
+}

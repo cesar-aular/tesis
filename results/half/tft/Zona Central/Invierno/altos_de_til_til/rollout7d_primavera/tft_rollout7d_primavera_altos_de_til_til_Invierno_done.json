@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d_primavera",
+    "planta": "altos_de_til_til",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.8117271159224678,
+        "MAE": 0.6194033513643912,
+        "sMAPE": 164.22343965579284,
+        "rRMSE": 150.946932732853,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.17404764925484503,
+        "Pinball_P95": 0.4417455275786952
+    }
+}

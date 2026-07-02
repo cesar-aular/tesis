@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_day1_otono",
+    "planta": "el_pilpen",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.2427597920892532,
+        "MAE": 0.8071961266541621,
+        "sMAPE": 157.81923742355872,
+        "rRMSE": 123.59231829679958,
+        "Coverage_90": 0.5833333333333334,
+        "Pinball_P05": 0.048314937854835684,
+        "Pinball_P95": 0.3737327821875321
+    }
+}

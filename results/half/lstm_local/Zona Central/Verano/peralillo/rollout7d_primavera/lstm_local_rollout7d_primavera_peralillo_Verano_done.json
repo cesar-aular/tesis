@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d_primavera",
+    "planta": "peralillo",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.004123177847345,
+        "MAE": 0.46196488180563716,
+        "sMAPE": 197.8986281821233,
+        "rRMSE": 217.37383230125263,
+        "Coverage_90": 0.49404761904761907,
+        "Pinball_P05": 0.02310575652627507,
+        "Pinball_P95": 0.43848526906958085
+    }
+}

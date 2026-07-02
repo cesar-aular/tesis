@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_rollout7d",
+    "planta": "la_manga_i",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.0235714924840462,
+        "MAE": 0.6543319453442695,
+        "sMAPE": 157.968601716499,
+        "rRMSE": 156.161292692866,
+        "Coverage_90": 0.16666666666666666,
+        "Pinball_P05": 0.03517595089693555,
+        "Pinball_P95": 0.619749379734679
+    }
+}

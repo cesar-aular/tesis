@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_rollout7d_otono",
+    "planta": "parque_solar_finis_terrae",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 6.775715892770887,
+        "MAE": 4.106577758682848,
+        "sMAPE": 106.9308230299477,
+        "rRMSE": 33.9082057230434
+    }
+}

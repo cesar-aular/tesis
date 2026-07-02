@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_primavera",
+    "planta": "peralillo",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.38708458349923086,
+        "MAE": 0.24222314062838754,
+        "sMAPE": 55.07577563800251,
+        "rRMSE": 63.51133877443825
+    }
+}

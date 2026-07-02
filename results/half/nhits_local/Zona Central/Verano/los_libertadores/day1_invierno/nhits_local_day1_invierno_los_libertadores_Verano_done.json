@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_day1_invierno",
+    "planta": "los_libertadores",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.059652822592268895,
+        "MAE": 0.04218017767804364,
+        "sMAPE": 125.0,
+        "rRMSE": 0.0,
+        "Coverage_90": 0.4583333333333333,
+        "Pinball_P05": 0.05823890400740008,
+        "Pinball_P95": 0.0023174880848576642
+    }
+}

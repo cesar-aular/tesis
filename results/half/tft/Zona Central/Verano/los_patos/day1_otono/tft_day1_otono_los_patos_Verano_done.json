@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1_otono",
+    "planta": "los_patos",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.4803330903672423,
+        "MAE": 1.1010436056531034,
+        "sMAPE": 171.58491861254745,
+        "rRMSE": 138.173159317442,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.14576513382198755,
+        "Pinball_P95": 0.9744189314903148
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_verano",
+    "planta": "la_acacia",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.1403589681427158,
+        "MAE": 0.9155212808400393,
+        "sMAPE": 74.85583784361286,
+        "rRMSE": 40.877527312397305
+    }
+}

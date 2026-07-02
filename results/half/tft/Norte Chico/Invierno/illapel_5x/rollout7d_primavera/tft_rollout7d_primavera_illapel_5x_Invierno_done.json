@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d_primavera",
+    "planta": "illapel_5x",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.2424152138830196,
+        "MAE": 0.8155854333127709,
+        "sMAPE": 179.37602278053802,
+        "rRMSE": 155.5748991409373,
+        "Coverage_90": 0.005952380952380952,
+        "Pinball_P05": 0.09308484109504618,
+        "Pinball_P95": 0.726424957602628
+    }
+}

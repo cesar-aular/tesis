@@ -1,0 +1,14 @@
+{
+    "model": "lstm_day1_verano",
+    "planta": "amparo_del_sol",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.1989627976669743,
+        "MAE": 0.8320276124177326,
+        "sMAPE": 123.39206666147948,
+        "rRMSE": 114.42917621235283,
+        "Coverage_90": 0.3333333333333333,
+        "Pinball_P05": 0.05207710643329241,
+        "Pinball_P95": 0.4177947346590978
+    }
+}

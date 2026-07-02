@@ -1,0 +1,14 @@
+{
+    "model": "lstm_rollout7d_primavera",
+    "planta": "illapel_5x",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.1723626869458492,
+        "MAE": 0.7372908545504894,
+        "sMAPE": 171.34000927872788,
+        "rRMSE": 146.80294054687243,
+        "Coverage_90": 0.047619047619047616,
+        "Pinball_P05": 0.048545085299363,
+        "Pinball_P95": 0.5594331255551933
+    }
+}

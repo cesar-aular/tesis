@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_primavera",
+    "planta": "fv_bolero",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 20.684472996589484,
+        "MAE": 14.165749569733938,
+        "sMAPE": 108.88597611272475,
+        "rRMSE": 42.739825970979275
+    }
+}

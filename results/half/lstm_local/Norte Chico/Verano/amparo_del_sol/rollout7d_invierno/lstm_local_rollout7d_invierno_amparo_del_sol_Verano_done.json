@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d_invierno",
+    "planta": "amparo_del_sol",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.4476873004993613,
+        "MAE": 0.27818114774639807,
+        "sMAPE": 96.3294625758388,
+        "rRMSE": 159.31193194342495,
+        "Coverage_90": 0.9583333333333334,
+        "Pinball_P05": 0.014321101816590055,
+        "Pinball_P95": 0.047602730827652776
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1_otono",
+    "planta": "los_patos",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.3026485185629793,
+        "MAE": 1.1106201144284569,
+        "sMAPE": 152.8965770053595,
+        "rRMSE": 121.58821717981053,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.35707268298817024,
+        "Pinball_P95": 0.7530175678790935
+    }
+}

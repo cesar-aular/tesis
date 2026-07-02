@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_day1_invierno",
+    "planta": "crucero",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.40673485321477354,
+        "MAE": 0.22310951243465146,
+        "sMAPE": 83.15229071632653,
+        "rRMSE": 279.3917661192582
+    }
+}

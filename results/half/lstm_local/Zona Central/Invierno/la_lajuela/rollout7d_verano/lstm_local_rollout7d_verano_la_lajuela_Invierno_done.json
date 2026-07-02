@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d_verano",
+    "planta": "la_lajuela",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 2.6970223646999276,
+        "MAE": 2.4881434312722246,
+        "sMAPE": 128.1724950935929,
+        "rRMSE": 91.96376118762257,
+        "Coverage_90": 0.43452380952380953,
+        "Pinball_P05": 0.5463517076399598,
+        "Pinball_P95": 0.3941501761467886
+    }
+}

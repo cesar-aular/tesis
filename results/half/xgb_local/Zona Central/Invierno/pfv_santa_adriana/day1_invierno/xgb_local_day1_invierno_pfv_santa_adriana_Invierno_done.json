@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_day1_invierno",
+    "planta": "pfv_santa_adriana",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.27637777692402116,
+        "MAE": 0.1525957037738408,
+        "sMAPE": 131.13115456117825,
+        "rRMSE": 143.1006207929768
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1_verano",
+    "planta": "chalinga_solar",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.4401915679067638,
+        "MAE": 1.0791411276635092,
+        "sMAPE": 164.53260146576898,
+        "rRMSE": 131.26911571953625,
+        "Coverage_90": 0.041666666666666664,
+        "Pinball_P05": 0.13850602349169397,
+        "Pinball_P95": 0.9409285553158648
+    }
+}

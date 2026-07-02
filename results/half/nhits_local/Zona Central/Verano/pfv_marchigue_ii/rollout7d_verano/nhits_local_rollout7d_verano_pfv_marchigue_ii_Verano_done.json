@@ -1,0 +1,14 @@
+{
+    "model": "nhits_local_rollout7d_verano",
+    "planta": "pfv_marchigue_ii",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 5.1959786050705254,
+        "MAE": 3.5266050210269957,
+        "sMAPE": 180.66316140498495,
+        "rRMSE": 147.68046501802908,
+        "Coverage_90": 0.03389830508474576,
+        "Pinball_P05": 0.19885370697257884,
+        "Pinball_P95": 3.32533835807018
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d",
+    "planta": "donihue",
+    "estacion": "Primavera",
+    "metrics": {
+        "RMSE": 0.9402479684718059,
+        "MAE": 0.5191003572876136,
+        "sMAPE": 77.32124990931737,
+        "rRMSE": 130.2342259458978,
+        "Coverage_90": 0.9041916167664671,
+        "Pinball_P05": 0.03653508698843799,
+        "Pinball_P95": 0.08197329638739856
+    }
+}

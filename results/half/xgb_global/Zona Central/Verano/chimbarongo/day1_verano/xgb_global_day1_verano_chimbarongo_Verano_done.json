@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_verano",
+    "planta": "chimbarongo",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.6913257762643289,
+        "MAE": 0.43902494804933667,
+        "sMAPE": 73.74495422123931,
+        "rRMSE": 230.78366937666402
+    }
+}

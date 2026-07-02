@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_primavera",
+    "planta": "parque_solar_finis_terrae",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 14.167196808232267,
+        "MAE": 9.295480330785116,
+        "sMAPE": 112.59833990851521,
+        "rRMSE": 37.87725113886602
+    }
+}

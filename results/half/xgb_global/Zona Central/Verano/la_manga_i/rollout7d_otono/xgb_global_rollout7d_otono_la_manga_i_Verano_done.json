@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_rollout7d_otono",
+    "planta": "la_manga_i",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.3761818787706628,
+        "MAE": 0.25388736056941397,
+        "sMAPE": 66.72295977262517,
+        "rRMSE": 59.462961058090805
+    }
+}

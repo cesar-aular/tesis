@@ -1,0 +1,14 @@
+{
+    "model": "informer_rollout7d_invierno",
+    "planta": "los_patos",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.3357252669985739,
+        "MAE": 0.24067399340440584,
+        "sMAPE": 163.71603020033035,
+        "rRMSE": 312.5293361475215,
+        "Coverage_90": 0.13690476190476192,
+        "Pinball_P05": 0.10810392979332217,
+        "Pinball_P95": 0.06031016709197766
+    }
+}

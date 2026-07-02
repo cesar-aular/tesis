@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1_otono",
+    "planta": "don_eugenio",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.4212229640151857,
+        "MAE": 1.033208412642125,
+        "sMAPE": 175.67315234474836,
+        "rRMSE": 137.33527305267316,
+        "Coverage_90": 0.125,
+        "Pinball_P05": 0.07854942122260884,
+        "Pinball_P95": 0.2975366944864315
+    }
+}

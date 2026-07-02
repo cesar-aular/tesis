@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1_invierno",
+    "planta": "donihue",
+    "estacion": "Primavera",
+    "metrics": {
+        "RMSE": 1.3804470834316895,
+        "MAE": 1.2627775663665186,
+        "sMAPE": 137.73650432920616,
+        "rRMSE": 219.36850407794722,
+        "Coverage_90": 0.041666666666666664,
+        "Pinball_P05": 1.0415606642568795,
+        "Pinball_P95": 0.23554576260115334
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d_otono",
+    "planta": "fotovolt_solar_i",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.2329291941748047,
+        "MAE": 0.1806689952825566,
+        "sMAPE": 162.92575782452695,
+        "rRMSE": 164.93973396080412,
+        "Coverage_90": 0.35119047619047616,
+        "Pinball_P05": 0.032612462967196276,
+        "Pinball_P95": 0.04208536970791393
+    }
+}

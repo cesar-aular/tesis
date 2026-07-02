@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1",
+    "planta": "fv_bolero",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 6.859876564361372,
+        "MAE": 6.754813534518083,
+        "sMAPE": 195.32798516784771,
+        "rRMSE": 9516.5919885467,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 4.627503344292442,
+        "Pinball_P95": 0.14753219299018397
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_rollout7d_invierno",
+    "planta": "los_libertadores",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.5211758025496593,
+        "MAE": 1.0305169536236327,
+        "sMAPE": 110.04310619596902,
+        "rRMSE": 511.3520495219414
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_rollout7d_verano",
+    "planta": "andes_solar",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 6.2299601236477775,
+        "MAE": 3.094283742630588,
+        "sMAPE": 126.65567654410903,
+        "rRMSE": 107.21285226952948
+    }
+}

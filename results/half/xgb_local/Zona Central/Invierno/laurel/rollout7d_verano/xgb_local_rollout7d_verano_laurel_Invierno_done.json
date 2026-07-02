@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_rollout7d_verano",
+    "planta": "laurel",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.947474065046798,
+        "MAE": 0.48534153769945815,
+        "sMAPE": 97.39889712686517,
+        "rRMSE": 37.293178504294985
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "nhits_day1_primavera",
+    "planta": "pampa_solar_norte",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 13.400770448544014,
+        "MAE": 9.378310260052482,
+        "sMAPE": 150.16650518373388,
+        "rRMSE": 153.18084157698271,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 3.3523073266260326,
+        "Pinball_P95": 5.975656705939522
+    }
+}

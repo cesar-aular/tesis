@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_day1_verano",
+    "planta": "donihue",
+    "estacion": "Primavera",
+    "metrics": {
+        "RMSE": 2.0855424804297664,
+        "MAE": 1.7059851734278102,
+        "sMAPE": 98.67401080415848,
+        "rRMSE": 59.98744161511941
+    }
+}

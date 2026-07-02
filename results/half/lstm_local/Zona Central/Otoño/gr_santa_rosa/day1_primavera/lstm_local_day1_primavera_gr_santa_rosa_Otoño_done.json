@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_day1_primavera",
+    "planta": "gr_santa_rosa",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 3.047504895886592,
+        "MAE": 1.6468479909985945,
+        "sMAPE": 157.95085965015173,
+        "rRMSE": 185.00704675598513,
+        "Coverage_90": 0.4583333333333333,
+        "Pinball_P05": 0.08236237160731436,
+        "Pinball_P95": 1.5630316029150435
+    }
+}

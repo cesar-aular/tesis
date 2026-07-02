@@ -18,10 +18,11 @@ def calculate_metrics(y_true, y_pred, y_lo=None, y_hi=None):
     rmse = np.sqrt(np.mean((y_true - y_pred) ** 2))
     mae = np.mean(np.abs(y_true - y_pred))
 
-    # sMAPE
+    # sMAPE (errstate: el 0/0 nocturno se descarta via np.where, sin warning)
     numerator = np.abs(y_true - y_pred)
     denominator = (np.abs(y_true) + np.abs(y_pred)) / 2.0
-    smape = np.mean(np.where(denominator == 0, 0, numerator / denominator)) * 100
+    with np.errstate(divide='ignore', invalid='ignore'):
+        smape = np.mean(np.where(denominator == 0, 0, numerator / denominator)) * 100
 
     # rRMSE
     mean_y = np.mean(y_true)

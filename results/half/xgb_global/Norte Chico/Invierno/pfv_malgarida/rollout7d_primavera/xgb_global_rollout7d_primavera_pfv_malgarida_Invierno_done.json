@@ -1,0 +1,11 @@
+{
+    "model": "xgb_global_rollout7d_primavera",
+    "planta": "pfv_malgarida",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 51.15330211416435,
+        "MAE": 33.400082947065435,
+        "sMAPE": 114.5036547449013,
+        "rRMSE": 66.28037834979732
+    }
+}

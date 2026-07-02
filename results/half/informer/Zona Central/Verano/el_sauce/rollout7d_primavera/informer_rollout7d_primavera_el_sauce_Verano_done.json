@@ -1,0 +1,14 @@
+{
+    "model": "informer_rollout7d_primavera",
+    "planta": "el_sauce",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.877533373091622,
+        "MAE": 0.5266098299880035,
+        "sMAPE": 177.2595022656318,
+        "rRMSE": 203.45753373001165,
+        "Coverage_90": 0.07142857142857142,
+        "Pinball_P05": 0.10199191550695798,
+        "Pinball_P95": 0.3283168252228019
+    }
+}

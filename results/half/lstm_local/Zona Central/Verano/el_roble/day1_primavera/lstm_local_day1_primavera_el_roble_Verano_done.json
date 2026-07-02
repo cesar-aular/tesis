@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_day1_primavera",
+    "planta": "el_roble",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 2.4843344999977743,
+        "MAE": 1.3430026756444324,
+        "sMAPE": 75.24606230458782,
+        "rRMSE": 144.73592256393198,
+        "Coverage_90": 1.0,
+        "Pinball_P05": 0.0858230097956645,
+        "Pinball_P95": 0.34583549063730396
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "informer_rollout7d_verano",
+    "planta": "la_frontera",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.531454069038806,
+        "MAE": 1.0565562143000486,
+        "sMAPE": 157.23794401231268,
+        "rRMSE": 144.51921673926236,
+        "Coverage_90": 0.18452380952380953,
+        "Pinball_P05": 0.1501467649020578,
+        "Pinball_P95": 0.5152319928602859
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_rollout7d_primavera",
+    "planta": "pfv_jose_soler_mallafre",
+    "estacion": "Primavera",
+    "metrics": {
+        "RMSE": 0.24886300702889694,
+        "MAE": 0.14694887004935436,
+        "sMAPE": 133.85845116268524,
+        "rRMSE": 88.8607684185416
+    }
+}

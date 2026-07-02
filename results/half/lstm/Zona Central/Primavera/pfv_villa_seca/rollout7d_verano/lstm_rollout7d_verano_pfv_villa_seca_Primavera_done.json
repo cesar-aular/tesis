@@ -1,0 +1,14 @@
+{
+    "model": "lstm_rollout7d_verano",
+    "planta": "pfv_villa_seca",
+    "estacion": "Primavera",
+    "metrics": {
+        "RMSE": 0.8195094983919503,
+        "MAE": 0.5925688012111788,
+        "sMAPE": 127.97776269962765,
+        "rRMSE": 95.80137432899772,
+        "Coverage_90": 0.39285714285714285,
+        "Pinball_P05": 0.06963744155028355,
+        "Pinball_P95": 0.10835469233763025
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_rollout7d",
+    "planta": "los_libertadores",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 0.33851977850012394,
+        "MAE": 0.20855584248368228,
+        "sMAPE": 90.29582859775279,
+        "rRMSE": 13.73896587687291
+    }
+}

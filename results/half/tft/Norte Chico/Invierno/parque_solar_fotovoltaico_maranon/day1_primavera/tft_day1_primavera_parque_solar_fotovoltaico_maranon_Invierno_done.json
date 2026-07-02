@@ -1,0 +1,14 @@
+{
+    "model": "tft_day1_primavera",
+    "planta": "parque_solar_fotovoltaico_maranon",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.5266640408466354,
+        "MAE": 0.4691871731095792,
+        "sMAPE": 145.5463049840349,
+        "rRMSE": 117.29442603267842,
+        "Coverage_90": 0.041666666666666664,
+        "Pinball_P05": 0.11894411919590009,
+        "Pinball_P95": 0.37349971660344944
+    }
+}

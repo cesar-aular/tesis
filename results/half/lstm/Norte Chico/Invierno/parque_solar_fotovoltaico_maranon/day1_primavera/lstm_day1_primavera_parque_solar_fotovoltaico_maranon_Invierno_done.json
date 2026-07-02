@@ -1,0 +1,14 @@
+{
+    "model": "lstm_day1_primavera",
+    "planta": "parque_solar_fotovoltaico_maranon",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.2801951066813434,
+        "MAE": 0.22139088721208586,
+        "sMAPE": 107.70191227496862,
+        "rRMSE": 62.40282545685258,
+        "Coverage_90": 0.4166666666666667,
+        "Pinball_P05": 0.05609595423205368,
+        "Pinball_P95": 0.0666722602079972
+    }
+}

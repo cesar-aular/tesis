@@ -1,0 +1,14 @@
+{
+    "model": "informer_day1_primavera",
+    "planta": "laurel",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 1.5419353787685723,
+        "MAE": 1.2004414802261938,
+        "sMAPE": 148.49033219644997,
+        "rRMSE": 145.14072118759375,
+        "Coverage_90": 0.4583333333333333,
+        "Pinball_P05": 0.13092693862272428,
+        "Pinball_P95": 0.3175361215098143
+    }
+}

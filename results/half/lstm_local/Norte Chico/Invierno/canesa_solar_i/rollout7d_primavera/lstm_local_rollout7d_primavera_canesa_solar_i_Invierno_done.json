@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d_primavera",
+    "planta": "canesa_solar_i",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.7958622238265555,
+        "MAE": 0.4787070755677026,
+        "sMAPE": 47.37276844352129,
+        "rRMSE": 87.75454345096881,
+        "Coverage_90": 0.9583333333333334,
+        "Pinball_P05": 0.04448476425783329,
+        "Pinball_P95": 0.09336738490809311
+    }
+}

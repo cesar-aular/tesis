@@ -1,0 +1,14 @@
+{
+    "model": "lstm_rollout7d_primavera",
+    "planta": "crucero",
+    "estacion": "Oto\u00f1o",
+    "metrics": {
+        "RMSE": 0.659053776564133,
+        "MAE": 0.5295709390558321,
+        "sMAPE": 143.4590364800438,
+        "rRMSE": 114.65207088368388,
+        "Coverage_90": 0.30357142857142855,
+        "Pinball_P05": 0.09920362027814701,
+        "Pinball_P95": 0.06839602475813648
+    }
+}

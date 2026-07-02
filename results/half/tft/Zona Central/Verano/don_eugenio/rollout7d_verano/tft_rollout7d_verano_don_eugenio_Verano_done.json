@@ -1,0 +1,14 @@
+{
+    "model": "tft_rollout7d_verano",
+    "planta": "don_eugenio",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.2862168862305623,
+        "MAE": 0.9738784284612498,
+        "sMAPE": 155.88936260452147,
+        "rRMSE": 131.12399650799065,
+        "Coverage_90": 0.0,
+        "Pinball_P05": 0.17096272739352067,
+        "Pinball_P95": 0.8202826818733675
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "model": "lstm_local_rollout7d_otono",
+    "planta": "chimbarongo",
+    "estacion": "Verano",
+    "metrics": {
+        "RMSE": 1.2109519417715853,
+        "MAE": 0.8089374844988372,
+        "sMAPE": 182.5632879364026,
+        "rRMSE": 143.13699924294914,
+        "Coverage_90": 0.023809523809523808,
+        "Pinball_P05": 0.04730733483598707,
+        "Pinball_P95": 0.5990640224509468
+    }
+}

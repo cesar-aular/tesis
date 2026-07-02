@@ -1,0 +1,11 @@
+{
+    "model": "xgb_local_rollout7d_verano",
+    "planta": "canesa_solar_i",
+    "estacion": "Invierno",
+    "metrics": {
+        "RMSE": 0.3549986205475743,
+        "MAE": 0.1702748813993475,
+        "sMAPE": 82.16834300247172,
+        "rRMSE": 30.374709782823718
+    }
+}
