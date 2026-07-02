@@ -74,17 +74,42 @@ def make_hourly_grid(test_df: pd.DataFrame, planta: str) -> pd.DataFrame:
     return grid
 
 
-def synthetic_context(grid_hist: pd.DataFrame, capacidad: float, regional_pr: float) -> pd.DataFrame:
-    """Contexto Cold-Start 100% sintético: y = capacidad * PR_regional * perfil_solar."""
+def synthetic_context(grid_hist: pd.DataFrame, regional_pr: float) -> pd.DataFrame:
+    """Contexto Cold-Start 100% sintético en espacio NORMALIZADO por capacidad.
+
+    Perfil guiado por la radiación del propio contexto (exógena legítima:
+    observada en la estación asociada u obtenible de pronósticos) — captura
+    duración real del día, estacionalidad y nubosidad, a diferencia de la
+    campana gaussiana fija que comprimía la varianza del escalador (causa de
+    la subcobertura medida: TFT 0.00 vs 0.90 nominal). Fallback horario si
+    la radiación no aporta señal (hueco largo imputado).
+
+    y_norm = PR_regional × perfil ∈ [0, 1]. JAMÁS usa la generación real.
+    """
     hist = grid_hist.copy()
-    horas = hist['ds'].dt.hour
-    perfil = np.exp(-0.5 * ((horas - 12) / 3) ** 2)  # campana centrada al mediodía
-    hist['y'] = np.clip(capacidad * regional_pr * perfil, 0, None)
+    perfil = None
+    if 'radiacion-global-instantanea' in hist.columns:
+        ghi = hist['radiacion-global-instantanea'].to_numpy(dtype=float)
+        gmax = np.nanmax(ghi) if len(ghi) else 0.0
+        if np.isfinite(gmax) and gmax > 50:  # hay señal solar real en el contexto
+            perfil = np.clip(np.nan_to_num(ghi) / gmax, 0.0, 1.0)
+    if perfil is None:
+        horas = hist['ds'].dt.hour.to_numpy()
+        perfil = np.exp(-0.5 * ((horas - 12) / 3) ** 2)  # campana de respaldo
+    hist['y'] = np.clip(regional_pr * perfil, 0.0, 1.0)
     return hist
+
+
+# Noche astronómica profunda en Chile continental (UTC-3/-4): sin producción
+# solar posible en todo el año. Complementa el umbral de radiación, que puede
+# no activarse cuando la radiación viene interpolada sobre huecos largos
+# (piso nocturno residual observado en la corrida half pre-normalización).
+DEEP_NIGHT_HOURS = {23, 0, 1, 2, 3, 4}
 
 
 def _apply_physics(preds: pd.DataFrame, futr: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
     night = (futr['radiacion-global-instantanea'].values < 5)
+    night = night | futr['ds'].dt.hour.isin(DEEP_NIGHT_HOURS).to_numpy()
     for col in cols:
         if col in preds.columns:
             preds.loc[night, col] = 0.0
@@ -125,13 +150,14 @@ def run_dl_test(model_label: str, test_df: pd.DataFrame, results_dir: Path,
         print(f"[{model_label}] Planta {planta} sin datos suficientes ({len(grid)} < {needed}h). Saltando.")
         return
 
-    capacidad = float(grid['potencia_neta_mw'].iloc[0])
+    capacidad = max(float(grid['potencia_neta_mw'].iloc[0]), 1e-6)
     static_df = grid[['unique_id'] + STATIC_COLS].drop_duplicates('unique_id')
 
     # Ground truth real (solo observaciones reales, para métricas honestas)
     real_y = test_df[['unique_id', 'ds', 'y']].copy()
 
     def _predict_window(current_hist: pd.DataFrame, futr: pd.DataFrame) -> pd.DataFrame:
+        """Contexto en espacio normalizado -> predicción des-normalizada a MWh."""
         futr_input = futr.drop(columns=['y'])
         preds = nf.predict(df=current_hist, futr_df=futr_input, static_df=static_df)
         preds = preds.reset_index()
@@ -141,6 +167,10 @@ def run_dl_test(model_label: str, test_df: pd.DataFrame, results_dir: Path,
             raise RuntimeError(
                 f"{model_label} produjo predicciones NaN (modelo divergente). "
                 "Revisar precision/lr; este modelo/planta se omite.")
+        # Des-normalizar: el modelo opera en y/capacidad, las métricas en MWh
+        for col in pred_cols:
+            if col in preds.columns:
+                preds[col] = preds[col] * capacidad
         return _apply_physics(preds, futr, pred_cols)
 
     def _save(preds: pd.DataFrame, horizon: str):
@@ -172,8 +202,8 @@ def run_dl_test(model_label: str, test_df: pd.DataFrame, results_dir: Path,
         else:
             pr_window = regional_pr
 
-        # 1. Contexto histórico sintético (Cold-Start estricto)
-        hist_df = synthetic_context(window.iloc[:HIST_HOURS], capacidad, pr_window)
+        # 1. Contexto histórico sintético NORMALIZADO (Cold-Start estricto)
+        hist_df = synthetic_context(window.iloc[:HIST_HOURS], pr_window)
 
         # 2. Day 1 (24h)
         futr_day1 = window.iloc[HIST_HOURS:HIST_HOURS + 24].copy()
@@ -189,7 +219,8 @@ def run_dl_test(model_label: str, test_df: pd.DataFrame, results_dir: Path,
             all_preds.append(preds)
 
             new_tail = futr_day.copy()
-            new_tail['y'] = preds[f'{model_label}-median'].values
+            # El contexto autorregresivo vive en espacio normalizado
+            new_tail['y'] = preds[f'{model_label}-median'].values / capacidad
             current_hist = pd.concat([current_hist.iloc[24:], new_tail], ignore_index=True)
 
         _save(pd.concat(all_preds, ignore_index=True), f"rollout7d{suffix}")

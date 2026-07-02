@@ -1,5 +1,31 @@
 # Changelog
 
+## [2026-07-02] - Optimización del entrenamiento DL (decisiones de César)
+- **Decisiones**: mantener LOPO por planta (máxima base estadística; se descartó
+  el LOPO agrupado 5-fold); estructurar la evaluación como zero-shot POR
+  ESTACIÓN con todas las plantas (las ventanas estacionales pasan de análisis
+  de sensibilidad a eje principal del reporte). Foundation models descartados
+  (se sigue entrenando desde cero). ⚠️ "Entrenar con TODA la base y luego
+  zero-shot" se descartó por leakage (la planta objetivo quedaría en el train).
+- **Normalización por capacidad (DL)**: `normalize_target` — y_norm = y /
+  potencia_neta_mw (metadata estática, cero fuga). Todas las plantas en [0,1]:
+  el modelo global aprende forma, no escala. Aplica a train/tune (global y
+  local); las predicciones se des-normalizan a MWh en test (cuantiles MQLoss
+  equivariantes a escala). XGB queda en MWh (baseline intacto).
+- **Semilla sintética guiada por radiación**: y_norm = PR_regional ×
+  (GHI/GHI_max del contexto) — captura duración del día, estacionalidad y
+  nubosidad; fallback a campana horaria si el hueco imputado dejó la radiación
+  sin señal (gmax <= 50). Ataca la subcobertura (varianza del scaler realista).
+- **Máscara nocturna astronómica**: horas 23-04 forzadas a 0 además del umbral
+  de radiación (elimina el piso nocturno residual con radiación interpolada).
+- **Tune**: 5 trials (antes 3) sobre datos normalizados; hiperparámetros y
+  modelos previos archivados (representación del target cambió).
+- **Baseline preservado**: results/half -> results/half_prenorm y models/half
+  -> models/half_prenorm (comparación antes/después = material del capítulo V).
+- Reporte estacional: tabla por horizonte (day1 + rollout7d) con fila de n.
+- `src/ml/utils/coldstart.py` (muerto, campana legacy) eliminado; su test
+  reescrito contra la semilla real de producción. Suite: 17 tests verdes.
+
 ## [2026-07-02] - Corrida half completa + tesis con resultados reales
 - **Corrida half completada** (47 folds LOPO, 8 modelos, EXIT 0 en dos pasadas:
   globales + locales incrementales por idempotencia). Hallazgos de la corrida:

@@ -25,7 +25,8 @@ import pandas as pd
 import torch
 from neuralforecast import NeuralForecast
 
-from src.ml.utils.dl_models import MODEL_SPECS, _build, _compute_max_steps
+from src.ml.utils.dl_models import (MODEL_SPECS, _build, _compute_max_steps,
+                                    normalize_target)
 from src.ml.utils.dl_test import (HIST_HOURS, ROLLOUT_DAYS, make_hourly_grid,
                                   _apply_physics)
 from src.ml.utils.eval_window import eval_window_variants, WINDOW_HOURS
@@ -61,7 +62,7 @@ def run_local_dl(model_name: str, test_df: pd.DataFrame, results_dir: Path,
         print(f"[{label} Local] {planta} sin datos suficientes. Saltando.")
         return
 
-    capacidad = float(grid['potencia_neta_mw'].iloc[0])
+    capacidad = max(float(grid['potencia_neta_mw'].iloc[0]), 1e-6)
     variants = eval_window_variants(grid['y'].reset_index(drop=True), capacidad,
                                     dates=grid['ds'])
 
@@ -70,6 +71,8 @@ def run_local_dl(model_name: str, test_df: pd.DataFrame, results_dir: Path,
         print(f"[{label} Local] {planta}: historia local insuficiente tras excluir "
               f"ventanas de evaluación ({len(train_df)} filas). Saltando.")
         return
+    # Mismo espacio normalizado que los modelos globales (comparación 1:1)
+    train_df = normalize_target(train_df)
 
     # Hiperparámetros: reutiliza los del modelo global de la estrategia
     # (misma familia arquitectónica; tunear 2x47 modelos locales es prohibitivo)
@@ -107,11 +110,15 @@ def run_local_dl(model_name: str, test_df: pd.DataFrame, results_dir: Path,
     real_y = test_df[['unique_id', 'ds', 'y']].copy()
 
     def _predict(current_hist, futr):
+        """Contexto normalizado -> predicción des-normalizada a MWh."""
         futr_input = futr.drop(columns=['y'])
         preds = nf.predict(df=current_hist, futr_df=futr_input,
                            static_df=static_df).reset_index()
         if preds[f'{label}-median'].isna().any():
             raise RuntimeError(f"{label} Local produjo NaN para {planta}.")
+        for col in pred_cols:
+            if col in preds.columns:
+                preds[col] = preds[col] * capacidad
         return _apply_physics(preds, futr, pred_cols)
 
     def _save(preds, horizon):
@@ -135,9 +142,10 @@ def run_local_dl(model_name: str, test_df: pd.DataFrame, results_dir: Path,
         # CONTEXTO REAL: el paradigma local observa su propio pasado. Solo se
         # interpola el hueco puntual para que el modelo procese la ventana
         # ("se rellena de forma que el modelo lo entienda"); ni el train ni
-        # las métricas usan estos valores.
+        # las métricas usan estos valores. Normalizado como el train.
         hist_df = window.iloc[:HIST_HOURS].copy()
-        hist_df['y'] = hist_df['y'].interpolate(limit_direction='both').fillna(0.0)
+        hist_df['y'] = (hist_df['y'].interpolate(limit_direction='both')
+                        .fillna(0.0) / capacidad)
 
         _save(_predict(hist_df, window.iloc[HIST_HOURS:HIST_HOURS + 24].copy()),
               f"day1{suffix}")
@@ -150,7 +158,8 @@ def run_local_dl(model_name: str, test_df: pd.DataFrame, results_dir: Path,
             preds = _predict(current_hist, futr_day)
             all_preds.append(preds)
             new_tail = futr_day.copy()
-            new_tail['y'] = preds[f'{label}-median'].values  # autorregresivo
+            # autorregresivo en espacio normalizado
+            new_tail['y'] = preds[f'{label}-median'].values / capacidad
             current_hist = pd.concat([current_hist.iloc[24:], new_tail],
                                      ignore_index=True)
         _save(pd.concat(all_preds, ignore_index=True), f"rollout7d{suffix}")

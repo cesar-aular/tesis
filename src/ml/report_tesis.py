@@ -511,19 +511,38 @@ def tab_resultados(df: pd.DataFrame):
 
 
 def tab_estacional(df: pd.DataFrame):
-    sea = df[(df.Horizon == "7-Day Rollout") & df.Window.isin(SEASONS)]
-    piv = sea.pivot_table(index="Model", columns="Window", values="rRMSE",
-                          aggfunc="median").reindex(MODEL_ORDER)[SEASONS]
-    lines = [r"\begin{tabular}{lrrrr}", r"\toprule",
-             r"Modelo & Verano & Otoño & Invierno & Primavera \\", r"\midrule"]
-    for m in MODEL_ORDER:
-        if m not in piv.index:
+    """Eje estacional principal: zero-shot por estación con todas las plantas.
+
+    Una tabla por horizonte (day1 y rollout7d) + fila de n (plantas evaluadas
+    por estación, rango entre modelos)."""
+    for horizon, fname in (("Day 1", "tab_estacional_day1.tex"),
+                           ("7-Day Rollout", "tab_estacional.tex")):
+        sea = df[(df.Horizon == horizon) & df.Window.isin(SEASONS)]
+        if sea.empty:
             continue
-        r = piv.loc[m]
-        vals = " & ".join(_fmt(r[s]) for s in SEASONS)
-        lines.append(f"{MODEL_LABEL[m]} & {vals} \\\\")
-    lines += [r"\bottomrule", r"\end{tabular}"]
-    _write_tex(TAB_DIR / "tab_estacional.tex", "\n".join(lines))
+        piv = sea.pivot_table(index="Model", columns="Window", values="rRMSE",
+                              aggfunc="median").reindex(MODEL_ORDER)
+        piv = piv[[s for s in SEASONS if s in piv.columns]]
+        ns = sea.groupby(["Model", "Window"]).Planta.nunique().unstack()
+        lines = [r"\begin{tabular}{lrrrr}", r"\toprule",
+                 r"Modelo & Verano & Otoño & Invierno & Primavera \\", r"\midrule"]
+        for m in MODEL_ORDER:
+            if m not in piv.index or piv.loc[m].isna().all():
+                continue
+            r = piv.loc[m]
+            vals = " & ".join(_fmt(r.get(s)) for s in SEASONS)
+            lines.append(f"{MODEL_LABEL[m]} & {vals} \\\\")
+        n_cells = []
+        for s in SEASONS:
+            if s in ns.columns:
+                mn, mx = int(ns[s].min()), int(ns[s].max())
+                n_cells.append(str(mn) if mn == mx else f"{mn}--{mx}")
+            else:
+                n_cells.append("--")
+        lines += [r"\midrule",
+                  r"\textit{n plantas} & " + " & ".join(n_cells) + r" \\",
+                  r"\bottomrule", r"\end{tabular}"]
+        _write_tex(TAB_DIR / fname, "\n".join(lines))
 
 
 def tab_probabilistico(df: pd.DataFrame):

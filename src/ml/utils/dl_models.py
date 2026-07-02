@@ -128,6 +128,25 @@ def _build(spec, hidden: int, lr: float, max_steps: int, batch_size: int,
     )
 
 
+def normalize_target(df: pd.DataFrame) -> pd.DataFrame:
+    """Target adimensional para DL: y_norm = y / capacidad instalada.
+
+    Pone todas las plantas en [0, 1] para que el modelo global aprenda una
+    función de FORMA universal (cómo juegan radiación/temperatura/hora) en
+    lugar de la escala de cada sitio — causa raíz del bajo desempeño DL
+    medido en la corrida half pre-normalización (LSTM 116% vs XGB 86%).
+
+    CERO LEAKAGE: la capacidad es metadata estática del maestro de
+    instalaciones (no deriva de y). Las predicciones se des-normalizan
+    multiplicando por la misma constante en test (los cuantiles de MQLoss
+    son equivariantes a escala).
+    """
+    df = df.copy()
+    cap = df['potencia_neta_mw'].clip(lower=1e-6)
+    df['y'] = df['y'] / cap
+    return df
+
+
 def _compute_max_steps(n_windows: int, batch_size: int, windows_batch: int,
                        epochs: int, cap: int) -> int:
     """Steps con la definición CORRECTA de época.
@@ -179,6 +198,7 @@ def run_dl_train(model_name: str, train_df: pd.DataFrame, strategy: str = "toy",
     params = json.loads(params_path.read_text()) if params_path.exists() else {}
 
     train_df, batch_size, windows_batch, epochs, cap, patience = _strategy_subset(train_df, strategy)
+    train_df = normalize_target(train_df)
     max_steps = 10 if strategy == 'toy' else _compute_max_steps(
         len(train_df), batch_size, windows_batch, epochs, cap)
     # Early stopping requiere ventana de validacion por serie
@@ -248,8 +268,11 @@ def run_dl_tune(model_name: str, train_df: pd.DataFrame, strategy: str = "toy"):
     plantas_tune = train_subset['unique_id'].unique().tolist()[:3]
     train_subset = train_subset[train_subset['unique_id'].isin(plantas_tune)].copy()
     val_subset = val_subset[val_subset['unique_id'].isin(plantas_tune)].copy()
+    # Mismo espacio normalizado que el train final (RMSE de ranking adimensional)
+    train_subset = normalize_target(train_subset)
+    val_subset = normalize_target(val_subset)
 
-    n_trials = 2 if strategy == "toy" else 3
+    n_trials = 2 if strategy == "toy" else 5
     batch_size = 16
     # Trials cortos con la formula corregida: suficiente para RANKEAR configs,
     # no para converger (el train final usa el presupuesto completo).
