@@ -16,6 +16,7 @@ from neuralforecast import NeuralForecast
 from src.ml.utils.metrics import calculate_metrics
 from src.ml.utils.idempotency import mark_run_completed
 from src.ml.utils.eval_window import eval_window_variants
+from src.ml.utils.physics import night_mask
 from src.ml.visualize import plot_forecast_rollout
 
 HIST_HOURS = 168          # ventana de contexto (7 días)
@@ -100,16 +101,8 @@ def synthetic_context(grid_hist: pd.DataFrame, regional_pr: float) -> pd.DataFra
     return hist
 
 
-# Noche astronómica profunda en Chile continental (UTC-3/-4): sin producción
-# solar posible en todo el año. Complementa el umbral de radiación, que puede
-# no activarse cuando la radiación viene interpolada sobre huecos largos
-# (piso nocturno residual observado en la corrida half pre-normalización).
-DEEP_NIGHT_HOURS = {23, 0, 1, 2, 3, 4}
-
-
 def _apply_physics(preds: pd.DataFrame, futr: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
-    night = (futr['radiacion-global-instantanea'].values < 5)
-    night = night | futr['ds'].dt.hour.isin(DEEP_NIGHT_HOURS).to_numpy()
+    night = night_mask(futr)
     for col in cols:
         if col in preds.columns:
             preds.loc[night, col] = 0.0

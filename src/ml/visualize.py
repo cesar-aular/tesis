@@ -177,9 +177,13 @@ def generate_global_metrics_report(strategy: str = "toy"):
                 "Planta": planta,
                 "RMSE": metrics.get("RMSE", 0),
                 "MAE": metrics.get("MAE", 0),
+                "MBE": metrics.get("MBE"),
                 "sMAPE": metrics.get("sMAPE", 0),
+                "MAPE": metrics.get("MAPE"),
+                "WMAPE": metrics.get("WMAPE"),
                 "rRMSE": metrics.get("rRMSE", 0),
-                # Metricas probabilisticas (solo modelos DL con MQLoss level=[90])
+                "R2": metrics.get("R2"),
+                # Metricas probabilisticas (DL MQLoss level=[90] y XGB cuantilico)
                 "Coverage_90": metrics.get("Coverage_90"),
                 "Pinball_P05": metrics.get("Pinball_P05"),
                 "Pinball_P95": metrics.get("Pinball_P95"),

@@ -160,23 +160,10 @@ def run_ml_pipeline(strategy: str = "toy", force: bool = False):
                     test_mod.run_test(test_dl, silver_dl, results_dir, macrozona,
                                       estacion, planta, strategy, regional_pr=pr_by_window)
                 except Exception as e:
-                    if "NaN" in str(e):
-                        # Divergencia numerica fp16 (medida en NHITS/TFT para
-                        # ciertas plantas): un reintento en fp32 la resuelve.
-                        print(f"[RETRY] {model_name.upper()} divergio (NaN) para "
-                              f"{planta}: reintentando en fp32...")
-                        try:
-                            train_mod.run_train(train_dl, strategy, force_fp32=True)
-                            test_mod.run_test(test_dl, silver_dl, results_dir, macrozona,
-                                              estacion, planta, strategy,
-                                              regional_pr=pr_by_window)
-                        except Exception as e2:
-                            print(f"[ERROR] {model_name.upper()} (retry fp32) fallo "
-                                  f"para {planta}: {e2}. Continuando.")
-                    else:
-                        # Un modelo fallido no debe matar una corrida de horas.
-                        # Sin marker de completitud -> la idempotencia lo reintenta.
-                        print(f"[ERROR] {model_name.upper()} fallo para {planta}: {e}. Continuando.")
+                    # Un modelo fallido no debe matar una corrida de horas.
+                    # Sin marker de completitud -> la idempotencia lo reintenta.
+                    # (El retry fp32 anti-NaN se eliminó: todo entrena en fp32.)
+                    print(f"[ERROR] {model_name.upper()} fallo para {planta}: {e}. Continuando.")
                 gc.collect()
                 import torch
                 if torch.cuda.is_available():

@@ -1,16 +1,21 @@
-"""Silenciador central de ruido de librerías.
+"""Configuración de arranque de librerías ML (orden de imports + verbosidad).
 
-No cambia NINGÚN comportamiento de los modelos — solo la verbosidad:
-- PyTorch Lightning: banners (GPU available, Seed set, LOCAL_RANK), warnings de
-  scheduler/dataloader y resúmenes de módulos.
-- Optuna: logs INFO por trial (el resumen del TUNE ya lo imprime dl_models).
-- pandas/sklearn: FutureWarnings repetitivos que no podemos accionar aquí.
+POLÍTICA DE WARNINGS (decisión de César, 2026-07-02): los warnings se
+RESUELVEN en su origen (pasando los parámetros que la librería pide o
+corrigiendo el uso), no se ocultan. Este módulo NO contiene
+warnings.filterwarnings — si aparece un warning nuevo, es accionable:
+arreglarlo donde se genera.
 
-Llamar silence_noise() al inicio de cualquier entrypoint de ML.
+Lo que sí hace:
+1. Orden de carga anti-segfault (Windows DLL hell): pyarrow debe cargar sus
+   DLLs antes que torch/lightning, o el import perezoso de pyarrow.dataset
+   dentro de read_parquet revienta el proceso (exit 139).
+2. Niveles de LOGGING (verbosidad de INFO/banners, no warnings): Lightning
+   anuncia GPU/seeds/ranks por cada fit (~50x por corrida LOPO) y Optuna
+   loguea cada trial; se elevan a WARNING/ERROR — sus warnings reales siguen
+   visibles.
 """
 import logging
-import os
-import warnings
 
 
 def silence_noise():
@@ -31,31 +36,16 @@ def silence_noise():
     except ImportError:
         pass
 
-    # --- Lightning / Fabric: solo errores (mata banners y PossibleUserWarning) ---
+    # --- Lightning / Fabric: banners INFO fuera; warnings reales siguen ---
     for name in ("pytorch_lightning", "lightning.pytorch", "lightning_fabric",
                  "lightning_fabric.utilities.seed",
                  "pytorch_lightning.utilities.rank_zero",
                  "pytorch_lightning.accelerators.cuda", "lightning"):
-        logging.getLogger(name).setLevel(logging.ERROR)
+        logging.getLogger(name).setLevel(logging.WARNING)
 
-    # --- Optuna: sin INFO por trial ---
+    # --- Optuna: sin INFO por trial (el resumen del TUNE lo imprime dl_models) ---
     try:
         import optuna
         optuna.logging.set_verbosity(optuna.logging.WARNING)
     except ImportError:
         pass
-
-    # --- Warnings de librerías que no podemos accionar sin pelear con NF ---
-    warnings.filterwarnings("ignore", category=UserWarning, module=r"pytorch_lightning.*")
-    warnings.filterwarnings("ignore", category=UserWarning, module=r"lightning.*")
-    warnings.filterwarnings("ignore", category=UserWarning, module=r"torch.*")
-    warnings.filterwarnings("ignore", category=FutureWarning, module=r"neuralforecast.*")
-    warnings.filterwarnings("ignore", category=FutureWarning, module=r"pandas.*")
-    warnings.filterwarnings("ignore", category=FutureWarning, module=r"sklearn.*")
-    # lr_scheduler.step() before optimizer.step(): interno de Lightning+AMP
-    warnings.filterwarnings("ignore", message=r".*lr_scheduler\.step.*")
-    # val_check_steps > max_steps en trials cortos: esperado
-    warnings.filterwarnings("ignore", message=r".*val_check_steps is greater than max_steps.*")
-
-    # Que los DataLoader workers hereden el silencio (Windows spawn)
-    os.environ.setdefault("PYTHONWARNINGS", "ignore::UserWarning,ignore::FutureWarning")

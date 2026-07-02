@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import xgboost as xgb
 import joblib
@@ -8,6 +9,9 @@ from src.ml.utils.features import generate_lags
 from src.ml.utils.eval_window import eval_window_variants, WINDOW_HOURS
 
 LAGS = [24, 168]
+# Regresión cuantílica multi-salida (xgboost >= 2.0): P5 / P50 / P95 en un
+# solo modelo -> intervalos de 90% comparables 1:1 con MQLoss(level=[90]) DL.
+QUANTILES = np.array([0.05, 0.5, 0.95])
 
 
 def run_train(silver_df: pd.DataFrame, planta: str, strategy: str = "toy"):
@@ -56,6 +60,8 @@ def run_train(silver_df: pd.DataFrame, planta: str, strategy: str = "toy"):
     params['enable_categorical'] = True
     params['tree_method'] = 'hist'
     params['n_jobs'] = -1
+    params['objective'] = 'reg:quantileerror'
+    params['quantile_alpha'] = QUANTILES
 
     X_train = train_df.drop(columns=['y', 'ds', 'unique_id'])
     y_train = train_df['y']
@@ -69,5 +75,8 @@ def run_train(silver_df: pd.DataFrame, planta: str, strategy: str = "toy"):
         model = xgb.XGBRegressor(**params, random_state=42)
         model.fit(X_train, y_train)
 
+    # Inferencia sobre DataFrames en RAM: alinear device evita el warning
+    # "Falling back to prediction using DMatrix" (mismatch GPU/CPU)
+    model.set_params(device='cpu')
     joblib.dump(model, models_dir / f"xgb_local_{planta}.joblib")
     print(f"[XGB Local] Entrenamiento finalizado para {planta} ({len(train_df)} filas, lags={LAGS}).")

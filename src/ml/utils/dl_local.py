@@ -85,16 +85,13 @@ def run_local_dl(model_name: str, test_df: pd.DataFrame, results_dir: Path,
     patience = -1 if strategy == 'toy' else 5
     val_size = 0 if patience < 0 else 168
 
-    # SIEMPRE fp32: una serie única con robust scaler degenerado (noches en 0)
-    # desborda fp16 (medido: NHITS local divergió a NaN en 12/47 plantas; LSTM
-    # local en fp32: 0 fallas). A <=300 steps el ahorro de fp16 es irrelevante.
     model_obj = _build(spec,
                        hidden=params.get('hidden_size', 64),
                        lr=params.get('learning_rate', 1e-3),
                        max_steps=max_steps, batch_size=batch_size,
                        windows_batch_size=windows_batch,
                        input_size=params.get('input_size', 168),
-                       early_stop_patience=patience, force_fp32=True)
+                       early_stop_patience=patience)
     nf = NeuralForecast(models=[model_obj], freq='h')
 
     static_df = None

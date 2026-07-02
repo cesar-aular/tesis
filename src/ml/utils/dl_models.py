@@ -52,13 +52,15 @@ FUTR_EXOG = ['sin_hour', 'cos_hour', 'sin_month', 'cos_month',
 # (el pronóstico meteorológico day-ahead es información futura legítima).
 FUTR_ONLY_EXOG = HIST_EXOG + FUTR_EXOG
 
+# PRECISIÓN: fp32 completo en todos los modelos (decisión de diseño).
+# fp16-mixed divergió a NaN a escala half en LSTM/Informer (siempre) y en
+# NHITS/TFT para plantas puntuales; la corrección numérica prima sobre la
+# velocidad (~1.5-2x más lento, aceptado).
 MODEL_SPECS = {
     "lstm": {
         "cls": LSTM, "label": "LSTM",
         "arch": lambda h: {"encoder_hidden_size": h},
         "exog": "full", "hidden_choices": [32, 64, 128],
-        # Los RNN divergen (loss NaN) en fp16 aun con AMP; LSTM entrena en fp32
-        "fp32": True,
     },
     "nhits": {
         "cls": NHITS, "label": "NHITS",
@@ -74,9 +76,6 @@ MODEL_SPECS = {
         "cls": Informer, "label": "Informer",
         "arch": lambda h: {"hidden_size": h},
         "exog": "futr_only", "hidden_choices": [32, 64, 128],
-        # La atencion prob-sparse desborda fp16 con outliers del robust scaler
-        # (diverge a NaN a escala half); se mantiene en fp32
-        "fp32": True,
     },
 }
 
@@ -94,21 +93,17 @@ def _static_df(df: pd.DataFrame, spec):
     return df[['unique_id'] + STAT_EXOG].drop_duplicates('unique_id')
 
 
-def _trainer_kwargs(force_fp32: bool = False):
-    """Config Lightning para velocidad: fp16 en GPU, sin logger ni progress bar."""
-    kw = {"logger": False, "enable_progress_bar": False, "enable_checkpointing": False,
-          "enable_model_summary": False,  # sin tabla de modulos por cada fit
-          "gradient_clip_val": 1.0}  # estabilidad numerica, costo ~0
-    if torch.cuda.is_available() and not force_fp32:
-        kw["precision"] = "16-mixed"  # tensor cores Turing: ~1.5-2x mas rapido
-    return kw
+def _trainer_kwargs():
+    """Config Lightning: fp32 completo (ver nota en MODEL_SPECS), sin logger,
+    checkpoints ni progress bar (evita IO y lightning_logs/)."""
+    return {"logger": False, "enable_progress_bar": False, "enable_checkpointing": False,
+            "enable_model_summary": False,  # sin tabla de modulos por cada fit
+            "gradient_clip_val": 1.0}  # estabilidad numerica, costo ~0
 
 
 def _build(spec, hidden: int, lr: float, max_steps: int, batch_size: int,
            windows_batch_size: int, acc_grad: int = 1, input_size: int = 168,
-           early_stop_patience: int = -1, force_fp32: bool | None = None):
-    # force_fp32=None -> decide el spec; True -> override (retry anti-NaN, locales)
-    fp32 = spec.get("fp32", False) if force_fp32 is None else force_fp32
+           early_stop_patience: int = -1):
     return spec["cls"](
         h=24,
         input_size=input_size,
@@ -120,11 +115,13 @@ def _build(spec, hidden: int, lr: float, max_steps: int, batch_size: int,
         inference_windows_batch_size=1024,
         accumulate_grad_batches=acc_grad,
         early_stop_patience_steps=early_stop_patience,
-        val_check_steps=50,
+        # val_check_steps > max_steps dispara un warning legitimo de NF:
+        # el chequeo de validacion debe caber dentro del presupuesto de steps
+        val_check_steps=max(1, min(50, max_steps)),
         loss=MQLoss(level=[90]),
         **spec["arch"](hidden),
         **_exog_kwargs(spec),
-        **_trainer_kwargs(force_fp32=fp32),
+        **_trainer_kwargs(),
     )
 
 
@@ -174,20 +171,22 @@ def _strategy_subset(train_df: pd.DataFrame, strategy: str):
     """Subsetting y presupuesto de cómputo por estrategia.
 
     Devuelve (df, batch_size, windows_batch, épocas, tope_steps, patience).
-    fp16 libera VRAM -> batches grandes sin acumulación de gradiente.
+    Presupuesto fp32 (RTX 2060, 6GB): batch 16x512 = 8,192 ventanas por step
+    (la mitad del presupuesto fp16 anterior, activaciones el doble de anchas);
+    más épocas y patience amplio — corrección sobre velocidad, decisión de
+    diseño documentada.
     """
     if strategy == 'toy':
         plantas = train_df['unique_id'].unique().tolist()[:2]
         return train_df[train_df['unique_id'].isin(plantas)].copy(), 8, 256, 1, 10, -1
     if strategy == 'half':
         min_date = train_df['ds'].max() - pd.DateOffset(years=1)
-        return train_df[train_df['ds'] >= min_date].copy(), 32, 512, 6, 900, 5
+        return train_df[train_df['ds'] >= min_date].copy(), 16, 512, 10, 1200, 7
     min_date = train_df['ds'].max() - pd.DateOffset(years=2)
-    return train_df[train_df['ds'] >= min_date].copy(), 32, 512, 8, 1500, 5
+    return train_df[train_df['ds'] >= min_date].copy(), 16, 512, 12, 2000, 7
 
 
-def run_dl_train(model_name: str, train_df: pd.DataFrame, strategy: str = "toy",
-                 force_fp32: bool = False):
+def run_dl_train(model_name: str, train_df: pd.DataFrame, strategy: str = "toy"):
     spec = MODEL_SPECS[model_name]
     label = spec["label"]
     print(f"[{label}] Iniciando TRAIN global probabilistico con variables exogenas...")
@@ -204,11 +203,8 @@ def run_dl_train(model_name: str, train_df: pd.DataFrame, strategy: str = "toy",
     # Early stopping requiere ventana de validacion por serie
     val_size = 0 if patience < 0 else 168
 
-    fp32 = spec.get("fp32", False) or force_fp32
-    usa_fp16 = torch.cuda.is_available() and not fp32
     print(f"[{label}] steps={max_steps} (epocas={epochs}, batch={batch_size}x{windows_batch}, "
-          f"early_stop={'off' if patience < 0 else f'patience={patience}'}, "
-          f"fp16={'on' if usa_fp16 else 'off'})")
+          f"early_stop={'off' if patience < 0 else f'patience={patience}'}, precision=fp32)")
 
     model_obj = _build(spec,
                        hidden=params.get('hidden_size', 64),
@@ -216,7 +212,7 @@ def run_dl_train(model_name: str, train_df: pd.DataFrame, strategy: str = "toy",
                        max_steps=max_steps, batch_size=batch_size,
                        windows_batch_size=windows_batch,
                        input_size=params.get('input_size', 168),
-                       early_stop_patience=patience, force_fp32=fp32)
+                       early_stop_patience=patience)
     nf = NeuralForecast(models=[model_obj], freq='h')
     static_df = _static_df(train_df, spec)
 
@@ -228,7 +224,7 @@ def run_dl_train(model_name: str, train_df: pd.DataFrame, strategy: str = "toy",
         _cleanup(nf, model_obj)
         model_obj = _build(spec, hidden=32, lr=1e-3, max_steps=min(300, max_steps),
                            batch_size=8, windows_batch_size=128, acc_grad=4,
-                           early_stop_patience=patience, force_fp32=fp32)
+                           early_stop_patience=patience)
         nf = NeuralForecast(models=[model_obj], freq='h')
         nf.fit(df=train_df, static_df=static_df, val_size=val_size)
 
@@ -289,7 +285,12 @@ def run_dl_tune(model_name: str, train_df: pd.DataFrame, strategy: str = "toy"):
                                batch_size=batch_size, windows_batch_size=256)
             nf = NeuralForecast(models=[model_obj], freq='h')
             nf.fit(df=train_subset, static_df=static_df)
-            val_preds = nf.predict(futr_df=val_subset)
+            # futr_df exacto: h=24 -> primeras 24h por planta (pasar la ventana
+            # completa de 7 dias dispara "Dropped N unused rows" en NF)
+            futr_val = (val_subset.sort_values(['unique_id', 'ds'])
+                        .groupby('unique_id', observed=True).head(24)
+                        .drop(columns=['y']))
+            val_preds = nf.predict(futr_df=futr_val)
 
             merged = val_preds.reset_index().merge(
                 val_subset[['unique_id', 'ds', 'y']], on=['unique_id', 'ds'], how='inner')

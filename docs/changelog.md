@@ -1,5 +1,35 @@
 # Changelog
 
+## [2026-07-02] - Rigor del benchmark: XGB cuantílico, rollout justo, fp32, métricas ampliadas
+- **XGB cuantílico (local y global)**: `reg:quantileerror` con alpha=[.05,.5,.95]
+  -> P5/P50/P95 en un solo modelo, reparación de cruces de cuantiles, bandas
+  `lo-90/hi-90` idénticas a MQLoss(level=[90]) -> **Coverage_90 y Pinball ahora
+  existen para los 8 modelos** (pedido de César).
+- **🔴 Teacher forcing eliminado (xgb_local rollout)**: los lags de los días
+  2-7 usaban la generación REAL de la propia ventana de evaluación (siete
+  day-ahead con realimentación perfecta, no un pronóstico semanal). Ahora es
+  autorregresivo: realimenta la P50 predicha, igual que el roll-out DL.
+  Medido en toy: day1 32.7% -> rollout 70.7% (la degradación ahora es visible
+  y honesta). lag_168 sigue apuntando al contexto real (legítimo local).
+- **fp32 completo** (decisión: corrección > velocidad): eliminado `16-mixed`,
+  los flags por spec y el retry-NaN del orquestador (parche del síntoma).
+  Presupuesto reajustado: batch 16x512, épocas 10 (half) / 12 (total),
+  patience 7, topes 1200/2000. Corrida half estimada ~10-16h.
+- **Warnings resueltos EN ORIGEN, no ocultados** (política nueva): quiet.py ya
+  no tiene ningún filterwarnings (solo orden DLL anti-segfault + niveles de
+  logging INFO). Corregidos: device GPU/CPU alineado post-fit en XGB
+  ("Falling back to prediction"), `val_check_steps` acotado al presupuesto de
+  steps, futr_df de tuning exacto (24h/planta; "Dropped N unused rows").
+  Toy completo: 0 warnings.
+- **Métricas ampliadas** (`calculate_metrics`): MBE (sesgo con signo), MAPE
+  solo sobre horas productivas (y>0; en cero real el porcentaje es indefinido),
+  WMAPE (pondera por energía, robusta a intermitencia), R² (NaN sin varianza).
+  Consolidado con las columnas nuevas. Tests con valores conocidos (20 verdes).
+- **Complejidad vs error**: tab_params.tex + fig_complejidad.png — DL: pesos
+  entrenables (torch); XGB: nodos totales del ensamble (splits+hojas).
+- **Física compartida**: `utils/physics.py` (umbral radiación + noche
+  astronómica 23-04h) usada por XGB y DL por igual.
+
 ## [2026-07-02] - Optimización del entrenamiento DL (decisiones de César)
 - **Decisiones**: mantener LOPO por planta (máxima base estadística; se descartó
   el LOPO agrupado 5-fold); estructurar la evaluación como zero-shot POR

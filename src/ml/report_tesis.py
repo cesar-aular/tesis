@@ -456,7 +456,8 @@ def tab_dataset():
 
 def tab_hparams(strategy: str):
     rows = []
-    fp32 = {"lstm": "fp32", "nhits": "fp16", "tft": "fp16", "informer": "fp32"}
+    # Decisión de diseño: precisión completa en todas las arquitecturas
+    fp32 = {"lstm": "fp32", "nhits": "fp32", "tft": "fp32", "informer": "fp32"}
     hidden_name = {"lstm": "encoder\\_hidden\\_size", "nhits": "mlp\\_units",
                    "tft": "hidden\\_size", "informer": "hidden\\_size"}
     for m in ("lstm", "nhits", "tft", "informer"):
@@ -560,6 +561,88 @@ def tab_probabilistico(df: pd.DataFrame):
     _write_tex(TAB_DIR / "tab_probabilistico.tex", "\n".join(lines))
 
 
+def _count_params(strategy: str) -> dict:
+    """Número de parámetros por modelo.
+
+    - DL: parámetros entrenables de torch, reconstruyendo la arquitectura con
+      los hiperparámetros óptimos cacheados (sin entrenar). Los locales
+      comparten arquitectura con su global (reusan sus hiperparámetros).
+    - XGB: nodos totales del ensamble (splits + hojas de todos los árboles y
+      cuantiles) — la medida de complejidad análoga en modelos de árboles.
+    """
+    import joblib
+    from src.ml.utils.dl_models import MODEL_SPECS, _build
+
+    counts = {}
+    for m, spec in MODEL_SPECS.items():
+        p = Path(f"models/{strategy}/{m}/best_params.json")
+        params = json.loads(p.read_text()) if p.exists() else {}
+        try:
+            obj = _build(spec, hidden=params.get("hidden_size", 64),
+                         lr=1e-3, max_steps=1, batch_size=1,
+                         windows_batch_size=1,
+                         input_size=params.get("input_size", 168))
+            n = int(sum(t.numel() for t in obj.parameters()))
+            counts[m.upper()] = n
+            counts[f"{m.upper()}_LOCAL"] = n  # misma arquitectura/hparams
+        except Exception as e:
+            print(f"[Tesis] No se pudo contar parámetros de {m}: {e}")
+
+    def _xgb_nodes(path: Path):
+        model = joblib.load(path)
+        return len(model.get_booster().trees_to_dataframe())
+
+    gpath = Path("models/xgb_global/xgb_global_model.joblib")
+    if gpath.exists():
+        counts["XGB_GLOBAL"] = _xgb_nodes(gpath)
+    locales = sorted(Path("models/xgb_local").glob("xgb_local_*.joblib"))
+    if locales:
+        sample = [_xgb_nodes(p) for p in locales[:10]]  # muestra representativa
+        counts["XGB_LOCAL"] = int(np.median(sample))
+    return counts
+
+
+def tab_params(df: pd.DataFrame, strategy: str):
+    """Complejidad vs desempeño: #parámetros y rRMSE mediano por modelo."""
+    counts = _count_params(strategy)
+    if not counts:
+        return
+    roll = df[(df.Horizon == "7-Day Rollout") & (df.Window == "Raw")]
+    med = roll.groupby("Model")["rRMSE"].median()
+
+    lines = [r"\begin{tabular}{lrrc}", r"\toprule",
+             r"Modelo & Parámetros & rRMSE roll-out (\%) & Tipo de parámetro \\",
+             r"\midrule"]
+    tipo = {"XGB": "nodos de árbol", "DL": "pesos entrenables"}
+    for m in MODEL_ORDER:
+        if m not in counts:
+            continue
+        t = tipo["XGB"] if m.startswith("XGB") else tipo["DL"]
+        lines.append(f"{MODEL_LABEL[m]} & {counts[m]:,} & "
+                     f"{_fmt(med.get(m))} & {t} \\\\".replace(",", "."))
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    _write_tex(TAB_DIR / "tab_params.tex", "\n".join(lines))
+
+    # Scatter complejidad (log) vs error
+    fig, ax = plt.subplots(figsize=(9, 5))
+    for m in MODEL_ORDER:
+        if m not in counts or m not in med.index or pd.isna(med[m]):
+            continue
+        color = C_LOCAL if m in LOCAL_MODELS else C_GLOBAL
+        ax.scatter(counts[m], med[m], s=90, color=color, zorder=3)
+        ax.annotate(MODEL_LABEL[m], (counts[m], med[m]),
+                    textcoords="offset points", xytext=(8, 6), fontsize=8.5)
+    ax.set_xscale("log")
+    ax.set_xlabel("Número de parámetros (escala log)")
+    ax.set_ylabel("rRMSE mediano (%) — roll-out 7 días, ventana Raw")
+    ax.set_title("Complejidad del modelo vs. error de pronóstico Cold-Start")
+    ax.grid(alpha=0.3)
+    ax.scatter([], [], color=C_GLOBAL, label="paradigma global")
+    ax.scatter([], [], color=C_LOCAL, label="paradigma local")
+    ax.legend()
+    _save_fig(fig, "fig_complejidad.png")
+
+
 def tab_anexo_plantas(df: pd.DataFrame):
     """Anexo: rRMSE rollout7d por planta (ventana Raw) para modelos clave."""
     keep = ["XGB_LOCAL", "XGB_GLOBAL", "LSTM", "TFT"]
@@ -627,6 +710,7 @@ def main(strategy: str = "half"):
     tab_resultados(df)
     tab_estacional(df)
     tab_probabilistico(df)
+    tab_params(df, strategy)
     tab_anexo_plantas(df)
     tab_anexo_imputacion()
     print("[Tesis] Artefactos generados en latex-tesis/{figuras,tablas}.")

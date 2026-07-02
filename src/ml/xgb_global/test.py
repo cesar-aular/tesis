@@ -1,3 +1,11 @@
+"""Evaluación del modelo XGB GLOBAL (Cross-Site) sobre las ventanas Cold-Start.
+
+Sin lags autorregresivos: el modelo global mapea exógenas (clima + calendario
++ geografía + prior regional) a generación — no observa la serie de la planta
+objetivo ni en entrenamiento (LOPO) ni en inferencia. day1 y rollout7d usan la
+misma predicción exógena-condicionada (no hay realimentación que hacer).
+Intervalos: regresión cuantílica (P5/P50/P95) -> Coverage_90 y Pinball.
+"""
 import pandas as pd
 from pathlib import Path
 import joblib
@@ -5,6 +13,7 @@ import joblib
 from src.ml.utils.metrics import calculate_metrics
 from src.ml.utils.idempotency import mark_run_completed
 from src.ml.utils.eval_window import eval_window_variants, WINDOW_HOURS
+from src.ml.utils.physics import night_mask
 from src.ml.visualize import plot_forecast_rollout
 
 
@@ -26,20 +35,28 @@ def run_test(test_df: pd.DataFrame, results_dir: Path, macrozona: str, estacion:
 
     def _evaluate(window: pd.DataFrame, horizon: str):
         X = window.drop(columns=['unique_id', 'ds', 'y'])
-        preds = model.predict(X)
+        q = model.predict(X)
+        lo, med, hi = q[:, 0].copy(), q[:, 1].copy(), q[:, 2].copy()
+        # Reparar cruces de cuantiles (posibles en quantile regression)
+        lo = pd.Series(lo).combine(pd.Series(med), min).to_numpy()
+        hi = pd.Series(hi).combine(pd.Series(med), max).to_numpy()
 
-        night = window['radiacion-global-instantanea'].values < 5
-        preds[night] = 0.0
-        preds = preds.clip(min=0)
+        night = night_mask(window)
+        for arr in (lo, med, hi):
+            arr[night] = 0.0
+        lo, med, hi = lo.clip(min=0), med.clip(min=0), hi.clip(min=0)
 
         out = window[['unique_id', 'ds', 'y']].copy()
-        out['y_pred'] = preds
+        out['y_pred'] = med
+        out['y_pred_lo_90'] = lo
+        out['y_pred_hi_90'] = hi
 
         out_dir = results_dir / "xgb_global" / macrozona / estacion / planta / horizon
         out_dir.mkdir(parents=True, exist_ok=True)
         out.to_parquet(out_dir / "preds.parquet")
 
-        metrics = calculate_metrics(out['y'], out['y_pred'])
+        metrics = calculate_metrics(out['y'], out['y_pred'],
+                                    y_lo=out['y_pred_lo_90'], y_hi=out['y_pred_hi_90'])
         mark_run_completed(out_dir, f"xgb_global_{horizon}", planta, estacion, metrics)
         plot_forecast_rollout(df_real=out, df_pred=out,
                               output_path=out_dir / "forecast_plot.png",
