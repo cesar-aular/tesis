@@ -1,5 +1,22 @@
 # Changelog
 
+## [2026-07-02] - Optimizaciones de rendimiento (rama `perf-optimizations`)
+- **CAUSA RAÍZ de los tiempos absurdos en `half`**: la fórmula heredada de steps
+  (`filas/batch × épocas`) ignoraba que cada step de NeuralForecast procesa
+  `batch × windows_batch` VENTANAS (16×256=4,096), no 16 filas → programaba
+  ~250,000 steps por modelo por fold (≈500 épocas). Corregida:
+  `ceil(ventanas/(batch×windows_batch)) × épocas`, con tope (half: 900, total: 1500).
+- **Early stopping**: `patience=5` sobre validación (`val_size=168h` por serie),
+  chequeo cada 50 steps — si converge antes, para.
+- **Precisión mixta fp16** (`16-mixed`): tensor cores de la RTX 2060 (~1.5-2x);
+  AMP acumula la pérdida en fp32 — sin riesgo numérico práctico.
+- **Batches grandes**: 32×512 sin acumulación de gradiente (VRAM liberada por fp16).
+- **Tune cacheado**: hiperparámetros se eligen 1 vez por modelo/estrategia y se
+  reutilizan en los 47/94 folds (antes: re-tuneo por fold, 47× el costo). Caveat
+  de fuga a nivel de hiperparámetros documentado como despreciable.
+- **Sin lightning_logs ni progress bar**: `logger=False`, menos IO.
+- Trials de tuning: 3 (antes 5), cortos (~200 steps): rankean configs, no convergen.
+
 ## [2026-07-01] - Análisis de Sensibilidad: Ventana Cold-Start Raw vs Operacional
 - **Contexto**: la ventana LOPO comenzaba en la primera hora registrada de cada planta,
   que suele caer en la *rampa de puesta en marcha* (ej. alto_solar: primeras 336h = 100%

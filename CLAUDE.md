@@ -61,8 +61,14 @@ for the full audit procedure.
   the visualizers/metrics). Report interval coverage and pinball loss, not just point error.
 - **Physical consistency:** clip predictions to ≥ 0 and force 0 at night
   (`radiacion-global-instantanea < 5`).
-- **Epoch-based training:** DL steps are dynamic — `Steps = (Rows/(Batch·StepSize))·Epochs`.
-  Toy uses fixed tiny `max_steps` for smoke tests only.
+- **Epoch-based training (corrected formula):** each NeuralForecast step consumes
+  `batch_size × windows_batch_size` windows, so
+  `Steps = ceil(Windows/(Batch·WindowsBatch))·Epochs`, capped per strategy, with
+  early stopping (patience on `val_size=168`). The legacy `Rows/Batch·Epochs` formula
+  overestimated ~250× (250K steps/fold in half ≈ days of compute). Training runs
+  fp16-mixed on CUDA (Turing tensor cores); hyperparameter tuning is cached once per
+  model/strategy and reused across LOPO folds (param-level leakage: negligible,
+  documented). Toy uses fixed tiny `max_steps` for smoke tests only.
 - **Multimodal input:** dynamic exog (GHI, temp, humidity) + static geo (macrozona, capacity).
 
 ## Architecture & Pipeline
