@@ -164,9 +164,16 @@ def generate_global_metrics_report(strategy: str = "toy"):
             row = {
                 "Model": base_model,
                 "Horizon": horizon,
+                # Window = estacion donde EMPIEZA la ventana de evaluacion
+                # (Raw/Operational = momento real de conexion; Verano..Primavera =
+                # sensibilidad estacional simulando el Cold-Start en esa estacion)
                 "Window": window,
                 "Macrozona": macrozona,
-                "Estacion": estacion,
+                # Estacion_Conexion = estacion del PRIMER registro de la planta
+                # (cuando ocurrio su Cold-Start real). NO es la estacion evaluada:
+                # una planta conectada en Verano tambien se evalua con ventanas
+                # de Invierno tomadas de su historia posterior.
+                "Estacion_Conexion": estacion,
                 "Planta": planta,
                 "RMSE": metrics.get("RMSE", 0),
                 "MAE": metrics.get("MAE", 0),
@@ -197,10 +204,29 @@ def generate_global_metrics_report(strategy: str = "toy"):
     visuals_dir.mkdir(parents=True, exist_ok=True)
     df_metrics.to_csv(visuals_dir / "all_metrics_summary.csv", index=False)
     
-    # Grouped RMSE barplots por Macrozona, Estacion y Ventana (sensibilidad)
+    # Sensibilidad estacional GLOBAL: rRMSE por modelo x ventana (todas las
+    # plantas; cada planta aporta ventanas de sus 4 estaciones si su historia
+    # las contiene). Esta es la vista correcta para comparar estaciones —
+    # el cruce con la estacion de conexion solo particiona la muestra.
+    df_roll = df_metrics[df_metrics["Horizon"] == "7-Day Rollout"]
+    if not df_roll.empty:
+        plt.figure(figsize=(14, 6))
+        orden = ["Raw", "Operational", "Verano", "Otoño", "Invierno", "Primavera"]
+        orden = [w for w in orden if w in df_roll["Window"].unique()]
+        sns.barplot(data=df_roll, x="Window", y="rRMSE", hue="Model",
+                    order=orden, errorbar=None, estimator="median")
+        plt.title("Sensibilidad de la ventana Cold-Start (rRMSE mediano, rollout 7d, todas las plantas)")
+        plt.ylabel("rRMSE mediano (%)")
+        plt.xlabel("Ventana de evaluacion")
+        plt.grid(axis='y', alpha=0.3)
+        plt.tight_layout()
+        plt.savefig(visuals_dir / "window_sensitivity_global.png", dpi=150)
+        plt.close()
+
+    # Grouped RMSE barplots por Macrozona, Estacion de conexion y Ventana
     for macrozona in df_metrics["Macrozona"].unique():
-        for estacion in df_metrics["Estacion"].unique():
-            df_subset = df_metrics[(df_metrics["Macrozona"] == macrozona) & (df_metrics["Estacion"] == estacion)]
+        for estacion in df_metrics["Estacion_Conexion"].unique():
+            df_subset = df_metrics[(df_metrics["Macrozona"] == macrozona) & (df_metrics["Estacion_Conexion"] == estacion)]
             if df_subset.empty: continue
 
             out_dir = visuals_dir / macrozona / estacion
@@ -211,14 +237,14 @@ def generate_global_metrics_report(strategy: str = "toy"):
                 if df_w.empty: continue
                 plt.figure(figsize=(12, 6))
                 sns.barplot(data=df_w, x="Model", y="RMSE", hue="Horizon", errorbar=None)
-                plt.title(f"Comparacion de RMSE - {macrozona} ({estacion}) [Ventana {window}]")
+                plt.title(f"Comparacion de RMSE - {macrozona} (conexion: {estacion}) [Ventana evaluada: {window}]")
                 plt.ylabel("RMSE")
                 plt.grid(axis='y', alpha=0.3)
                 plt.tight_layout()
                 plt.savefig(out_dir / f"unified_rmse_comparison_{window.lower()}.png", dpi=150)
                 plt.close()
 
-            # Export sub-csv (ambas ventanas, columna Window)
+            # Export sub-csv (todas las ventanas, columna Window)
             df_subset.to_csv(out_dir / "metrics_summary.csv", index=False)
             
     print(f"[Reporte] Graficas unificadas de RMSE y CSVs guardadas por zona y estacion en {visuals_dir}")

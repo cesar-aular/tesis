@@ -36,6 +36,7 @@ visuales/**/*.jpg
 *.sqlite3
 
 # ---- LaTeX (artefactos de compilacion TeXworks/MiKTeX) ----
+latex-tesis/tesis_check.*
 latex-tesis/*.aux
 latex-tesis/*.lof
 latex-tesis/*.lot

@@ -1,16 +1,28 @@
 \section{Repositorio del Proyecto}
-El código fuente completo del proyecto (pipelines de datos, entrenamiento, evaluación LOPO y generación de reportes), junto a su suite de pruebas automatizadas, se encuentra versionado en un repositorio Git.
+El código fuente completo del proyecto (pipelines de datos, entrenamiento, evaluación LOPO y generación de reportes), junto a su suite de pruebas automatizadas anti-fuga de información, se encuentra versionado en un repositorio Git.
 % [PENDIENTE: URL del repositorio o referencia al medio de entrega.]
 
-\section{Tablas Completas de Métricas por Planta}
-% [PENDIENTE: exportar desde results/<estrategia>/visuals/all_metrics_summary.csv
-%  las tablas completas por planta, ventana de evaluación, estación y horizonte.]
+\section{Métricas por Planta}
+La tabla siguiente reporta el rRMSE mediano (\%) del roll-out de 7 días en la ventana \textit{Raw} para las cuatro configuraciones principales, desglosado por planta evaluada en la estrategia \textit{half}. El archivo \texttt{all\_metrics\_summary.csv} del repositorio contiene el detalle completo (ocho modelos, todas las ventanas, ambos horizontes y las métricas probabilísticas).
+
+\input{tablas/tab_anexo_plantas}
 
 \section{Registro de Imputación de Variables Exógenas}
-% [PENDIENTE: resumen estadístico del log de imputación de la capa Silver
-%  (data/silver/imputation_log.csv): proporción imputada por variable y macrozona.]
+Resumen del registro de imputación de la capa Silver (\texttt{imputation\_log.csv}): horas-planta imputadas por variable meteorológica y macrozona. Cada imputación queda además señalizada al modelo mediante la variable indicadora \texttt{\_is\_imputed} correspondiente. La generación (variable objetivo) no aparece en este registro porque jamás se imputa.
+
+\begin{table}[hbt!]
+  \centering
+  \input{tablas/tab_anexo_imputacion}
+  \caption{Horas-planta imputadas en la capa Silver por variable exógena y macrozona.}
+\end{table}
 
 \section{Hallazgos de Calidad de Datos}
-% [PENDIENTE: detalle de los hallazgos documentados en el Capítulo V, Fase 0:
-%  agregación multi-unidad (PFV Jama), transiciones DST y rampas de puesta
-%  en marcha por planta.]
+Durante la construcción del corpus se documentaron los siguientes hallazgos, resueltos en la capa Bronze del pipeline:
+
+\begin{itemize}
+    \item \textbf{Agregación multi-unidad:} centrales con múltiples unidades físicas reportando bajo el mismo identificador (ej. PFV Jama: dos unidades, 51 MW combinados) se consolidaron sumando la generación por hora. Sin esta corrección, la serie subcontaba aproximadamente la mitad de la producción real de la central.
+    \item \textbf{Duplicación por reejecución:} el modo de escritura incremental de la capa Bronze podía duplicar el dataset completo en reejecuciones forzadas (factor de hasta 3,17$\times$ detectado); se corrigió limpiando las salidas previas y añadiendo deduplicación defensiva aguas abajo.
+    \item \textbf{Transiciones de horario de verano (DST):} la hora repetida del primer domingo de abril se colapsa de forma segura (en generación solar corresponde a horas nocturnas de producción nula).
+    \item \textbf{Rampas de puesta en marcha:} 15 de las 47 plantas evaluadas presentan períodos iniciales de generación nula superiores a 24 horas (hasta semanas), motivando el análisis de sensibilidad Raw/Operacional del Capítulo V.
+    \item \textbf{Sentinelas y fechas fuera de rango:} los registros meteorológicos con valor $-9999$ se descartan y las fechas se restringen al período 2014--2024 antes del parseo.
+\end{itemize}

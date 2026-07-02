@@ -1,30 +1,24 @@
 \section{Conclusiones y Trabajo Futuro}
 
-% [PENDIENTE: párrafo introductorio breve del capítulo una vez consolidados
-%  los resultados de la corrida HALF/TOTAL.]
+Este capítulo cierra la investigación contrastando los resultados obtenidos con los objetivos y la hipótesis planteados en el Capítulo I, y proyecta las líneas de continuidad que la evidencia empírica sugiere.
 
 \subsubsection{Conclusiones}
-% [PENDIENTE: redactar en tercera persona a partir de los resultados de la
-%  Fase 3 (Capítulo V). Estructura sugerida alineada con la rúbrica
-%  (relación resultados-metodología-objetivos):
-%   1. Cumplimiento del Objetivo Específico 1 (arquitectura Transformer
-%      adaptada al entrenamiento multi-serie con exógenas multimodales).
-%   2. Cumplimiento del Objetivo Específico 2 (evaluación Cold-Start LOPO
-%      global vs. baselines locales) y veredicto sobre la HIPÓTESIS del
-%      Capítulo I.
-%   3. Cumplimiento del Objetivo Específico 3 (integración multimodal:
-%      exógenas dinámicas + estáticas geográficas).
-%   4. Hallazgos metodológicos relevantes: rampas de puesta en marcha y
-%      sensibilidad de la ventana de evaluación; efecto estacional
-%      (dificultad invernal); integridad del target sin imputación.]
+
+En relación con el \textbf{Objetivo Específico 1} (adaptación de una arquitectura Transformer al entrenamiento multi-serie), se implementó y sintonizó un conjunto de arquitecturas globales de última generación (TFT, Informer, N-HiTS y LSTM) sobre el ecosistema NeuralForecast, entrenadas simultáneamente sobre las series de hasta 93 plantas mediante un pipeline reproducible con validación automatizada. La adaptación exigió resolver desafíos de ingeniería no triviales documentados en el Capítulo V: estabilidad numérica en precisión mixta, presupuesto de cómputo por época corregido y gestión de memoria en GPU de gama media, demostrando la viabilidad técnica del enfoque con recursos computacionales accesibles.
+
+En relación con el \textbf{Objetivo Específico 2} (evaluación del modelo global durante la puesta en marcha frente a modelos locales), la metodología \textit{Leave-One-Plant-Out} sobre 47 plantas objetivo entregó un veredicto matizado de la hipótesis. A igualdad de arquitectura profunda, la transferencia \textit{Cross-Site} supera al entrenamiento estrictamente local en el horizonte semanal (LSTM global 115,8\,\% frente a LSTM local 132,5\,\% de rRMSE mediano), pese a operar con contexto 100\,\% sintético. Sin embargo, frente al baseline local más fuerte —XGBoost con un año de historia propia y rezagos autorregresivos (68,7\,\%)— el mejor modelo global (XGBoost global, 86,2\,\%) no alcanza la paridad. La hipótesis se sostiene, por tanto, en su dominio de validez genuino: el régimen de escasez de datos extrema, donde el paradigma local simplemente no puede existir y el modelo global entrega pronósticos coherentes desde la primera hora de conexión.
+
+En relación con el \textbf{Objetivo Específico 3} (integración de datos multimodales), el pipeline consolidó exitosamente variables exógenas dinámicas (radiación, temperatura y humedad de la red CR2), características estáticas geográficas (macrozona, capacidad instalada) y atributos cíclicos deterministas, verificando mediante pruebas automatizadas que ninguna característica derivada de la generación del objetivo contaminara el entrenamiento. El prior de eficiencia regional —calculado exclusivamente sobre las plantas de entrenamiento de cada partición— demostró ser un mecanismo eficaz para sembrar el contexto sintético sin fuga de información.
+
+Del desarrollo emergen además cuatro hallazgos metodológicos transferibles. Primero, las \textbf{rampas de puesta en marcha} (semanas iniciales de generación nula) distorsionan las métricas relativas si la ventana de evaluación se define ingenuamente desde el primer registro, lo que motivó el análisis de sensibilidad Raw/Operacional. Segundo, el \textbf{invierno es sistemáticamente la estación más difícil} para el arranque en frío en todas las arquitecturas, con errores que duplican o triplican los estivales. Tercero, la \textbf{calibración probabilística no se transfiere}: los intervalos de 90\,\% de los modelos globales cubren entre el 0\,\% y el 38\,\% de las observaciones bajo contexto sintético, un aspecto crítico para el uso operativo de estas predicciones en mercados eléctricos. Cuarto, la \textbf{integridad del target} —no imputar jamás la generación ausente— resultó esencial para la honestidad de las métricas, en contraste con la práctica habitual de rellenar con ceros.
 
 \subsubsection{Trabajos Futuros}
-% [PENDIENTE: redactar fundamentado en los resultados. Candidatos ya
-%  identificados durante el desarrollo:
-%   - Ajuste fino (fine-tuning) del modelo global con los primeros días de
-%     datos reales de la planta nueva (transfer learning en dos etapas).
-%   - Incorporación de PatchTST cuando el ecosistema NeuralForecast
-%     incorpore soporte de variables exógenas para dicha arquitectura.
-%   - Extensión del prior regional de eficiencia con clustering climático
-%     más fino que la Macrozona.
-%   - Despliegue operacional (MLOps) explícitamente excluido del alcance.]
+
+Los resultados fundamentan cuatro extensiones directas:
+
+\begin{itemize}
+    \item \textbf{Ajuste fino en dos etapas:} los primeros días de datos reales de la planta nueva podrían emplearse para un \textit{fine-tuning} ligero del modelo global pre-entrenado, cerrando gradualmente la brecha con el baseline local maduro a medida que la historia propia crece. La evidencia obtenida (el paradigma local domina con un año de datos) acota el período donde esta transición aporta valor.
+    \item \textbf{Calibración de intervalos bajo transferencia:} la subcobertura severa detectada sugiere incorporar predicción conformal u otro mecanismo de recalibración post-hoc que ensanche los intervalos sintéticos hacia la variabilidad real observada en plantas análogas de la misma macrozona.
+    \item \textbf{Consistencia física independiente de sensores:} el forzamiento nocturno a cero depende de la radiación observada, vulnerable a huecos de imputación; una máscara astronómica (elevación solar calculada desde coordenadas y calendario) eliminaría el piso nocturno residual observado en los roll-outs.
+    \item \textbf{Ampliación arquitectónica y territorial:} incorporar PatchTST cuando el ecosistema NeuralForecast soporte variables exógenas para dicha arquitectura; refinar el prior regional con clustering climático más fino que la macrozona; y escalar la evaluación a las 94 plantas del corpus (estrategia \textit{total}). El despliegue operacional (MLOps) permanece explícitamente fuera del alcance, conforme a la delimitación del proyecto.
+\end{itemize}

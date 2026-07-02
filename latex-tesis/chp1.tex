@@ -59,9 +59,8 @@ Con el propósito de analizar y comparar el desempeño predictivo de modelos glo
 
 \begin{figure}[hbt!]
   \centering
-  % \includegraphics[width=0.6\textwidth]{ruta/al/mapa.png}
-  \framebox(300,200){\textit{Placeholder: Mapa de las plantas agrupadas por Macrozona}}
-  \caption{\label{fig:mapa_alcance} Distribución geográfica de las plantas fotovoltaicas pertenecientes a la muestra.}
+  \includegraphics[width=\textwidth]{figuras/fig_mapa_muestra.png}
+  \caption{\label{fig:mapa_alcance} Distribución de las plantas fotovoltaicas de la muestra por macrozona (94 instalaciones; 1.876 MW de capacidad agregada).}
 \end{figure}
 
 \subsection{Carta de Compromiso}
@@ -74,6 +73,31 @@ Para cumplir con los objetivos trazados de manera sistemática, se ha definido u
 
 \begin{figure}[hbt!]
   \centering
-  \framebox(300,200){\textit{Placeholder: Carta Gantt del Proyecto}}
+  \begin{ganttchart}[
+      hgrid, vgrid,
+      x unit=1.5cm, y unit chart=0.62cm, y unit title=0.7cm,
+      title/.append style={fill=ucmblue!15},
+      title label font=\small\bfseries,
+      bar/.append style={rounded corners=1pt},
+      bar label font=\small,
+      bar height=0.6
+    ]{1}{6}
+    \gantttitle{Semanas de ejecución}{6} \\
+    \gantttitlelist{1,...,6}{1} \\
+    \ganttbar[bar/.append style={fill=obj3}]{Procesamiento de datos multimodales}{1}{2} \\
+    \ganttbar[bar/.append style={fill=obj2}]{Entrenamiento algoritmos clásicos}{2}{3} \\
+    \ganttbar[bar/.append style={fill=obj1}]{Parametrización arquitectura Transformer}{2}{3} \\
+    \ganttbar[bar/.append style={fill=obj1}]{Entrenamiento simultáneo Cross-Site}{3}{4} \\
+    \ganttbar[bar/.append style={fill=obj2}]{Simulación Cold-Start}{4}{5} \\
+    \ganttbar[bar/.append style={fill=obj2}]{Benchmark comparativo y métricas}{5}{6} \\
+    \ganttbar[bar/.append style={fill=general}]{Redacción y entrega final}{1}{6}
+  \end{ganttchart}
+  \vspace{4pt}
+
+  {\small
+    \textcolor{obj1}{$\blacksquare$}~Obj.~1: Arq.~Transformer \quad
+    \textcolor{obj2}{$\blacksquare$}~Obj.~2: Eval.~Cold-Start \quad
+    \textcolor{obj3}{$\blacksquare$}~Obj.~3: Datos multimodales \quad
+    \textcolor{general}{$\blacksquare$}~Tareas transversales}
   \caption{\label{fig:gantt_planificacion} Planificación estructurada en 6 semanas, categorizada según los Objetivos Específicos del proyecto.}
 \end{figure}

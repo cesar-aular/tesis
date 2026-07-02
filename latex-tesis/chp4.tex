@@ -8,7 +8,7 @@ Desde la perspectiva algorítmica, el proyecto adopta la arquitectura \textit{Te
 
 \begin{figure}[hbt!]
   \centering
-  \framebox(350,200){\textit{Placeholder: Diagrama General de la Solución (Arquitectura del Proyecto)}}
+  \includegraphics[width=\textwidth]{figuras/fig_solucion.png}
   \caption{\label{fig:diagrama_solucion} Representación esquemática de la propuesta de solución predictiva.}
 \end{figure}
 
@@ -24,7 +24,7 @@ La fase fundacional del orquestador aborda el acondicionamiento integral de los 
 
 \begin{figure}[hbt!]
   \centering
-  \framebox(300,150){\textit{Placeholder: Flujograma del proceso ETL e Imputación}}
+  \includegraphics[width=\textwidth]{figuras/fig_etl_flow.png}
   \caption{\label{fig:etl_flow} Algoritmia del proceso de preparación de datos y control de calidad.}
 \end{figure}
 
@@ -37,7 +37,7 @@ El modelo \textit{Cross-Site} es entrenado exclusivamente con los años de exper
 
 \begin{figure}[hbt!]
   \centering
-  \framebox(350,180){\textit{Placeholder: Diagrama del esquema LOPO (Leave-One-Plant-Out)}}
+  \includegraphics[width=\textwidth]{figuras/fig_lopo.png}
   \caption{\label{fig:lopo_strategy} Visualización iterativa del aislamiento espacial para simulación de arranque en frío.}
 \end{figure}
 
@@ -54,15 +54,11 @@ La consolidación de estas métricas se tabulará y graficará para facilitar el
 
 \begin{figure}[hbt!]
   \centering
-  \framebox(300,200){\textit{Placeholder: Gráficos de barra comparativos y proyecciones temporales de salida}}
-  \caption{\label{fig:metrics_visual} Esquema comparativo de métricas de precisión entre arquitecturas locales y globales.}
+  \includegraphics[width=\textwidth]{figuras/fig_eval_protocolo.png}
+  \caption{\label{fig:metrics_visual} Protocolo de evaluación Cold-Start: contexto sintético, horizontes de pronóstico y ventanas del análisis de sensibilidad sobre las cuales se computan las métricas comparativas.}
 \end{figure}
 
-\begin{figure}[hbt!]
-  \centering
-  \framebox(300,200){\textit{Placeholder: Carta Gantt del Proyecto (Capítulo 4)}}
-  \caption{\label{fig:gantt_cap4} Cronograma metodológico de actividades para la ejecución de la propuesta.}
-\end{figure}
+El cronograma temporal que ordena la ejecución de estas cuatro fases corresponde a la carta Gantt de seis semanas presentada en la Figura \ref{fig:gantt_planificacion} del Capítulo I, cuyas actividades se encuentran categorizadas según el objetivo específico al que tributan.
 
 \subsection{Estudio de Factibilidad}
 
@@ -70,16 +66,16 @@ La consolidación de estas métricas se tabulará y graficará para facilitar el
 La factibilidad técnica de este proyecto está garantizada por la disponibilidad de herramientas de \textit{software} de código abierto (\textit{Open Source}) y librerías especializadas en \textit{Machine Learning} y \textit{Deep Learning}. Toda la orquestación del pipeline (ETL, entrenamiento y validación) se encuentra programada en \textit{Python}, utilizando el ecosistema \textit{Nixtla} (específicamente \textit{NeuralForecast}) para la ejecución de los algoritmos atencionales de última generación (TFT y N-HiTS), así como \textit{XGBoost} para las líneas base locales. Adicionalmente, el procesamiento matricial intensivo requerido por el paradigma \textit{Cross-Site Learning} se aborda mediante el uso de aceleración por hardware computacional (GPUs), recursos que son accesibles a través de entornos de desarrollo estándar.
 
 \subsubsection{Factibilidad operativa}
-No aplica.
+La operación del estudio es autónoma y reproducible: el pipeline completo se ejecuta desde un único punto de entrada con validación automatizada previa (gate de pruebas), control de idempotencia para reanudar corridas interrumpidas y generación automática de reportes. La extensión del análisis a nuevas plantas o períodos no requiere infraestructura ni personal adicional.
 
 \subsubsection{Factibilidad económica}
-No aplica.
+El costo marginal del proyecto es prácticamente nulo: las fuentes de datos son públicas (Coordinador Eléctrico Nacional y red climatológica CR2), la totalidad del software empleado es de código abierto y el cómputo se resuelve en hardware de consumo (una única GPU de gama media), sin requerir financiamiento externo ni servicios de nube de pago.
 
 \subsubsection{Factibilidad legal}
-No aplica.
+Los datos empleados provienen de repositorios públicos de organismos oficiales chilenos y no contienen datos personales ni información sujeta a confidencialidad. Las licencias de las librerías utilizadas (ecosistema Python de código abierto) son compatibles con el uso académico e investigativo del presente trabajo.
 
 \subsubsection{Factibilidad Social}
-No aplica.
+El proyecto no genera impactos sociales adversos. Indirectamente, la mejora del pronóstico de generación en plantas recién conectadas contribuye a la estabilidad del suministro eléctrico y reduce las barreras de entrada para nuevos actores renovables de menor escala.
 
 \subsubsection{Factibilidad Ambiental}
-No aplica.
+La investigación tributa a la descarbonización de la matriz energética al facilitar la integración temprana de nueva capacidad solar. La huella de cómputo del estudio es acotada: los entrenamientos completos se resuelven en horas sobre una única GPU, sin infraestructura de centros de datos dedicada.

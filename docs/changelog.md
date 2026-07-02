@@ -1,5 +1,40 @@
 # Changelog
 
+## [2026-07-02] - Corrida half completa + tesis con resultados reales
+- **Corrida half completada** (47 folds LOPO, 8 modelos, EXIT 0 en dos pasadas:
+  globales + locales incrementales por idempotencia). Hallazgos de la corrida:
+  - NHITS_LOCAL divergió a NaN en 12/47 plantas (fp16 sobre serie única) y
+    NHITS/TFT globales en 2 plantas → **fix**: locales DL siempre fp32 +
+    reintento automático en fp32 ante NaN en globales (commit 7ad6171).
+    Pendiente re-ejecutar los folds faltantes (decisión: otro momento).
+  - Resultados (rRMSE mediano, rollout7d operacional): XGB local 68.7% ·
+    XGB global 86.2% · LSTM 115.8% · LSTM local 132.5% · TFT 150.5% ·
+    Informer 153.2% · NHITS 163.7%. Invierno es la estación más difícil para
+    todos. Cobertura de intervalos 90% severamente subcalibrada en globales
+    (TFT 0.00, NHITS 0.01 vs ideal 0.90) — el contexto sintético comprime la
+    varianza del escalador local.
+- **PR regional por ventana estacional**: la semilla sintética de cada ventana
+  usa el PR de SU estación (antes: siempre el de puesta en marcha).
+- **Reporte clarificado**: columna `Estacion_Conexion` (estación del primer
+  registro) vs `Window` (estación donde inicia la ventana evaluada) — una
+  planta conectada en Verano también se evalúa con ventana de Invierno
+  (sensibilidad por diseño). Nuevo agregado global `window_sensitivity_global.png`.
+- **Nuevo `src/ml/report_tesis.py`**: genera 11 figuras + 8 tablas .tex desde
+  los resultados hacia `latex-tesis/{figuras,tablas}`.
+- **Tesis LaTeX completada con datos reales**: 9 placeholders reemplazados por
+  figuras generadas (mapa muestra, TFT, cross-site, solución, ETL, LOPO,
+  protocolo de evaluación, medallion, resultados); Gantt pgfgantt real en chp1
+  (el duplicado de chp4 se sustituyó por referencia cruzada — figs 4.8/4.9
+  ordenadas); chp5 Fase 3 completa (6 tablas + 3 figuras + análisis + contraste
+  de hipótesis matizado); chp6 conclusiones/trabajo futuro; anexos con métricas
+  por planta e imputación; factibilidades redactadas; resumen/abstract con
+  resultados; bibliografía sin warnings APA (@online→@misc, volume/number).
+  Compila 0 errores / 0 refs indefinidas (52 págs).
+- **Limitación documentada**: el forzamiento nocturno a cero depende de la
+  radiación CR2 (interpolada en huecos largos puede quedar ≥5 W/m² de noche)
+  → piso nocturno residual en rollouts DL; máscara astronómica propuesta como
+  trabajo futuro. Afecta a todos los modelos por igual (comparación justa).
+
 ## [2026-07-02] - Baselines DL estrictamente locales (lstm_local, nhits_local)
 - Resuelve la discrepancia con el anteproyecto (LSTM debía ser línea base LOCAL):
   nuevo `src/ml/utils/dl_local.py` entrena LSTM y N-HiTS por planta usando SOLO su

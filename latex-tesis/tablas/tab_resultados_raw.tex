@@ -1,0 +1,17 @@
+\begin{tabular}{lrrrrrrr}
+\toprule
+ & \multicolumn{3}{c}{Day 1 (24 h)} & \multicolumn{3}{c}{Roll-out 7 días} & \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Modelo & RMSE & sMAPE & rRMSE & RMSE & sMAPE & rRMSE & $n$ \\
+ & (MWh) & (\%) & (\%) & (MWh) & (\%) & (\%) & \\
+\midrule
+XGBoost local & 0.69 & 122.6 & 49.3 & 0.57 & 113.6 & 64.2 & 47 \\
+LSTM local & 0.87 & 111.3 & 112.7 & 0.94 & 120.9 & 130.2 & 47 \\
+N-HiTS local & 1.06 & 122.7 & 156.2 & 1.37 & 136.3 & 157.2 & 42 \\
+XGBoost global & 0.93 & 95.2 & 67.1 & 1.08 & 96.8 & 80.5 & 47 \\
+LSTM global & 0.91 & 144.2 & 109.0 & 1.03 & 145.7 & 117.7 & 47 \\
+N-HiTS global & 1.04 & 120.9 & 156.1 & 1.37 & 135.5 & 157.3 & 45 \\
+TFT global & 1.16 & 162.6 & 142.2 & 1.27 & 159.0 & 137.7 & 45 \\
+Informer global & 1.07 & 164.9 & 142.3 & 1.24 & 163.8 & 143.0 & 47 \\
+\bottomrule
+\end{tabular}
