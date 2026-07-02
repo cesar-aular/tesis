@@ -1,3 +1,24 @@
+# Fase Actual (2026-07-01): Post-Auditoría Claude — Benchmark Limpio
+
+## Estado
+La auditoría de rigor (rama `claude-focused`) eliminó dos leakages críticos (PR = y/capacidad
+como feature; train-on-test en xgb_local), arregló el crash del Roll-Out DL en series con
+huecos, la idempotencia rota y agregó Informer. Datos Silver/Gold/silver_dl regenerados sin PR.
+
+## Próximos pasos
+1. **Verificación toy**: 2 plantas × 6 modelos end-to-end (smoke test post-fix). ✔ en curso
+2. **Estrategia `half`**: regenerar benchmark con datos limpios (los resultados previos de
+   XGB están invalidados por el leakage; los DL por el crash de contigüidad).
+3. **Estrategia `total`**: corrida final para la tesis + reporte comparativo
+   (RMSE/MAE/sMAPE/rRMSE + Coverage_90/Pinball para bandas P5–P95).
+4. **Análisis para la memoria**: global vs local por macrozona/estación; validar la
+   hipótesis Cold-Start con el prior regional leakage-free.
+
+> Regla de oro: si un modelo "cold-start" reporta rRMSE < 5%, sospechar leakage y correr
+> `.claude/skills/lopo-leakage-audit` antes de confiar en el número.
+
+---
+
 # Plan de Implementación: Orquestador Central
 
 ## Objetivo

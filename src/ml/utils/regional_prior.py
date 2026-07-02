@@ -57,14 +57,24 @@ def lookup_regional_pr(table: pd.DataFrame, macrozona: str, estacion: str) -> fl
 
 
 def merge_regional_pr(df: pd.DataFrame, table: pd.DataFrame) -> pd.DataFrame:
-    """Une el prior como feature `pr_regional` (por macrozona+estación).
+    """Agrega el prior como feature `pr_regional` (por macrozona+estación).
 
-    Para filas sin combinación en la tabla se aplica el fallback de lookup.
+    Usa un mapeo (no merge) para PRESERVAR los dtypes originales del frame:
+    un merge sobre columnas categóricas puede degradarlas a object y
+    desalinear los códigos de categoría entre train y test en XGBoost.
     Seguro para train y test: la tabla proviene solo de plantas de entrenamiento.
     """
-    out = df.merge(table, on=['macrozona', 'estacion_año'], how='left')
-    if out['pr_regional'].isna().any():
-        global_mean = float(table['pr_regional'].mean()) if not table.empty else DEFAULT_PR
-        out['pr_regional'] = out['pr_regional'].fillna(global_mean if global_mean > 0 else DEFAULT_PR)
-    out['pr_regional'] = out['pr_regional'].clip(upper=1.0)
+    out = df.copy()
+    if table is None or table.empty:
+        out['pr_regional'] = DEFAULT_PR
+        return out
+
+    global_mean = float(table['pr_regional'].mean())
+    fallback = global_mean if global_mean > 0 else DEFAULT_PR
+    mapping = {(str(mz), str(es)): float(pr)
+               for mz, es, pr in table[['macrozona', 'estacion_año', 'pr_regional']].itertuples(index=False)}
+
+    keys = pd.Series(list(zip(out['macrozona'].astype(str), out['estacion_año'].astype(str))),
+                     index=out.index)
+    out['pr_regional'] = keys.map(mapping).fillna(fallback).clip(upper=1.0).astype('float32')
     return out

@@ -1,5 +1,38 @@
 # Changelog
 
+## [2026-07-01] - Auditoría Claude: Leakage crítico, crash Roll-Out, Informer (rama `claude-focused`)
+- **🔴 LEAKAGE ELIMINADO**: `PR = y/capacidad` era el target disfrazado (`corr(PR,y)=1.0`);
+  alimentado a XGBoost producía rRMSE falso de 0.83% (real: ~56%). Eliminado de Silver.
+  Nuevo `src/ml/utils/regional_prior.py`: prior de eficiencia por macrozona+estación
+  calculado SOLO con plantas de entrenamiento dentro de cada split LOPO (feature
+  `pr_regional` + semilla PR del contexto sintético Cold-Start, antes hardcodeada a 0.75).
+- **🔴 LEAKAGE ELIMINADO (xgb_local)**: el baseline local entrenaba con TODA su serie,
+  incluida la ventana donde luego era evaluado (train-on-test). Ahora excluye las primeras
+  336h (contexto + evaluación).
+- **CRASH ARREGLADO**: el Roll-Out DL fallaba con "missing combinations of ids and times"
+  en plantas con huecos horarios. Nuevo `src/ml/utils/dl_test.py` compartido reindexa a
+  grilla horaria continua (features temporales recalculadas, clima interpolado);
+  lstm/nhits/tft ahora son wrappers delgados (~300 líneas duplicadas eliminadas).
+- **Idempotencia REAL**: `check_plant_model_done` (glob) reemplaza el check roto que
+  nunca coincidía con los markers escritos → los re-runs ya no repiten todo.
+- **Nuevo modelo**: Informer (tune/train/test) según anteproyecto; clima como `futr_exog`
+  (pronóstico day-ahead legítimamente disponible). PatchTST descartado: sin soporte de
+  exógenas en neuralforecast 3.1.9.
+- **XGB Local mejorado**: lags autorregresivos [24h, 168h] (`generate_lags` por fin
+  conectado).
+- **Métricas probabilísticas**: Coverage_90 y Pinball P05/P95; el reporte leía una llave
+  inexistente (`rMAE`, siempre 0) — ahora exporta sMAPE/rRMSE/Coverage/Pinball reales.
+- **Rendimiento**: silver se carga UNA vez por corrida (antes 5 relecturas de 147MB por
+  planta); `toy` submuestrea xgb_global (10 plantas × 1 año); CSV de Silver (4.4GB
+  duplicado del Parquet) ahora es opt-in (`write_csv`).
+- **Limpieza**: eliminados módulos muertos/duplicados (`ml/metrics.py`, `ml/coldstart.py`,
+  `ml/lopo.py`, `ml/utils.py`), `src/ml/scratch/`, `scratch/`, `check_*.py` raíz, binarios
+  XGB contaminados y resultados toy obsoletos.
+- **Infra**: repo git inicializado (baseline en `master`, trabajo Claude en
+  `claude-focused` sin `.gemini/`); `CLAUDE.md` + `.claude/{agents,skills,knowledge}`;
+  `prepare_dl_dataset` integrado al orquestador raíz; TDD ampliado con tests
+  anti-leakage (7 tests, verdes).
+
 ## [2026-06-30] - Orquestador Central e Idempotencia
 - Creación de `.gemini/rules/orchestration-mandates.md` para asentar el rol del orquestador en el sistema.
 - Implementación de `src/orchestrator.py` que integra validación TDD automática vía `pytest.main()`.
