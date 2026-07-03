@@ -92,7 +92,10 @@ Medallion ETL, all Parquet, single entry point `src/orchestrator.py`:
   (`xgb_local`, `lstm_local`, `nhits_local` via `utils/dl_local.py`: trained ONLY on the
   target plant's own history, ALL eval windows excluded, real-history inference context).
   Horizons `day1`/`rollout7d` × windows raw/operational/seasonal.
-  Strategies: `toy` (2 plants, tiny steps), `half` (1yr history), `total` (2yr history).
+  Strategies: ALL train DL on the FULL 2014-2024 base of the N-1 plants (César's
+  mandate 2026-07-03: truncated history starves TFT/Informer). What varies is the
+  number of target plants evaluated (`toy` 2 / `half` 47 / `total` 94) and the
+  training step budget (10 / 1200 / 2000 max steps, early stopping patience 7).
 
 ## Engineering Rules
 
@@ -103,8 +106,9 @@ Medallion ETL, all Parquet, single entry point `src/orchestrator.py`:
    `check_run_completed` marker path/name MUST match what `mark_run_completed` writes.
    Decouple data vs. visuals. `--force` / `--clean` override.
 4. **GPU hygiene (RTX 2060, 6GB):** after every NeuralForecast fit/trial, `del nf`,
-   `del model_obj`, `gc.collect()`, `torch.cuda.empty_cache()` in a `finally`. Subset
-   `train_df` per strategy to avoid CUDA OOM.
+   `del model_obj`, `gc.collect()`, `torch.cuda.empty_cache()` in a `finally`. VRAM is
+   governed by `batch_size × windows_batch_size` (16×512 in fp32), NOT by corpus size —
+   do not truncate training history to save memory.
 5. **Tuning val split is per-plant:** `val_subset` uses each plant's own max `ds`
    (`groupby('unique_id')['ds'].max()`), never the global max — avoids "Missing
    combinations" in `predict()`.

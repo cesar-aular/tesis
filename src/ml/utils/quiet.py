@@ -16,6 +16,22 @@ Lo que sí hace:
    visibles.
 """
 import logging
+import os
+
+import pandas as pd
+
+# Copy-on-Write (pandas 2.x): df.copy() y los slices se vuelven perezosos —
+# solo se materializa la columna que efectivamente se muta. Mitigación OOM de
+# RAM clave con la base completa (~4.3M filas): el camino DL hacía 2-3 copias
+# profundas de ~350MB por fold que CoW convierte en vistas.
+pd.options.mode.copy_on_write = True
+
+# Mitigación OOM de VRAM por FRAGMENTACIÓN: 47 folds x 4 modelos = ~200 fits
+# secuenciales en un mismo proceso; el allocator de torch fragmenta y termina
+# fallando con memoria "libre" pero no contigua. expandable_segments permite
+# crecer segmentos en vez de reservar bloques fijos (leído en la primera
+# asignación CUDA — debe configurarse antes de tocar la GPU).
+os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
 
 
 def silence_noise():

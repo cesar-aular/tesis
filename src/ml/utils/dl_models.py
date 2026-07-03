@@ -112,7 +112,9 @@ def _build(spec, hidden: int, lr: float, max_steps: int, batch_size: int,
         scaler_type='robust',
         batch_size=batch_size,
         windows_batch_size=windows_batch_size,
-        inference_windows_batch_size=1024,
+        # 512 (no 1024): el pico de VRAM en predict escala con este valor;
+        # a fp32 el margen de la 2060 (6GB) exige acotarlo
+        inference_windows_batch_size=512,
         accumulate_grad_batches=acc_grad,
         early_stop_patience_steps=early_stop_patience,
         # val_check_steps > max_steps dispara un warning legitimo de NF:
@@ -168,22 +170,25 @@ def _cleanup(*objs):
 
 
 def _strategy_subset(train_df: pd.DataFrame, strategy: str):
-    """Subsetting y presupuesto de cómputo por estrategia.
+    """Presupuesto de cómputo por estrategia.
+
+    DECISIÓN (César, 2026-07-03): TODAS las estrategias entrenan con la BASE
+    COMPLETA (2014-2024) de las N-1 plantas — recortar la historia a 1-2 años
+    no da suficientes ejemplos para que TFT/Informer aprendan correctamente.
+    Lo que diferencia a las estrategias es (a) cuántas plantas objetivo se
+    evalúan (lo decide el orquestador: toy 2, half 47, total 94) y (b) el
+    presupuesto de iteraciones de entrenamiento definido aquí.
 
     Devuelve (df, batch_size, windows_batch, épocas, tope_steps, patience).
-    Presupuesto fp32 (RTX 2060, 6GB): batch 16x512 = 8,192 ventanas por step
-    (la mitad del presupuesto fp16 anterior, activaciones el doble de anchas);
-    más épocas y patience amplio — corrección sobre velocidad, decisión de
-    diseño documentada.
+    Presupuesto fp32 (RTX 2060, 6GB): batch 16x512 = 8,192 ventanas por step.
+    Con ~4M de ventanas totales el tope de steps es el limitante efectivo
+    (~2.5 épocas en half, ~4 en total); early stopping decide antes si converge.
     """
     if strategy == 'toy':
-        plantas = train_df['unique_id'].unique().tolist()[:2]
-        return train_df[train_df['unique_id'].isin(plantas)].copy(), 8, 256, 1, 10, -1
+        return train_df.copy(), 8, 256, 1, 10, -1
     if strategy == 'half':
-        min_date = train_df['ds'].max() - pd.DateOffset(years=1)
-        return train_df[train_df['ds'] >= min_date].copy(), 16, 512, 10, 1200, 7
-    min_date = train_df['ds'].max() - pd.DateOffset(years=2)
-    return train_df[train_df['ds'] >= min_date].copy(), 16, 512, 12, 2000, 7
+        return train_df.copy(), 16, 512, 10, 1200, 7
+    return train_df.copy(), 16, 512, 12, 2000, 7
 
 
 def run_dl_train(model_name: str, train_df: pd.DataFrame, strategy: str = "toy"):
@@ -219,11 +224,18 @@ def run_dl_train(model_name: str, train_df: pd.DataFrame, strategy: str = "toy")
     try:
         nf.fit(df=train_df, static_df=static_df, val_size=val_size)
     except Exception as e:
-        print(f"[{label}] ERROR de memoria o fitting: {e}")
-        # Fallback conservador para 6GB VRAM
+        # Retry anti-OOM: MISMA arquitectura tuneada y MISMO batch efectivo
+        # (8 x 256 x acc_grad 4 = 8,192 ventanas/step), solo menor pico de
+        # VRAM por paso. No degrada el modelo ni el presupuesto de steps.
+        print(f"[{label}] Fit fallo ({e}); reintentando con micro-batches "
+              f"(8x256, acumulacion x4, misma arquitectura).")
         _cleanup(nf, model_obj)
-        model_obj = _build(spec, hidden=32, lr=1e-3, max_steps=min(300, max_steps),
-                           batch_size=8, windows_batch_size=128, acc_grad=4,
+        model_obj = _build(spec,
+                           hidden=params.get('hidden_size', 64),
+                           lr=params.get('learning_rate', 1e-3),
+                           max_steps=max_steps, batch_size=8,
+                           windows_batch_size=256, acc_grad=4,
+                           input_size=params.get('input_size', 168),
                            early_stop_patience=patience)
         nf = NeuralForecast(models=[model_obj], freq='h')
         nf.fit(df=train_df, static_df=static_df, val_size=val_size)
