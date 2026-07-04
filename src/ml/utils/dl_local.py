@@ -27,11 +27,11 @@ from neuralforecast import NeuralForecast
 
 from src.ml.utils.dl_models import (MODEL_SPECS, _build, _compute_max_steps,
                                     normalize_target)
-from src.ml.utils.dl_test import (HIST_HOURS, ROLLOUT_DAYS, make_hourly_grid,
-                                  _apply_physics)
+from src.ml.utils.dl_test import HIST_HOURS, ROLLOUT_DAYS, _apply_physics
+from src.ml.utils.grid import make_hourly_grid
 from src.ml.utils.eval_window import eval_window_variants, WINDOW_HOURS
 from src.ml.utils.metrics import calculate_metrics
-from src.ml.utils.idempotency import mark_run_completed
+from src.ml.utils.idempotency import mark_run_completed, mark_plant_model_complete
 from src.ml.visualize import plot_forecast_rollout
 
 LOCAL_MAX_STEPS_CAP = 300  # serie única: converge rápido; early stopping decide
@@ -121,6 +121,8 @@ def run_local_dl(model_name: str, test_df: pd.DataFrame, results_dir: Path,
     def _save(preds, horizon):
         merged = real_y.merge(preds, on=['unique_id', 'ds'], how='inner')
         out = merged.rename(columns=rename_map)
+        if out.empty:
+            return  # ventana sin observaciones reales (hueco total de sensores)
         out_dir = results_dir / result_name / macrozona / estacion / planta / horizon
         out_dir.mkdir(parents=True, exist_ok=True)
         out.to_parquet(out_dir / "preds.parquet")
@@ -160,6 +162,10 @@ def run_local_dl(model_name: str, test_df: pd.DataFrame, results_dir: Path,
             current_hist = pd.concat([current_hist.iloc[24:], new_tail],
                                      ignore_index=True)
         _save(pd.concat(all_preds, ignore_index=True), f"rollout7d{suffix}")
+
+    # Marker de completitud por planta: TODAS las ventanas terminaron
+    mark_plant_model_complete(results_dir / result_name / macrozona / estacion / planta,
+                              result_name, planta, estacion)
 
     del nf, model_obj
     gc.collect()

@@ -7,6 +7,7 @@ from pathlib import Path
 
 from src.ml.utils.features import generate_lags
 from src.ml.utils.eval_window import eval_window_variants, WINDOW_HOURS
+from src.ml.utils.grid import make_hourly_grid
 
 LAGS = [24, 168]
 # Regresión cuantílica multi-salida (xgboost >= 2.0): P5 / P50 / P95 en un
@@ -32,20 +33,30 @@ def run_train(silver_df: pd.DataFrame, planta: str, strategy: str = "toy"):
                 .reset_index(drop=True)
                 .copy())
 
-    # Excluir TODAS las ventanas de evaluacion (los targets evaluados no se entrenan)
-    capacidad = float(plant_df['potencia_neta_mw'].iloc[0])
-    excluded = pd.Series(False, index=plant_df.index)
-    for _, start in eval_window_variants(plant_df['y'], capacidad, dates=plant_df['ds']).items():
+    # GRILLA CANONICA: las ventanas se definen sobre las mismas horas
+    # calendario que en test (XGB y DL comparten grilla; ver utils/grid.py)
+    grid = make_hourly_grid(plant_df, planta)
+    capacidad = float(grid['potencia_neta_mw'].iloc[0])
+    excluded = pd.Series(False, index=grid.index)
+    for _, start in eval_window_variants(grid['y'], capacidad, dates=grid['ds']).items():
         excluded.iloc[start:start + WINDOW_HOURS] = True
 
-    train_df = plant_df[~excluded].copy()
+    # ANTI-LEAKAGE de lags: enmascarar la y de TODAS las ventanas de evaluacion
+    # ANTES de calcular lags — un lag calendario-verdadero de una fila de train
+    # cercana a una ventana apuntaria DENTRO de ella (y evaluada como feature).
+    grid_lags = grid.copy()
+    grid_lags.loc[excluded, 'y'] = float('nan')
+    grid_lags = generate_lags(grid_lags, LAGS)
+    # Restaurar la y real de las filas de train (solo los LAGS quedan ciegos
+    # a las ventanas; el target de entrenamiento es la observacion real)
+    grid_lags['y'] = grid['y']
+
+    train_df = grid_lags[~excluded].dropna(subset=['y'])
     if train_df.empty:
         print(f"[XGB Local] {planta} sin historia suficiente tras excluir ventanas de test.")
         return
-
-    # Lags calculados DENTRO del slice de entrenamiento (sin tocar la ventana de test)
-    train_df = generate_lags(train_df, LAGS)
-    train_df = train_df.dropna(subset=[f'lag_{lag}' for lag in LAGS])
+    # Los lags NaN (hueco real o referencia a ventana enmascarada) se conservan:
+    # XGBoost enruta valores faltantes de forma nativa, igual que en test.
 
     models_dir = Path("models/xgb_local")
     models_dir.mkdir(parents=True, exist_ok=True)

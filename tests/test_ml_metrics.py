@@ -35,6 +35,7 @@ def test_mape_indefinida_en_ventana_toda_cero():
     assert np.isnan(m["MAPE"])
     assert np.isnan(m["WMAPE"])
     assert np.isnan(m["R2"])
+    assert np.isnan(m["rRMSE"]), "media cero -> rRMSE indefinido, jamas 0.0 'perfecto'"
     assert m["sMAPE"] == 0.0
     assert m["RMSE"] == 0.0
 

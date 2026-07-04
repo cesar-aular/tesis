@@ -103,7 +103,13 @@ def _trainer_kwargs():
 
 def _build(spec, hidden: int, lr: float, max_steps: int, batch_size: int,
            windows_batch_size: int, acc_grad: int = 1, input_size: int = 168,
-           early_stop_patience: int = -1):
+           early_stop_patience: int = -1, step_size: int = 1):
+    # GEOMETRIA ANTI-OOM (VRAM): NF materializa en GPU TODAS las ventanas de
+    # las batch_size series antes de muestrear windows_batch_size. Con la base
+    # completa (~90K ventanas/serie), 16 series a stride 1 pedian 13.6 GB
+    # (medido). El pico escala con batch_size x (largo_serie / step_size):
+    # batch 4 series + step_size 6 (ventana cada 6h) ~= 0.6 GB, preservando
+    # la mezcla multi-planta por step y fases horarias variadas (0/6/12/18h).
     return spec["cls"](
         h=24,
         input_size=input_size,
@@ -112,6 +118,7 @@ def _build(spec, hidden: int, lr: float, max_steps: int, batch_size: int,
         scaler_type='robust',
         batch_size=batch_size,
         windows_batch_size=windows_batch_size,
+        step_size=step_size,
         # 512 (no 1024): el pico de VRAM en predict escala con este valor;
         # a fp32 el margen de la 2060 (6GB) exige acotarlo
         inference_windows_batch_size=512,
@@ -179,16 +186,17 @@ def _strategy_subset(train_df: pd.DataFrame, strategy: str):
     evalúan (lo decide el orquestador: toy 2, half 47, total 94) y (b) el
     presupuesto de iteraciones de entrenamiento definido aquí.
 
-    Devuelve (df, batch_size, windows_batch, épocas, tope_steps, patience).
-    Presupuesto fp32 (RTX 2060, 6GB): batch 16x512 = 8,192 ventanas por step.
-    Con ~4M de ventanas totales el tope de steps es el limitante efectivo
-    (~2.5 épocas en half, ~4 en total); early stopping decide antes si converge.
+    Devuelve (df, batch_size, windows_batch, épocas, tope_steps, patience,
+    step_size). Geometría fp32 (RTX 2060, 6GB): 4 series por step, ventanas
+    cada 6h (step_size) — ver nota anti-OOM en _build; el gradiente de cada
+    step promedia 512 ventanas mezcladas de 4 plantas. El tope de steps es el
+    limitante efectivo; early stopping decide antes si converge.
     """
     if strategy == 'toy':
-        return train_df.copy(), 8, 256, 1, 10, -1
+        return train_df.copy(), 4, 256, 1, 10, -1, 6
     if strategy == 'half':
-        return train_df.copy(), 16, 512, 10, 1200, 7
-    return train_df.copy(), 16, 512, 12, 2000, 7
+        return train_df.copy(), 4, 512, 10, 1200, 7, 6
+    return train_df.copy(), 4, 512, 12, 2000, 7, 6
 
 
 def run_dl_train(model_name: str, train_df: pd.DataFrame, strategy: str = "toy"):
@@ -201,10 +209,11 @@ def run_dl_train(model_name: str, train_df: pd.DataFrame, strategy: str = "toy")
     params_path = models_dir / "best_params.json"
     params = json.loads(params_path.read_text()) if params_path.exists() else {}
 
-    train_df, batch_size, windows_batch, epochs, cap, patience = _strategy_subset(train_df, strategy)
+    (train_df, batch_size, windows_batch, epochs, cap,
+     patience, step_size) = _strategy_subset(train_df, strategy)
     train_df = normalize_target(train_df)
     max_steps = 10 if strategy == 'toy' else _compute_max_steps(
-        len(train_df), batch_size, windows_batch, epochs, cap)
+        len(train_df) // step_size, batch_size, windows_batch, epochs, cap)
     # Early stopping requiere ventana de validacion por serie
     val_size = 0 if patience < 0 else 168
 
@@ -217,7 +226,7 @@ def run_dl_train(model_name: str, train_df: pd.DataFrame, strategy: str = "toy")
                        max_steps=max_steps, batch_size=batch_size,
                        windows_batch_size=windows_batch,
                        input_size=params.get('input_size', 168),
-                       early_stop_patience=patience)
+                       early_stop_patience=patience, step_size=step_size)
     nf = NeuralForecast(models=[model_obj], freq='h')
     static_df = _static_df(train_df, spec)
 
@@ -225,18 +234,18 @@ def run_dl_train(model_name: str, train_df: pd.DataFrame, strategy: str = "toy")
         nf.fit(df=train_df, static_df=static_df, val_size=val_size)
     except Exception as e:
         # Retry anti-OOM: MISMA arquitectura tuneada y MISMO batch efectivo
-        # (8 x 256 x acc_grad 4 = 8,192 ventanas/step), solo menor pico de
-        # VRAM por paso. No degrada el modelo ni el presupuesto de steps.
+        # (2 series x 256 ventanas x acumulacion 4 = 2,048 como 4x512), solo
+        # menor pico de VRAM por paso. No degrada modelo ni presupuesto.
         print(f"[{label}] Fit fallo ({e}); reintentando con micro-batches "
-              f"(8x256, acumulacion x4, misma arquitectura).")
+              f"(2x256, acumulacion x4, misma arquitectura).")
         _cleanup(nf, model_obj)
         model_obj = _build(spec,
                            hidden=params.get('hidden_size', 64),
                            lr=params.get('learning_rate', 1e-3),
-                           max_steps=max_steps, batch_size=8,
+                           max_steps=max_steps, batch_size=2,
                            windows_batch_size=256, acc_grad=4,
                            input_size=params.get('input_size', 168),
-                           early_stop_patience=patience)
+                           early_stop_patience=patience, step_size=step_size)
         nf = NeuralForecast(models=[model_obj], freq='h')
         nf.fit(df=train_df, static_df=static_df, val_size=val_size)
 
@@ -281,11 +290,13 @@ def run_dl_tune(model_name: str, train_df: pd.DataFrame, strategy: str = "toy"):
     val_subset = normalize_target(val_subset)
 
     n_trials = 2 if strategy == "toy" else 5
-    batch_size = 16
+    # Misma geometria anti-OOM que el train (ver _build): pocas series por
+    # step y ventanas cada 6h — las 3 plantas de tuning traen historia completa
+    batch_size, step_size = 3, 6
     # Trials cortos con la formula corregida: suficiente para RANKEAR configs,
     # no para converger (el train final usa el presupuesto completo).
     max_steps = 10 if strategy == 'toy' else _compute_max_steps(
-        len(train_subset), batch_size, 256, epochs=2, cap=200)
+        len(train_subset) // step_size, batch_size, 256, epochs=2, cap=200)
     static_df = _static_df(train_subset, spec)
 
     def objective(trial):
@@ -294,7 +305,8 @@ def run_dl_tune(model_name: str, train_df: pd.DataFrame, strategy: str = "toy"):
         nf = model_obj = None
         try:
             model_obj = _build(spec, hidden=hidden, lr=lr, max_steps=max_steps,
-                               batch_size=batch_size, windows_batch_size=256)
+                               batch_size=batch_size, windows_batch_size=256,
+                               step_size=step_size)
             nf = NeuralForecast(models=[model_obj], freq='h')
             nf.fit(df=train_subset, static_df=static_df)
             # futr_df exacto: h=24 -> primeras 24h por planta (pasar la ventana

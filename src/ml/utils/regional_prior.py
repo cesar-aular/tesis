@@ -17,11 +17,18 @@ DEFAULT_PR = 0.25  # factor de planta solar típico si no hay información regio
 def compute_regional_pr(train_df: pd.DataFrame) -> pd.DataFrame:
     """Calcula la tabla de priors [macrozona, estacion_año, pr_regional].
 
-    Eficiencia estática por planta y estación: mean(y) / potencia_neta_mw,
+    Eficiencia DIURNA por planta y estación: mean(y | y > 0) / potencia_neta_mw,
     luego promedio ENTRE plantas de la macrozona (evita que plantas grandes
     dominen). `train_df` DEBE ser el set N-1 del split LOPO (sin la objetivo).
+
+    CALIBRACIÓN (auditoría 2026-07-04): la media sobre TODAS las horas (noches
+    en cero incluidas) da un factor de planta (~0.2-0.3) que, usado como
+    amplitud PICO del perfil sintético normalizado, deprimía el contexto
+    Cold-Start ~3-4x respecto de una planta típica. La media sobre horas
+    productivas es la amplitud correcta para un perfil con pico 1.0.
     """
-    per_plant = (train_df
+    productive = train_df[train_df['y'] > 0]
+    per_plant = (productive
                  .groupby(['unique_id', 'macrozona', 'estacion_año'], observed=True)
                  .agg(mean_y=('y', 'mean'), cap=('potencia_neta_mw', 'first'))
                  .reset_index())

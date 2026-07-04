@@ -5,14 +5,21 @@ Sin lags autorregresivos: el modelo global mapea exógenas (clima + calendario
 objetivo ni en entrenamiento (LOPO) ni en inferencia. day1 y rollout7d usan la
 misma predicción exógena-condicionada (no hay realimentación que hacer).
 Intervalos: regresión cuantílica (P5/P50/P95) -> Coverage_90 y Pinball.
+
+VENTANAS SOBRE LA GRILLA HORARIA CANÓNICA (utils/grid.py): mismas horas
+calendario que los DL — el slice posicional sobre la serie con huecos evaluaba
+fechas distintas en el 21% de las ventanas. Las métricas puntúan sólo las
+horas con observación real (y no-NaN en la grilla).
 """
+import numpy as np
 import pandas as pd
 from pathlib import Path
 import joblib
 
 from src.ml.utils.metrics import calculate_metrics
-from src.ml.utils.idempotency import mark_run_completed
+from src.ml.utils.idempotency import mark_run_completed, mark_plant_model_complete
 from src.ml.utils.eval_window import eval_window_variants, WINDOW_HOURS
+from src.ml.utils.grid import make_hourly_grid
 from src.ml.utils.physics import night_mask
 from src.ml.visualize import plot_forecast_rollout
 
@@ -26,20 +33,19 @@ def run_test(test_df: pd.DataFrame, results_dir: Path, macrozona: str, estacion:
 
     model = joblib.load(model_path)
 
-    if len(test_df) < WINDOW_HOURS:
+    grid = make_hourly_grid(test_df, planta)
+    if len(grid) < WINDOW_HOURS:
         print(f"[xgb_global] Planta {planta} no tiene suficientes datos. Saltando.")
         return
-
-    test_df = test_df.sort_values('ds').reset_index(drop=True)
-    capacidad = float(test_df['potencia_neta_mw'].iloc[0])
+    capacidad = float(grid['potencia_neta_mw'].iloc[0])
 
     def _evaluate(window: pd.DataFrame, horizon: str):
         X = window.drop(columns=['unique_id', 'ds', 'y'])
         q = model.predict(X)
-        lo, med, hi = q[:, 0].copy(), q[:, 1].copy(), q[:, 2].copy()
+        med = q[:, 1].copy()
         # Reparar cruces de cuantiles (posibles en quantile regression)
-        lo = pd.Series(lo).combine(pd.Series(med), min).to_numpy()
-        hi = pd.Series(hi).combine(pd.Series(med), max).to_numpy()
+        lo = np.minimum(q[:, 0], med)
+        hi = np.maximum(q[:, 2], med)
 
         night = night_mask(window)
         for arr in (lo, med, hi):
@@ -50,6 +56,10 @@ def run_test(test_df: pd.DataFrame, results_dir: Path, macrozona: str, estacion:
         out['y_pred'] = med
         out['y_pred_lo_90'] = lo
         out['y_pred_hi_90'] = hi
+        # Métricas sólo sobre observaciones reales (huecos de la grilla fuera)
+        out = out.dropna(subset=['y'])
+        if out.empty:
+            return
 
         out_dir = results_dir / "xgb_global" / macrozona / estacion / planta / horizon
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -63,10 +73,13 @@ def run_test(test_df: pd.DataFrame, results_dir: Path, macrozona: str, estacion:
                               model_name=f"xgb_global ({horizon})", planta=planta)
 
     # Sensibilidad: raw, operacional y las 4 estaciones del año
-    for suffix, start in eval_window_variants(test_df['y'], capacidad, dates=test_df['ds']).items():
-        if start + WINDOW_HOURS > len(test_df):
+    for suffix, start in eval_window_variants(grid['y'], capacidad, dates=grid['ds']).items():
+        if start + WINDOW_HOURS > len(grid):
             continue
-        _evaluate(test_df.iloc[start + 168:start + 168 + 24].copy(), f"day1{suffix}")
-        _evaluate(test_df.iloc[start + 168:start + 168 + (7 * 24)].copy(), f"rollout7d{suffix}")
+        _evaluate(grid.iloc[start + 168:start + 168 + 24].copy(), f"day1{suffix}")
+        _evaluate(grid.iloc[start + 168:start + 168 + (7 * 24)].copy(), f"rollout7d{suffix}")
 
+    # Marker de completitud por planta: TODAS las ventanas terminaron
+    mark_plant_model_complete(results_dir / "xgb_global" / macrozona / estacion / planta,
+                              "xgb_global", planta, estacion)
     print(f"[xgb_global] Completado.")

@@ -1,5 +1,43 @@
 # Changelog
 
+## [2026-07-04] - Auditoría profunda pre-corrida (pedido de César) + fixes
+Auditoría en 3 frentes antes de la corrida desatendida: skill lopo-leakage-audit,
+agente eval_scientist independiente, y revisión línea a línea. Correlaciones
+feature-y limpias (<0.6 en ambos silver); split LOPO, semilla sintética,
+rollouts autorregresivos y prior train-only verificados correctos.
+
+**Hallazgos corregidos:**
+- 🔴 **Ventanas XGB vs DL desalineadas (21% de las ventanas, 74/94 plantas)**:
+  XGB seleccionaba/rebanaba ventanas posicionalmente sobre la serie con huecos;
+  DL sobre la grilla continua → evaluaban horas calendario distintas. Fix:
+  grilla canónica compartida (`utils/grid.py`); XGB train/test operan sobre la
+  grilla, métricas solo sobre observaciones reales (y=NaN de huecos excluido).
+- 🔴 **Leakage latente de lags calendario**: la y de TODAS las ventanas se
+  enmascara antes de calcular lags del train local (un lag de una fila vecina
+  apuntaría dentro de la ventana evaluada). Test lo verifica.
+- 🟡 **Idempotencia**: marker de completitud POR PLANTA (antes: rollout raw
+  bastaba → una falla en ventanas estacionales las perdía para siempre).
+- 🟡 **Skew de features cíclicas (M1, eval_scientist)**: grid recalculaba
+  sin/cos_day_month con /31 fijo y day_year /366; Silver usa days_in_month
+  reales y 365.25 → desplazamiento train/test para xgb_global. Igualadas.
+- 🟡 **Semilla sintética ~3.5x deprimida (M2)**: el prior regional promediaba
+  TODAS las horas (noches en 0) pero se usaba como amplitud PICO del perfil.
+  Ahora: mean(y | y>0)/cap (eficiencia diurna) — amplitud correcta.
+- 🟡 **rRMSE=0.0 centinela (M3)**: media cero ahora reporta NaN (0.0 hacía
+  parecer perfecta una rampa todo-cero mal predicha).
+- 🟡 **Cobertura nocturna regalada (M5)**: nueva Coverage_90_diurna (de noche
+  lo=hi=y=0 da ~50% de cobertura sin mérito).
+- Guards de ventana vacía en _save DL; módulos tune XGB muertos eliminados
+  (tuneaban incluyendo las ventanas de evaluación si alguien los conectaba).
+- Sondas medidas (fp32, base completa, 4x512 stride 6): TFT 0.4s/step pico
+  4.94GB; LSTM 0.1 / NHITS 0.1 / Informer 0.2 → half ~12-18h, total ~2 días.
+
+**Deuda documentada (no bloquea):** baseline local entrena con historia
+posterior a la ventana raw (diseño declarado, favorece al local — explicitar
+en tesis); estacion_año ffilled en filas de grilla (no puntúan métricas);
+Bronze mode='a' + keep='last' no determinista entre corridas de ETL
+(reproducibilidad ETL, Silver actual no afectado). Suite: 24 tests verdes.
+
 ## [2026-07-02] - Rigor del benchmark: XGB cuantílico, rollout justo, fp32, métricas ampliadas
 - **XGB cuantílico (local y global)**: `reg:quantileerror` con alpha=[.05,.5,.95]
   -> P5/P50/P95 en un solo modelo, reparación de cruces de cuantiles, bandas

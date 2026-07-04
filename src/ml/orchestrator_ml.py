@@ -126,8 +126,12 @@ def run_ml_pipeline(strategy: str = "toy", force: bool = False):
 
             if "xgb_local" in pending_xgb:
                 # Baseline local: usa SOLO la historia de la planta objetivo
-                xgb_local_train.run_train(test_x, planta, strategy)
-                xgb_local_test.run_test(test_x, results_dir, macrozona, estacion, planta)
+                try:
+                    xgb_local_train.run_train(test_x, planta, strategy)
+                    xgb_local_test.run_test(test_x, results_dir, macrozona, estacion, planta)
+                except Exception as e:
+                    # Sin marker -> la idempotencia lo reintenta en el proximo run
+                    print(f"[ERROR] XGB_LOCAL fallo para {planta}: {e}. Continuando.")
 
             if "xgb_global" in pending_xgb:
                 train_g = train_x
@@ -137,8 +141,11 @@ def run_ml_pipeline(strategy: str = "toy", force: bool = False):
                     min_date = train_g['ds'].max() - pd.DateOffset(years=1)
                     train_g = train_g[(train_g['unique_id'].isin(sub_plantas)) &
                                       (train_g['ds'] >= min_date)]
-                xgb_global_train.run_train(train_g, strategy)
-                xgb_global_test.run_test(test_x, results_dir, macrozona, estacion, planta)
+                try:
+                    xgb_global_train.run_train(train_g, strategy)
+                    xgb_global_test.run_test(test_x, results_dir, macrozona, estacion, planta)
+                except Exception as e:
+                    print(f"[ERROR] XGB_GLOBAL fallo para {planta}: {e}. Continuando.")
                 del train_g
 
             del train_x, test_x

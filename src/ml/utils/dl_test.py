@@ -14,65 +14,14 @@ from pathlib import Path
 from neuralforecast import NeuralForecast
 
 from src.ml.utils.metrics import calculate_metrics
-from src.ml.utils.idempotency import mark_run_completed
+from src.ml.utils.idempotency import mark_run_completed, mark_plant_model_complete
 from src.ml.utils.eval_window import eval_window_variants
+from src.ml.utils.grid import make_hourly_grid, STATIC_COLS
 from src.ml.utils.physics import night_mask
 from src.ml.visualize import plot_forecast_rollout
 
 HIST_HOURS = 168          # ventana de contexto (7 días)
 ROLLOUT_DAYS = 7
-SEASON_MAP = {12: 'Verano', 1: 'Verano', 2: 'Verano',
-              3: 'Otoño', 4: 'Otoño', 5: 'Otoño',
-              6: 'Invierno', 7: 'Invierno', 8: 'Invierno',
-              9: 'Primavera', 10: 'Primavera', 11: 'Primavera'}
-SEASON_NUM = {'Verano': 1, 'Otoño': 2, 'Invierno': 3, 'Primavera': 4}
-
-WEATHER_COLS = ['humedad-relativa', 'radiacion-global-instantanea', 'temp-aire-seco']
-STATIC_COLS = ['macrozona_idx', 'potencia_neta_mw']
-
-
-def _recompute_time_features(df: pd.DataFrame) -> pd.DataFrame:
-    """Features temporales deterministas recalculadas desde ds (válidas en huecos)."""
-    ds = df['ds']
-    df['sin_hour'] = np.sin(2 * np.pi * ds.dt.hour / 24)
-    df['cos_hour'] = np.cos(2 * np.pi * ds.dt.hour / 24)
-    df['sin_month'] = np.sin(2 * np.pi * ds.dt.month / 12)
-    df['cos_month'] = np.cos(2 * np.pi * ds.dt.month / 12)
-    season_num = ds.dt.month.map(SEASON_MAP).map(SEASON_NUM)
-    df['sin_season'] = np.sin(2 * np.pi * season_num / 4)
-    df['cos_season'] = np.cos(2 * np.pi * season_num / 4)
-    return df
-
-
-def make_hourly_grid(test_df: pd.DataFrame, planta: str) -> pd.DataFrame:
-    """Reindexa la serie de la planta a una grilla horaria continua.
-
-    - y queda NaN en huecos (las métricas se calculan sólo contra observaciones reales).
-    - Clima se interpola/ffill (conocido u obtenible de pronósticos, sin leakage de y).
-    - Features temporales y estacion_idx se recalculan desde ds.
-    - Estáticas se propagan (constantes por planta).
-    """
-    # Dedup defensivo: reindex exige indice unico (una fila por hora)
-    test_df = test_df.sort_values('ds').drop_duplicates(subset=['ds'], keep='last')
-    full_range = pd.date_range(test_df['ds'].min(), test_df['ds'].max(), freq='h')
-    grid = (test_df.set_index('ds')
-            .reindex(full_range)
-            .rename_axis('ds')
-            .reset_index())
-    grid['unique_id'] = planta
-
-    for col in WEATHER_COLS:
-        if col in grid.columns:
-            grid[col] = grid[col].interpolate(limit_direction='both').ffill().bfill()
-    for col in STATIC_COLS:
-        if col in grid.columns:
-            grid[col] = grid[col].ffill().bfill()
-
-    grid = _recompute_time_features(grid)
-    if 'estacion_idx' in grid.columns:
-        # estacion_idx es determinista del mes; propagar por si el encoder difiere
-        grid['estacion_idx'] = grid['estacion_idx'].ffill().bfill()
-    return grid
 
 
 def synthetic_context(grid_hist: pd.DataFrame, regional_pr: float) -> pd.DataFrame:
@@ -169,6 +118,8 @@ def run_dl_test(model_label: str, test_df: pd.DataFrame, results_dir: Path,
     def _save(preds: pd.DataFrame, horizon: str):
         merged = real_y.merge(preds, on=['unique_id', 'ds'], how='inner')
         out = merged.rename(columns=rename_map)
+        if out.empty:
+            return  # ventana sin observaciones reales (hueco total de sensores)
         out_dir = results_dir / model_dir_name / macrozona / estacion / planta / horizon
         out_dir.mkdir(parents=True, exist_ok=True)
         out.to_parquet(out_dir / "preds.parquet")
@@ -217,6 +168,10 @@ def run_dl_test(model_label: str, test_df: pd.DataFrame, results_dir: Path,
             current_hist = pd.concat([current_hist.iloc[24:], new_tail], ignore_index=True)
 
         _save(pd.concat(all_preds, ignore_index=True), f"rollout7d{suffix}")
+
+    # Marker de completitud por planta: TODAS las ventanas terminaron
+    mark_plant_model_complete(results_dir / model_dir_name / macrozona / estacion / planta,
+                              model_dir_name, planta, estacion)
 
     del nf
     gc.collect()

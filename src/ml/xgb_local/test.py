@@ -12,14 +12,16 @@ Rigor del benchmark (comparación 1:1 con los modelos DL):
   contexto real (legítimo).
 - Intervalos: regresión cuantílica (P5/P50/P95) -> Coverage_90 y Pinball.
 """
+import numpy as np
 import pandas as pd
 from pathlib import Path
 import joblib
 
 from src.ml.utils.metrics import calculate_metrics
-from src.ml.utils.idempotency import mark_run_completed
+from src.ml.utils.idempotency import mark_run_completed, mark_plant_model_complete
 from src.ml.utils.eval_window import eval_window_variants, WINDOW_HOURS
 from src.ml.utils.features import generate_lags
+from src.ml.utils.grid import make_hourly_grid
 from src.ml.utils.physics import night_mask
 from src.ml.visualize import plot_forecast_rollout
 
@@ -31,10 +33,11 @@ EVAL_DAYS = 7
 def _predict_quantiles(model, X):
     """Predicción multi-cuantil (n, 3) -> (lo, med, hi) con monotonía forzada."""
     q = model.predict(X)
-    lo, med, hi = q[:, 0].copy(), q[:, 1].copy(), q[:, 2].copy()
+    med = q[:, 1].copy()
     # El cruce de cuantiles es posible en quantile regression: se repara
-    lo = pd.Series(lo).combine(pd.Series(med), min).to_numpy()
-    hi = pd.Series(hi).combine(pd.Series(med), max).to_numpy()
+    # (numpy directo: Series.to_numpy() bajo CoW devuelve vistas de solo lectura)
+    lo = np.minimum(q[:, 0], med)
+    hi = np.maximum(q[:, 2], med)
     return lo, med, hi
 
 
@@ -53,14 +56,18 @@ def run_test(test_df: pd.DataFrame, results_dir: Path, macrozona: str, estacion:
 
     model = joblib.load(model_path)
 
-    if len(test_df) < WINDOW_HOURS:
+    # Grilla horaria canónica: mismas horas calendario que los DL
+    grid = make_hourly_grid(test_df, planta)
+    if len(grid) < WINDOW_HOURS:
         print(f"[xgb_local] Planta {planta} no tiene suficientes datos. Saltando.")
         return
-
-    test_df = test_df.sort_values('ds').reset_index(drop=True)
-    capacidad = float(test_df['potencia_neta_mw'].iloc[0])
+    capacidad = float(grid['potencia_neta_mw'].iloc[0])
 
     def _save(out: pd.DataFrame, horizon: str):
+        # Métricas sólo sobre observaciones reales (huecos de la grilla fuera)
+        out = out.dropna(subset=['y'])
+        if out.empty:
+            return
         out_dir = results_dir / "xgb_local" / macrozona / estacion / planta / horizon
         out_dir.mkdir(parents=True, exist_ok=True)
         out.to_parquet(out_dir / "preds.parquet")
@@ -72,10 +79,10 @@ def run_test(test_df: pd.DataFrame, results_dir: Path, macrozona: str, estacion:
                               model_name=f"xgb_local ({horizon})", planta=planta)
 
     # Sensibilidad: raw, operacional y las 4 estaciones del año
-    for suffix, start in eval_window_variants(test_df['y'], capacidad, dates=test_df['ds']).items():
-        if start + WINDOW_HOURS > len(test_df):
+    for suffix, start in eval_window_variants(grid['y'], capacidad, dates=grid['ds']).items():
+        if start + WINDOW_HOURS > len(grid):
             continue
-        window = test_df.iloc[start:start + WINDOW_HOURS].reset_index(drop=True)
+        window = grid.iloc[start:start + WINDOW_HOURS].reset_index(drop=True)
         y_real = window['y'].copy()  # ground truth intocable para métricas
 
         # 'work' es la serie que ven los lags: contexto real + P50 realimentada
@@ -104,4 +111,7 @@ def run_test(test_df: pd.DataFrame, results_dir: Path, macrozona: str, estacion:
         _save(day_frames[0].copy(), f"day1{suffix}")
         _save(pd.concat(day_frames, ignore_index=True), f"rollout7d{suffix}")
 
+    # Marker de completitud por planta: TODAS las ventanas terminaron
+    mark_plant_model_complete(results_dir / "xgb_local" / macrozona / estacion / planta,
+                              "xgb_local", planta, estacion)
     print(f"[xgb_local] Completado.")

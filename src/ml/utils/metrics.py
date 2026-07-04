@@ -53,8 +53,10 @@ def calculate_metrics(y_true, y_pred, y_lo=None, y_hi=None):
     sum_abs_y = float(np.sum(np.abs(y_true)))
     wmape = float(np.sum(np.abs(err)) / sum_abs_y * 100) if sum_abs_y > 0 else float("nan")
 
+    # NaN (no 0.0) si la ventana tiene media cero: reportar 0 en una rampa
+    # todo-cero con predicción errada la haría parecer perfecta en agregados
     mean_y = float(np.mean(y_true))
-    rrmse = (rmse / mean_y) * 100 if mean_y != 0 else 0.0
+    rrmse = (rmse / mean_y) * 100 if mean_y != 0 else float("nan")
 
     # R²: NaN si la ventana no tiene varianza (SS_tot = 0)
     ss_tot = float(np.sum((y_true - mean_y) ** 2))
@@ -80,5 +82,9 @@ def calculate_metrics(y_true, y_pred, y_lo=None, y_hi=None):
             metrics["Coverage_90"] = float(np.mean(inside))
             metrics["Pinball_P05"] = pinball_loss(y_true, y_lo, 0.05)
             metrics["Pinball_P95"] = pinball_loss(y_true, y_hi, 0.95)
+            # Cobertura DIURNA: de noche lo=hi=y=0 regala inside=True (~50%
+            # de las horas) — el mérito probabilístico real está en el día
+            if productive.any():
+                metrics["Coverage_90_diurna"] = float(np.mean(inside[productive]))
 
     return metrics

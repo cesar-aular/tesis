@@ -16,7 +16,6 @@ Lo que sí hace:
    visibles.
 """
 import logging
-import os
 
 import pandas as pd
 
@@ -24,14 +23,10 @@ import pandas as pd
 # solo se materializa la columna que efectivamente se muta. Mitigación OOM de
 # RAM clave con la base completa (~4.3M filas): el camino DL hacía 2-3 copias
 # profundas de ~350MB por fold que CoW convierte en vistas.
+# (La mitigación de VRAM vive en la geometría de muestreo de dl_models:
+# batch_size de series y step_size de ventanas — expandable_segments de torch
+# no está soportado en Windows.)
 pd.options.mode.copy_on_write = True
-
-# Mitigación OOM de VRAM por FRAGMENTACIÓN: 47 folds x 4 modelos = ~200 fits
-# secuenciales en un mismo proceso; el allocator de torch fragmenta y termina
-# fallando con memoria "libre" pero no contigua. expandable_segments permite
-# crecer segmentos en vez de reservar bloques fijos (leído en la primera
-# asignación CUDA — debe configurarse antes de tocar la GPU).
-os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
 
 
 def silence_noise():

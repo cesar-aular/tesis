@@ -117,6 +117,9 @@ def generate_global_metrics_report(strategy: str = "toy"):
                 data = json.load(f)
                 
             model_name = data.get("model", "unknown")
+            # Markers de completitud de planta: no llevan métricas de ventana
+            if model_name.endswith("_complete"):
+                continue
             planta = data.get("planta", "")
             estacion = data.get("estacion", "")
             metrics = data.get("metrics", {})
@@ -185,6 +188,7 @@ def generate_global_metrics_report(strategy: str = "toy"):
                 "R2": metrics.get("R2"),
                 # Metricas probabilisticas (DL MQLoss level=[90] y XGB cuantilico)
                 "Coverage_90": metrics.get("Coverage_90"),
+                "Coverage_90_diurna": metrics.get("Coverage_90_diurna"),
                 "Pinball_P05": metrics.get("Pinball_P05"),
                 "Pinball_P95": metrics.get("Pinball_P95"),
             }

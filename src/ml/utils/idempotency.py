@@ -5,17 +5,27 @@ from typing import Dict, Any
 
 def check_plant_model_done(results_dir: Path | str, model_name: str, planta: str) -> bool:
     """
-    Idempotencia real del pipeline LOPO: verifica si el ultimo artefacto del
-    modelo para una planta (marker de rollout7d) ya existe, sin necesidad de
-    conocer macrozona/estacion de antemano.
+    Idempotencia real del pipeline LOPO: un modelo/planta está completo SOLO
+    si existe su marker de completitud de planta, escrito al terminar TODAS
+    las ventanas (raw + operacional + estacionales). Antes se usaba el marker
+    del rollout raw: una falla a mitad de las ventanas estacionales dejaba a
+    la planta "completa" con estacionales faltantes para siempre.
 
-    Estructura: results/{strategy}/{model}/{macrozona}/{estacion}/{planta}/rollout7d/*_done.json
+    Estructura: results/{strategy}/{model}/{macrozona}/{estacion}/{planta}/
+                {model}_complete_{planta}_*_done.json
     """
     base = Path(results_dir) / model_name
     if not base.exists():
         return False
-    pattern = f"*/*/{planta}/rollout7d/{model_name}_rollout7d_{planta}_*_done.json"
+    pattern = f"*/*/{planta}/{model_name}_complete_{planta}_*_done.json"
     return any(base.glob(pattern))
+
+
+def mark_plant_model_complete(plant_dir: Path | str, model_name: str,
+                              planta: str, estacion: str):
+    """Marca que TODAS las ventanas del modelo para la planta terminaron."""
+    mark_run_completed(plant_dir, f"{model_name}_complete", planta, estacion,
+                       {"status": "all_windows_done"})
 
 def get_marker_path(results_dir: Path | str, model_name: str, planta: str, estacion: str) -> Path:
     results_dir = Path(results_dir)
