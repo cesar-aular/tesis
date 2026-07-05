@@ -23,6 +23,6 @@ Durante la construcción del corpus se documentaron los siguientes hallazgos, re
     \item \textbf{Agregación multi-unidad:} centrales con múltiples unidades físicas reportando bajo el mismo identificador (ej. PFV Jama: dos unidades, 51 MW combinados) se consolidaron sumando la generación por hora. Sin esta corrección, la serie subcontaba aproximadamente la mitad de la producción real de la central.
     \item \textbf{Duplicación por reejecución:} el modo de escritura incremental de la capa Bronze podía duplicar el dataset completo en reejecuciones forzadas (factor de hasta 3,17$\times$ detectado); se corrigió limpiando las salidas previas y añadiendo deduplicación defensiva aguas abajo.
     \item \textbf{Transiciones de horario de verano (DST):} la hora repetida del primer domingo de abril se colapsa de forma segura (en generación solar corresponde a horas nocturnas de producción nula).
-    \item \textbf{Rampas de puesta en marcha:} 15 de las 47 plantas evaluadas presentan períodos iniciales de generación nula superiores a 24 horas (hasta semanas), motivando el análisis de sensibilidad Raw/Operacional del Capítulo V.
+    \item \textbf{Rampas de puesta en marcha:} 33 de las 94 plantas evaluadas presentan períodos iniciales de generación nula superiores a 24 horas (hasta semanas), motivando el análisis de sensibilidad Raw/Operacional del Capítulo V.
     \item \textbf{Sentinelas y fechas fuera de rango:} los registros meteorológicos con valor $-9999$ se descartan y las fechas se restringen al período 2014--2024 antes del parseo.
 \end{itemize}

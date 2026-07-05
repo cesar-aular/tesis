@@ -1,15 +1,15 @@
-\begin{tabular}{lccc}
+\begin{tabular}{lcccc}
 \toprule
-Modelo & Cobertura 90\,\% & Pinball P05 & Pinball P95 \\
- & (ideal $\approx 0{,}90$) & (MWh) & (MWh) \\
+Modelo & Cobertura 90\,\% & Cobertura diurna & Pinball P05 & Pinball P95 \\
+ & (con noche) & (horas $y>0$) & (MWh) & (MWh) \\
 \midrule
-XGBoost local & 0.881 & 0.039 & 0.033 \\
-LSTM local & 0.845 & 0.041 & 0.211 \\
-N-HiTS local & 0.827 & 0.045 & 0.107 \\
-XGBoost global & 0.976 & 0.045 & 0.091 \\
-LSTM global & 0.512 & 0.212 & 0.140 \\
-N-HiTS global & 0.679 & 0.091 & 0.277 \\
-TFT global & 0.500 & 0.195 & 0.123 \\
-Informer global & 0.560 & 0.133 & 0.114 \\
+XGBoost local & 0.88 & 0.86 & 0.039 & 0.033 \\
+LSTM local & 0.85 & 0.79 & 0.041 & 0.211 \\
+N-HiTS local & 0.83 & 0.66 & 0.045 & 0.107 \\
+XGBoost global & 0.98 & 0.99 & 0.045 & 0.091 \\
+LSTM global & 0.51 & 0.54 & 0.212 & 0.140 \\
+N-HiTS global & 0.68 & 0.36 & 0.091 & 0.277 \\
+TFT global & 0.50 & 0.44 & 0.195 & 0.123 \\
+Informer global & 0.56 & 0.65 & 0.133 & 0.114 \\
 \bottomrule
 \end{tabular}

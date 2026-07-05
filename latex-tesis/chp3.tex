@@ -1,76 +1,44 @@
 \section{Estado del Arte / Benchmarking}
-Esta sección analiza críticamente los principales trabajos de la literatura científica reciente que abordan el pronóstico de generación fotovoltaica, la gestión de series temporales multivariadas bajo escasez de datos y el uso de técnicas de transferencia de conocimiento. La revisión clasifica los artículos bibliográficos según sus arquitecturas y metodologías, contrastando objetivamente las ventajas y limitaciones metodológicas expuestas por cada autor.
+Este capítulo revisa la literatura científica reciente centrada específicamente en la \textbf{aplicación} de técnicas de aprendizaje al pronóstico de generación fotovoltaica. A diferencia del marco teórico —que expuso la genealogía de los métodos—, aquí el interés recae en cómo esos métodos se han instrumentado sobre datos solares reales, qué desempeño empírico han reportado y qué limitaciones persisten. La revisión avanza de lo general a lo específico: parte de los enfoques de \textit{Machine Learning} y aprendizaje profundo aplicados al pronóstico solar, transita hacia las arquitecturas atencionales, y converge en la frontera que motiva esta investigación: la transferencia de conocimiento entre plantas bajo escasez de datos.
 
-\subsection{Modelos Base y Pronóstico de Ámbito Local}
-La investigación académica inicial del pronóstico fotovoltaico empleó predominantemente algoritmos ajustados con historiales climáticos de una sola ubicación. Zhaoyang Zhu et al. (2023) \cite{rodriguez2023energy} exploraron la eficiencia algorítmica de distintos esquemas de regresión no lineal, demostrando la superioridad métrica del algoritmo \textit{XGBoost} sobre técnicas de series puramente estadísticas. 
-\begin{itemize}
-    \item \textbf{Pros:} Alta eficiencia computacional y gran desempeño para identificar la importancia de características (\textit{feature importance}) dentro de variables meteorológicas correlacionadas.
-    \item \textbf{Contras:} La naturaleza basada en árboles sufre degradaciones severas y pérdida de la capacidad de extrapolación cuando los regímenes de datos de prueba (como los que suceden en un arranque en frío) carecen de historial de entrenamiento (\textit{Cold-Start}).
-\end{itemize}
+\subsection{Enfoques de Machine Learning y Aprendizaje Profundo en el Pronóstico Fotovoltaico}
+La investigación aplicada inicial del pronóstico fotovoltaico se apoyó predominantemente en algoritmos ajustados con el historial climático de una sola ubicación. En una evaluación comparativa sobre un conjunto de datos solar real, Arslan et al. (2025) contrastaron algoritmos clásicos de \textit{Machine Learning} frente a modelos de aprendizaje profundo basados en Transformers, documentando la superioridad de estos últimos para capturar la dinámica no lineal de la irradiancia, aunque a costa de un mayor requerimiento computacional y de datos \cite{Arslan2025}. En la misma línea, los estudios centrados en algoritmos de potenciación del gradiente han consolidado a XGBoost como una línea base robusta y explicable para el pronóstico energético, destacando su eficiencia y su capacidad para jerarquizar la importancia de las variables meteorológicas, si bien evidencian su fragilidad ante regímenes de datos no observados en entrenamiento \cite{rodriguez2023energy}. Estos trabajos establecen el punto de partida empírico: los modelos locales son eficaces sobre bancos de datos extensos, pero su desempeño se degrada precisamente en las condiciones de escasez que caracterizan la puesta en marcha de una planta.
 
-Por su parte, Salinas et al. (2020) \cite{Salinas2020} propusieron \textit{DeepAR}, un modelo estructurado mediante redes recurrentes autorregresivas optimizadas para entregar densidades probabilísticas futuras en lugar de un estimador puntual.
-\begin{itemize}
-    \item \textbf{Pros:} Permite cuantificar de forma analítica los intervalos de incertidumbre de la estimación solar diaria.
-    \item \textbf{Contras:} El procesamiento secuencial característico del núcleo recurrente incrementa asintóticamente el tiempo de entrenamiento, limitando la habilidad práctica del algoritmo para ingerir largas secuencias climáticas de forma paralela.
-\end{itemize}
+\subsection{Arquitecturas Atencionales Aplicadas a la Energía Solar}
+La adopción de arquitecturas Transformer en el dominio solar ha producido resultados consistentemente favorables. López Santos et al. (2022) aplicaron el \textit{Temporal Fusion Transformer} al pronóstico fotovoltaico a un día vista (\textit{day-ahead}), aprovechando su capacidad para fusionar covariables estáticas y dinámicas y para emitir predicciones por cuantiles, y reportaron mejoras significativas frente a las líneas base recurrentes \cite{LopezSantos2022}. El-Saieed (2025) propuso un Transformer adaptativo para el pronóstico de largo plazo de temperatura y radiación en el contexto de la generación fotovoltaica, mostrando la idoneidad del mecanismo de atención para modelar las dependencias meteorológicas de largo alcance que gobiernan la producción \cite{ElSaieed2025}. Ampliando el espectro de fuentes de datos, Li et al. (2024) abordaron el \textit{nowcasting} solar mediante un Transformer que ingiere imágenes de satélite geoestacionario, evidenciando que la atención puede explotar información espacial exógena para anticipar la variabilidad inducida por la nubosidad \cite{Li2024}. En conjunto, esta línea confirma que las arquitecturas atencionales constituyen el estado del arte metodológico en el pronóstico fotovoltaico aplicado, pero la mayoría de estos trabajos opera todavía bajo el supuesto de disponer de historial local suficiente para el entrenamiento.
 
-\subsection{Aplicación de Arquitecturas Transformer en Series Temporales}
-Para superar los obstáculos del procesamiento secuencial, los mecanismos de atención \cite{Vaswani2017} fueron adaptados hacia ecosistemas temporales. Zhou et al. (2021) \cite{Zhou2021} concibieron la arquitectura \textit{Informer}, integrando una innovación de autoatención denominada \textit{ProbSparse}.
-\begin{itemize}
-    \item \textbf{Pros:} Al reducir el cálculo de atención de complejidad cuadrática a logarítmica, el modelo permite predecir eficientemente secuencias extremadamente extensas que antes colapsaban la memoria.
-    \item \textbf{Contras:} El análisis puntual del mecanismo de atención tiende a fraccionar la contigüidad cronológica real de las fluctuaciones climáticas en la serie de tiempo.
-\end{itemize}
+\subsection{Transferencia de Conocimiento y Escasez de Datos en Sistemas Fotovoltaicos}
+La frontera de la disciplina, y el núcleo de esta investigación, es la aplicación de la transferencia de conocimiento para resolver la escasez de datos. Bak et al. (2025) testearon empíricamente esquemas de \textit{Transfer Learning} para el pronóstico de potencia fotovoltaica \textbf{entre regiones}, agregando datos de gran escala de múltiples plantas operativas para pre-entrenar un modelo base; sus resultados demuestran una atenuación de los márgenes de error durante las primeras semanas de operación en sitios geográficos nuevos, aunque el esquema aún requiere una fase de ajuste fino (\textit{fine-tuning}) una vez disponibles los primeros registros locales \cite{Bak2025}. Llevando esta idea a su expresión más extrema, Mishra et al. (2025) exploraron el pronóstico de irradiancia solar de corto plazo mediante modelos fundacionales en un régimen de \textbf{transferencia zero-shot}, es decir, sin ajuste alguno sobre la planta objetivo, anticipando el potencial de los modelos pre-entrenados a gran escala para operar desde el primer instante \cite{Mishra2025}. Estos trabajos validan la dirección del aprendizaje multi-sitio, pero dejan abierta la pregunta de cuánto de esa ganancia se sostiene bajo un protocolo de evaluación estrictamente ciego a la planta objetivo y contrastado de forma justa contra líneas base locales maduras.
 
-A fin de retener dicho contexto, Nie et al. (2022) \cite{Nie2022} publicaron \textit{PatchTST}, un Transformer que preprocesa la señal temporal trozándola en ventanas sub-agrupadas (parches).
-\begin{itemize}
-    \item \textbf{Pros:} Retiene satisfactoriamente la información semántica a nivel de vecindario temporal de la serie y se alza como líder sobre los índices de error de las líneas base recurrentes.
-    \item \textbf{Contras:} Añade complejidad paramétrica al obligar a sintonizar heurísticamente la longitud del parche para cada frecuencia de resolución (horaria, diez-minutal) extraída de las plantas.
-\end{itemize}
-
-En un debate científico paralelo, Zeng et al. (2023) \cite{Zeng2023} cuestionaron estadísticamente el predominio del Transformer, reportando escenarios en que combinaciones lineales de componentes simples batían consistentemente arquitecturas atencionales sobre-complejas. 
-
-\subsection{Transfer Learning y Aprendizajes Globales Multi-Sitio}
-Finalmente, la discusión bibliográfica migra hacia la problemática del \textit{Cold-Start}. Bak et al. (2025) \cite{Bak2025} testearon empíricamente la efectividad de los esquemas de \textit{Transfer Learning} agregando datos de gran escala desde diversas plantas operativas para el entrenamiento de bases preentrenadas.
-\begin{itemize}
-    \item \textbf{Pros:} Demuestra empíricamente una atenuación de los márgenes de error durante las primeras semanas de operación en nuevos sitios geográficos.
-    \item \textbf{Contras:} Todavía exige algoritmos de post-entrenamiento (ajuste fino) una vez logrados los primeros flujos de información local.
-\end{itemize}
-
-Alineado a ello, Damato et al. (2026) \cite{Damato2026} ejecutaron un análisis paramétrico global versus local, resaltando que el aprendizaje cruzado inyecta un efecto estabilizador en conjuntos de datos propensos a cortes intermitentes en la transmisión de telemetría.
-\begin{itemize}
-    \item \textbf{Pros:} Máxima tolerancia a registros ruidosos o fallas persistentes en los sensores, logrando proyecciones fiables por imputación contextual implícita.
-    \item \textbf{Contras:} Impone requerimientos de infraestructura de \textit{hardware} avanzados para soportar la fase de entrenamiento concurrente.
-\end{itemize}
+\subsection{Síntesis Comparativa y Brecha Identificada}
+La Tabla \ref{tab:benchmarking} sintetiza los estudios revisados según su enfoque, aporte principal y limitación metodológica.
 
 \begin{table}[hbt!]
   \centering
   \resizebox{\textwidth}{!}{
-  \begin{tabular}{|m{3.5cm}|m{4cm}|m{5cm}|m{5cm}|}
+  \begin{tabular}{|m{3.2cm}|m{3.3cm}|m{4.5cm}|m{4.5cm}|}
     \hline
-    \textbf{Arquitectura} & \textbf{Enfoque Paradigmático} & \textbf{Ventajas (Pros)} & \textbf{Limitaciones (Contras)} \\
+    \textbf{Estudio} & \textbf{Enfoque} & \textbf{Aporte principal} & \textbf{Limitación metodológica} \\
     \hline
-    XGBoost & Machine Learning Local & Alta interpretabilidad de variables espaciales y rapidez computacional. & Degradación predictiva severa y sobreajuste ante escenarios de arranque en frío. \\
+    Arslan et al. (2025) & ML vs.\ Transformer (local) & Comparación empírica sobre datos solares reales; superioridad de la atención. & Entrenamiento local; no aborda el arranque en frío. \\
     \hline
-    LSTM & Deep Learning Recurrente & Excelente modelado secuencial probabilístico a corto plazo. & Limitada capacidad para evaluar relaciones temporales lejanas; procesamiento lento. \\
+    Zhu et al.\ (XGBoost) & Machine Learning local & Línea base robusta y explicable para pronóstico energético. & Degradación severa fuera del rango histórico observado. \\
     \hline
-    Informer / PatchTST & Transformer Global & Mecanismos de atención eficientes para secuencias extendidas. & Complejidad paramétrica elevada para afinar el tamaño óptimo de los parches. \\
+    López Santos et al. (2022) & TFT para FV (\textit{day-ahead}) & Fusión de covariables estáticas/dinámicas y pronóstico por cuantiles. & Requiere historial local del sitio evaluado. \\
     \hline
-    TFT & Transformer Multivariado & Arquitectura diseñada para segregar variables estáticas (planta) y dinámicas (clima). & Altos requerimientos de hardware para su entrenamiento inicial (Cross-Site). \\
+    El-Saieed (2025) & Transformer adaptativo FV & Modelado de dependencias meteorológicas de largo plazo. & Enfocado en variables meteorológicas, no en transferencia inter-sitio. \\
+    \hline
+    Li et al. (2024) & Transformer + satélite & Explotación de información espacial exógena (nubosidad). & Dependencia de infraestructura de datos satelitales. \\
+    \hline
+    Bak et al. (2025) & Transfer Learning inter-regional & Atenuación del error en las primeras semanas en sitios nuevos. & Exige \textit{fine-tuning} con datos locales iniciales. \\
+    \hline
+    Mishra et al. (2025) & Zero-shot / modelo fundacional & Pronóstico de irradiancia sin ajuste sobre el sitio objetivo. & Foco en irradiancia; sin \textit{benchmarking} contra locales maduros. \\
     \hline
   \end{tabular}
   }
-  \caption{\label{tab:benchmarking} Síntesis comparativa de las arquitecturas predictivas expuestas en el estado del arte.}
+  \caption{\label{tab:benchmarking} Síntesis comparativa de los estudios de pronóstico fotovoltaico aplicado revisados.}
 \end{table}
 
-\subsection{Conclusión del Estado del Arte y Aporte del Proyecto}
-La literatura académica indica que, si bien modelos predictivos locales basados en XGBoost o LSTM son altamente eficaces sobre bancos de datos de larga data, estos algoritmos son metodológicamente incapaces de operar solventemente frente al problema de escasez de datos tempranos (\textit{Cold-Start}). Alternativamente, el \textit{Cross-Site Learning} basado en arquitecturas avanzadas emerge como una solución robusta respaldada por investigaciones modernas. 
+De la revisión emerge una brecha clara. Si bien la literatura valida tanto la eficacia de las arquitecturas atencionales sobre datos solares como la promesa del aprendizaje por transferencia para mitigar la escasez de datos, los trabajos existentes rara vez combinan tres condiciones simultáneamente: \textbf{(i)} una evaluación estrictamente ciega a la planta objetivo (\textit{zero-shot} real, sin ajuste ni contexto local), \textbf{(ii)} un contraste directo y justo contra líneas base locales maduras bajo un protocolo idéntico, y \textbf{(iii)} una caracterización de la incertidumbre mediante intervalos probabilísticos y un análisis de sensibilidad estacional. La mayoría, además, opera sobre pocas plantas o requiere fases de ajuste fino que difuminan la condición de arranque en frío puro.
 
-Para abordar resolutivamente los desafíos expuestos en la literatura, este proyecto de título define como aporte metodológico central la implementación y evaluación de un marco predictivo \textit{Cross-Site} (entrenamiento cruzado multi-sitio) soportado sobre el \textit{Temporal Fusion Transformer} (TFT). La idoneidad del TFT se justifica científicamente por su capacidad intrínseca para fusionar variables temporales dinámicas y estáticas de forma asimétrica, característica vital para extrapolar conocimientos meteorológicos entre diferentes ubicaciones geográficas.
-
-Para garantizar la rigurosidad del \textit{benchmarking} y validar empíricamente la efectividad de la técnica frente a la escasez de datos, la investigación estipula un esquema de evaluación comparativo final cerrado, constituido por:
-\begin{enumerate}
-    \item \textbf{Líneas Base Locales Tradicionales:} Utilización del algoritmo \textit{XGBoost} y redes neuronales \textit{LSTM}, ambos condicionados por su estricto entrenamiento aislado en plantas individuales.
-    \item \textbf{Arquitecturas Globales Profundas:} Despliegue de redes jerárquicas \textit{N-HiTS} y las arquitecturas atencionales \textit{Temporal Fusion Transformer (TFT)} e \textit{Informer}, entrenadas bajo un paradigma de retención de una planta (\textit{Leave-One-Plant-Out}) para medir escenarios de \textit{Cold-Start} real.
-\end{enumerate}
-
-Esta arquitectura de evaluación empírica permitirá dictaminar cuantitativamente si el \textit{Temporal Fusion Transformer} es capaz de transferir el conocimiento climático generalizado de la flota operativa para mitigar los sesgos predictivos durante los arranques iniciales de los parques solares a nivel macrozonal.
+Para abordar esta brecha, el presente proyecto de título implementa y evalúa un marco predictivo \textit{Cross-Site} soportado sobre el \textit{Temporal Fusion Transformer}, el \textit{Informer} y N-HiTS, bajo un protocolo de retención de una planta (\textit{Leave-One-Plant-Out}) que garantiza la integridad \textit{zero-shot}. La evaluación se estructura como un \textit{benchmarking} cerrado que contrasta estas arquitecturas globales contra líneas base estrictamente locales (XGBoost y las mismas redes profundas entrenadas de forma aislada), reporta métricas puntuales y probabilísticas, y estratifica los resultados por estación del año sobre un conjunto de \textbf{94 plantas fotovoltaicas} del Sistema Eléctrico Nacional chileno. Esta configuración permite dictaminar cuantitativamente en qué medida el conocimiento climático generalizado de la flota operativa mitiga los sesgos predictivos durante el arranque en frío de nuevos parques solares.

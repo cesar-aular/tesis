@@ -547,16 +547,27 @@ def tab_estacional(df: pd.DataFrame):
 
 
 def tab_probabilistico(df: pd.DataFrame):
+    cols = ["Coverage_90", "Coverage_90_diurna", "Pinball_P05", "Pinball_P95"]
+    have = [c for c in cols if c in df.columns]
     dl = df[(df.Horizon == "7-Day Rollout") & (df.Window == "Operational")
             & df.Coverage_90.notna()]
-    med = dl.groupby("Model")[["Coverage_90", "Pinball_P05", "Pinball_P95"]].median()
+    med = dl.groupby("Model")[have].median()
     med = med.reindex([m for m in MODEL_ORDER if m in med.index])
-    lines = [r"\begin{tabular}{lccc}", r"\toprule",
-             r"Modelo & Cobertura 90\,\% & Pinball P05 & Pinball P95 \\",
-             r" & (ideal $\approx 0{,}90$) & (MWh) & (MWh) \\", r"\midrule"]
+    diurna = "Coverage_90_diurna" in have
+    header = (r"Modelo & Cobertura 90\,\% & Cobertura diurna & Pinball P05 & Pinball P95 \\"
+              if diurna else r"Modelo & Cobertura 90\,\% & Pinball P05 & Pinball P95 \\")
+    sub = (r" & (con noche) & (horas $y>0$) & (MWh) & (MWh) \\"
+           if diurna else r" & (ideal $\approx 0{,}90$) & (MWh) & (MWh) \\")
+    colspec = "lcccc" if diurna else "lccc"
+    lines = [r"\begin{tabular}{" + colspec + "}", r"\toprule", header, sub, r"\midrule"]
     for m, r in med.iterrows():
-        lines.append(f"{MODEL_LABEL[m]} & {_fmt(r['Coverage_90'], 3)} & "
-                     f"{_fmt(r['Pinball_P05'], 3)} & {_fmt(r['Pinball_P95'], 3)} \\\\")
+        if diurna:
+            lines.append(f"{MODEL_LABEL[m]} & {_fmt(r['Coverage_90'], 2)} & "
+                         f"{_fmt(r['Coverage_90_diurna'], 2)} & "
+                         f"{_fmt(r['Pinball_P05'], 3)} & {_fmt(r['Pinball_P95'], 3)} \\\\")
+        else:
+            lines.append(f"{MODEL_LABEL[m]} & {_fmt(r['Coverage_90'], 2)} & "
+                         f"{_fmt(r['Pinball_P05'], 3)} & {_fmt(r['Pinball_P95'], 3)} \\\\")
     lines += [r"\bottomrule", r"\end{tabular}"]
     _write_tex(TAB_DIR / "tab_probabilistico.tex", "\n".join(lines))
 
