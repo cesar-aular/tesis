@@ -128,7 +128,7 @@ pip install -r requirements.txt
 > está excluida por `.gitignore`). Para poder iniciar el proceso debes descargar
 > los datos crudos y colocarlos dentro de `data/landing/`.
 
-**🔗 Enlace de descarga de los datos:** `[ PEGA AQUÍ EL ENLACE ]`
+**🔗 Enlace de descarga de los datos:** `https://drive.google.com/drive/folders/1DV0AGel7DDr_UdgXu1LULUDCaTbcaiE1?usp=sharing`
 
 Tras descargarlos, la carpeta `data/landing/` debe quedar con esta estructura exacta
 (el pipeline la lee y construye el resto de capas automáticamente):
