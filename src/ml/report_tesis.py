@@ -85,8 +85,8 @@ def _arrow(ax, p1, p2, color="#555555"):
 # --------------------------------------------------------------------------
 def fig_solucion():
     """Concepto de la solución: transferencia Cross-Site hacia planta nueva."""
-    fig, ax = plt.subplots(figsize=(10, 5.4))
-    ax.set_xlim(0, 10); ax.set_ylim(0, 5.4); ax.axis("off")
+    fig, ax = plt.subplots(figsize=(11, 5.4))
+    ax.set_xlim(0, 11); ax.set_ylim(0, 5.4); ax.axis("off")
 
     for i, y in enumerate((4.3, 3.4, 2.5)):
         _box(ax, (0.3, y), 2.1, 0.7, f"Planta consolidada {i+1}\n(años de historia)",
@@ -99,18 +99,20 @@ def fig_solucion():
     _box(ax, (3.4, 0.6), 2.6, 1.1,
          "Exógenas conocidas:\nclima + geografía\n(sin generación del target)",
          fc="#FFF2CC")
-    _box(ax, (7.0, 2.9), 2.6, 1.6,
+    # Cajas de la derecha desplazadas a x=7.8 para abrir el hueco donde va
+    # el rótulo rojo (antes se superponía a ambas cajas)
+    _box(ax, (7.8, 2.9), 2.6, 1.6,
          "PLANTA NUEVA\n(Cold-Start:\nsin historial propio)", fc="#FCE4D6", bold=True)
-    _box(ax, (7.0, 0.6), 2.6, 1.1,
+    _box(ax, (7.8, 0.6), 2.6, 1.1,
          "Pronóstico day-1 y\nroll-out 7 días\nP5 / P50 / P95", fc="#E2EFDA")
 
     for y in (4.65, 3.75, 2.85):
         _arrow(ax, (2.4, y), (3.4, min(max(y, 3.1), 4.3)))
     _arrow(ax, (4.7, 2.9), (4.7, 1.7))
-    _arrow(ax, (6.0, 3.7), (7.0, 3.7), color="#C00000")
-    ax.text(6.5, 3.95, "transferencia\nZero-Shot", ha="center", fontsize=8.5,
-            color="#C00000", fontweight="bold")
-    _arrow(ax, (8.3, 2.9), (8.3, 1.7))
+    _arrow(ax, (6.0, 3.7), (7.8, 3.7), color="#C00000")
+    ax.text(6.9, 4.12, "transferencia\nZero-Shot", ha="center", va="center",
+            fontsize=8.5, color="#C00000", fontweight="bold")
+    _arrow(ax, (9.1, 2.9), (9.1, 1.7))
     fig.suptitle("Transferencia Cross-Site: pre-entrenamiento multi-planta e "
                  "inferencia sobre una planta sin historia", fontsize=11)
     _save_fig(fig, "fig_solucion.png")
@@ -192,10 +194,10 @@ def fig_eval_protocolo():
             ha="center", va="center", fontsize=9)
     ax.add_patch(plt.Rectangle((8, y0), 2.2, 0.9, fc="#C6E0B4", ec="#538135"))
     ax.text(9.1, y0 + 0.45, "day1\n(24 h)", ha="center", va="center", fontsize=9)
-    ax.add_patch(plt.Rectangle((8, 2.2), 14.6, 0.9, fc="#DEEBF7", ec="#1F4E79"))
-    ax.text(15.3, 2.65, "rollout7d: 7 días autorregresivos "
+    ax.add_patch(plt.Rectangle((8, 2.0), 14.6, 1.1, fc="#DEEBF7", ec="#1F4E79"))
+    ax.text(15.3, 2.55, "rollout7d: 7 días autorregresivos\n"
             "(realimenta la mediana predicha, nunca la realidad)",
-            ha="center", va="center", fontsize=9)
+            ha="center", va="center", fontsize=8.5)
     _arrow(ax, (9.1, y0), (9.1, 3.1))
 
     ax.annotate("", xy=(22.8, 1.75), xytext=(1, 1.75),
@@ -288,15 +290,17 @@ def fig_tft_arch():
     _box(ax, (6.6, 0.4), 2.5, 0.8, "Futuro conocido\n(calendario, pronóstico)",
          fc="#E2EFDA")
 
-    _box(ax, (2.0, 1.7), 5.5, 0.65,
+    # Cajas anchas: x=1.1, w=7.3 (centro 4.75, igual que antes) + fuente 8
+    # para que el texto largo no desborde los bordes
+    _box(ax, (1.1, 1.7), 7.3, 0.65,
          "Redes de Selección de Variables (VSN) + codificadores estáticos (GRN)",
-         fc="#FFF2CC")
+         fc="#FFF2CC", fontsize=8)
     _box(ax, (2.0, 2.8), 2.6, 0.65, "Codificador LSTM\n(secuencia pasada)", fc="#DEEBF7")
     _box(ax, (4.9, 2.8), 2.6, 0.65, "Decodificador LSTM\n(horizonte futuro)", fc="#E2EFDA")
-    _box(ax, (2.0, 3.9), 5.5, 0.65,
+    _box(ax, (1.1, 3.9), 7.3, 0.65,
          "Atención multi-cabezal interpretable (dependencias de largo plazo)",
-         fc="#D9D2E9")
-    _box(ax, (2.0, 5.0), 5.5, 0.65,
+         fc="#D9D2E9", fontsize=8)
+    _box(ax, (1.1, 5.0), 7.3, 0.65,
          "Compuertas GRN + salida cuantílica  →  P5 / P50 / P95", fc="#C6E0B4")
 
     for x in (1.65, 4.75, 7.85):
