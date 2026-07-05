@@ -118,8 +118,8 @@ def fig_solucion():
 
 def fig_etl_flow():
     """Flujograma del ETL Medallion con reglas de calidad."""
-    fig, ax = plt.subplots(figsize=(11, 4.6))
-    ax.set_xlim(0, 11); ax.set_ylim(0, 4.6); ax.axis("off")
+    fig, ax = plt.subplots(figsize=(11.5, 5.0))
+    ax.set_xlim(0, 11.5); ax.set_ylim(0, 5.0); ax.axis("off")
 
     stages = [
         ("LANDING", "CSV crudos\nCEN (generación)\nCR2 (meteorología)\nMaestro instalaciones", "#F2F2F2"),
@@ -127,22 +127,32 @@ def fig_etl_flow():
         ("SILVER", "Macrozonas geográficas\nFeatures cíclicas sin/cos\nImputación exógenas\n(ffill/bfill + dummy)\ny: JAMÁS imputada", "#DEEBF7"),
         ("GOLD / DL", "Particiones LOPO\npor planta (validación)\nsilver_dl numérico\nfloat32", "#E2EFDA"),
     ]
-    x = 0.3
+    box_w, box_h, y0 = 2.5, 2.4, 2.3
+    x = 0.25
+    centers = []
     for title, body, color in stages:
-        _box(ax, (x, 2.4), 2.3, 1.7, f"{title}\n\n", fc=color, bold=True, fontsize=10)
-        ax.text(x + 1.15, 3.15, body, ha="center", va="center", fontsize=7.8)
+        # Caja vacía; título arriba y cuerpo debajo en y DISTINTAS (evita el
+        # choque del patrón anterior, que centraba ambos en el mismo punto)
+        ax.add_patch(FancyBboxPatch((x, y0), box_w, box_h, boxstyle="round,pad=0.02",
+                                    fc=color, ec="#1F4E79", lw=1.4))
+        cx = x + box_w / 2
+        ax.text(cx, y0 + box_h - 0.33, title, ha="center", va="center",
+                fontsize=11, fontweight="bold")
+        ax.text(cx, y0 + box_h / 2 - 0.42, body, ha="center", va="center", fontsize=8)
+        centers.append(cx)
         if x > 0.5:
-            _arrow(ax, (x - 0.4, 3.25), (x, 3.25))
-        x += 2.7
+            _arrow(ax, (x - 0.28, y0 + box_h / 2), (x, y0 + box_h / 2))
+        x += box_w + 0.35
 
-    _box(ax, (2.0, 0.5), 6.6, 1.1,
-         "Reglas anti-leakage: sin PR = y/capacidad · prior regional calculado "
-         "solo con plantas de entrenamiento\n(dentro de cada split LOPO) · "
-         "pytest bloquea la ejecución si una regla se rompe (gate TDD)",
-         fc="#FFF2CC", fontsize=8.5)
-    _arrow(ax, (5.3, 2.4), (5.3, 1.6), color="#C00000")
+    ax.add_patch(FancyBboxPatch((2.0, 0.35), 7.5, 1.2, boxstyle="round,pad=0.02",
+                                fc="#FFF2CC", ec="#BF8F00", lw=1.4))
+    ax.text(5.75, 0.95, "Reglas anti-leakage: sin PR = y/capacidad · prior regional "
+            "calculado solo con plantas de entrenamiento\n(dentro de cada split LOPO) · "
+            "pytest bloquea la ejecución si una regla se rompe (gate TDD)",
+            ha="center", va="center", fontsize=8.5)
+    _arrow(ax, (centers[2], y0), (5.75, 1.55), color="#C00000")
     fig.suptitle("Pipeline Medallion de preparación de datos y control de calidad",
-                 fontsize=11)
+                 fontsize=12)
     _save_fig(fig, "fig_etl_flow.png")
 
 
