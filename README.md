@@ -106,8 +106,8 @@ funciona en CPU con menor velocidad).
 
 ```bash
 # 1. Clonar
-git clone <URL-del-repositorio>
-cd tesis-final
+git clone https://github.com/cesar-aular/tesis.git
+cd tesis
 
 # 2. Entorno virtual
 python -m venv .venv
