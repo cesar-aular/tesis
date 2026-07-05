@@ -1,0 +1,132 @@
+% =====================================================================
+%  CITAS POR VERIFICAR  —  BORRADORES (NO son bibliografía definitiva)
+% =====================================================================
+%  Reconstruidas de memoria para acelerar la búsqueda. ANTES de mover
+%  cada entrada a bibliografia.bib, VERIFICA contra la fuente original
+%  los campos marcados con  [VERIF]  (son los que suelen tener errores:
+%  páginas, volumen/número, DOI, editorial y, en libros clásicos, la
+%  edición/año). Autores, título y venue son de alta confianza.
+%
+%  USO: por cada entrada, verifica -> pégala en bibliografia.bib ->
+%  reemplaza en el .tex el \needcite{...} correspondiente por \cite{clave}.
+%  El mapeo \needcite -> clave está indicado en cada bloque.
+% =====================================================================
+
+
+% --- MODELOS CENTRALES DE LA TESIS (prioridad alta) ------------------
+
+% Reemplaza: \needcite{XGBoost / gradient boosting (Chen \& Guestrin, 2016)}  (chp2)
+% Confianza alta. [VERIF] páginas (785--794) y DOI.
+@inproceedings{Chen2016,
+  author    = {Chen, Tianqi and Guestrin, Carlos},
+  title     = {{XGBoost}: A Scalable Tree Boosting System},
+  booktitle = {Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (KDD '16)},
+  pages     = {785--794},           % [VERIF]
+  year      = {2016},
+  publisher = {ACM},
+  doi       = {10.1145/2939672.2939785}  % [VERIF]
+}
+
+% Reemplaza: \needcite{Temporal Fusion Transformer (Lim et al., 2021)}  (chp2)
+% Confianza alta. OJO: existe un preprint arXiv 2019; la versión de revista
+% (la citable) es 2021. [VERIF] volumen 37, número 4, páginas 1748--1764, DOI.
+@article{Lim2021,
+  author  = {Lim, Bryan and Ar{\i}k, Sercan {\"O}. and Loeff, Nicolas and Pfister, Tomas},
+  title   = {Temporal Fusion Transformers for interpretable multi-horizon time series forecasting},
+  journal = {International Journal of Forecasting},
+  volume  = {37},                   % [VERIF]
+  number  = {4},                    % [VERIF]
+  pages   = {1748--1764},           % [VERIF]
+  year    = {2021},
+  publisher = {Elsevier},
+  doi     = {10.1016/j.ijforecast.2021.03.012}  % [VERIF]
+}
+
+% Reemplaza: \needcite{N-HiTS / Neural Hierarchical Interpolation for Time Series (Challu et al., 2023)}  (chp2)
+% Confianza alta en autores/venue/año. [VERIF] volumen 37, número 6,
+% páginas (6989--6997) y DOI (el paginado AAAI es el campo más incierto).
+@inproceedings{Challu2023,
+  author    = {Challu, Cristian and Olivares, Kin G. and Oreshkin, Boris N. and Garza, Federico and Mergenthaler-Canseco, Max and Dubrawski, Artur},
+  title     = {{N-HiTS}: Neural Hierarchical Interpolation for Time Series Forecasting},
+  booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume    = {37},                 % [VERIF]
+  number    = {6},                  % [VERIF]
+  pages     = {6989--6997},         % [VERIF]
+  year      = {2023},
+  doi       = {10.1609/aaai.v37i6.25823}  % [VERIF]
+}
+
+
+% --- MODELOS ESTADÍSTICOS CLÁSICOS -----------------------------------
+
+% Reemplaza: \needcite{modelos ARMA/ARIMA y metodología Box-Jenkins}  (chp2)
+% Clásico. [VERIF] edición: la original es Holden-Day 1970; muchas tesis
+% citan la 5.ª ed. (Box, Jenkins, Reinsel \& Ljung, Wiley, 2015). Elige una.
+@book{BoxJenkins1970,
+  author    = {Box, George E. P. and Jenkins, Gwilym M.},
+  title     = {Time Series Analysis: Forecasting and Control},
+  publisher = {Holden-Day},         % [VERIF] (o Wiley si usas la 5.ª ed.)
+  address   = {San Francisco},
+  year      = {1970}                % [VERIF] (2015 si usas la 5.ª ed.)
+}
+
+% Reemplaza: \needcite{modelos SARIMA/SARIMAX con variables exógenas}  (chp2)
+% Winters (1960) cubre el suavizado estacional; para SARIMAX suele bastar
+% con Box-Jenkins + Hyndman. Si prefieres un texto único, usa Hyndman2021.
+@article{Winters1960,
+  author    = {Winters, Peter R.},
+  title     = {Forecasting sales by exponentially weighted moving averages},
+  journal   = {Management Science},
+  volume    = {6},                  % [VERIF]
+  number    = {3},                  % [VERIF]
+  pages     = {324--342},           % [VERIF]
+  year      = {1960},
+  publisher = {INFORMS}
+}
+
+
+% --- TEXTOS BASE Y SURVEYS -------------------------------------------
+
+% Reemplaza (cualquiera de): \needcite{definición formal de serie de tiempo...},
+% \needcite{propiedades de las series de tiempo...},
+% \needcite{suavizado exponencial y método de Holt-Winters}  (chp2)
+% Libro online, muy citado. [VERIF] edición/año: 2.ª ed. 2018 o 3.ª ed. 2021.
+@book{Hyndman2021,
+  author    = {Hyndman, Rob J. and Athanasopoulos, George},
+  title     = {Forecasting: Principles and Practice},
+  edition   = {3},                  % [VERIF] (usa {2} y year=2018 si prefieres esa)
+  publisher = {OTexts},
+  address   = {Melbourne, Australia},
+  year      = {2021},               % [VERIF]
+  note      = {\url{https://otexts.com/fpp3/}}
+}
+
+% Reemplaza: \needcite{modelos globales de pronóstico: localidad vs. globalidad (Montero-Manso \& Hyndman, 2021)}  (chp2)
+% Confianza alta en autores/título/journal/año. [VERIF] volumen 37, número 4,
+% páginas (1632--1653) y DOI.
+@article{MonteroManso2021,
+  author  = {Montero-Manso, Pablo and Hyndman, Rob J.},
+  title   = {Principles and algorithms for forecasting groups of time series: Locality and globality},
+  journal = {International Journal of Forecasting},
+  volume  = {37},                   % [VERIF]
+  number  = {4},                    % [VERIF]
+  pages   = {1632--1653},           % [VERIF]
+  year    = {2021},
+  publisher = {Elsevier},
+  doi     = {10.1016/j.ijforecast.2021.03.004}  % [VERIF]
+}
+
+% Reemplaza: \needcite{Transfer Learning: survey (Pan \& Yang, 2010)}  (chp2)
+% Survey clásico, confianza alta. [VERIF] volumen 22, número 10,
+% páginas 1345--1359, DOI.
+@article{PanYang2010,
+  author  = {Pan, Sinno Jialin and Yang, Qiang},
+  title   = {A Survey on Transfer Learning},
+  journal = {IEEE Transactions on Knowledge and Data Engineering},
+  volume  = {22},                   % [VERIF]
+  number  = {10},                   % [VERIF]
+  pages   = {1345--1359},           % [VERIF]
+  year    = {2010},
+  publisher = {IEEE},
+  doi     = {10.1109/TKDE.2009.191}  % [VERIF]
+}
