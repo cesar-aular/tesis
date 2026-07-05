@@ -122,6 +122,36 @@ pip install -r requirements.txt
 
 ---
 
+## 📥 Datos de entrada (¡requerido antes de ejecutar!)
+
+> ⚠️ La carpeta `data/` **no se incluye en el repositorio** (es demasiado pesada y
+> está excluida por `.gitignore`). Para poder iniciar el proceso debes descargar
+> los datos crudos y colocarlos dentro de `data/landing/`.
+
+**🔗 Enlace de descarga de los datos:** `[ PEGA AQUÍ EL ENLACE ]`
+
+Tras descargarlos, la carpeta `data/landing/` debe quedar con esta estructura exacta
+(el pipeline la lee y construye el resto de capas automáticamente):
+
+```
+data/landing/
+├── datos-centrales-generacion.xlsx     # Maestro de plantas (generación)
+├── datos-centrales-exogenas.xlsx       # Maestro de estaciones meteorológicas
+├── generacion_raw/                     # CSV mensuales del CEN (YYYYMMGxSEN.csv)
+│   ├── 201401GxSEN.csv
+│   └── ...
+└── variables_externas/                 # Series meteorológicas (red CR2)
+    ├── humedad-relativa/
+    ├── radiacion-global-instantanea/
+    ├── temp-aire-seco/
+    └── viento-10m/
+```
+
+Con los datos en su sitio, la primera ejecución del orquestador procesa el flujo
+completo `landing → bronze → silver → gold` antes de la fase de ML.
+
+---
+
 ## ▶️ Uso
 
 El orquestador es el **único** punto de entrada de producción. Estrategias de escala:
