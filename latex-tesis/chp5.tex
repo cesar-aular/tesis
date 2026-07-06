@@ -14,7 +14,7 @@ Durante la construcción de la capa \textit{Bronze} se identificaron y resolvier
 
 La capa \textit{Silver} incorporó las características cíclicas temporales (seno/coseno de hora, mes y estación), la asociación geográfica por Macrozona y la imputación trazable de exógenas (con variables indicadoras \textit{is\_imputed} y bitácora de imputación), mientras que la capa \textit{Gold} materializó las particiones de validación LOPO por planta.
 
-\begin{figure}[hbt!]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{figuras/fig_medallion_impl.png}
   \caption{\label{fig:etl_implementado} Flujo de datos implementado: Landing $\rightarrow$ Bronze $\rightarrow$ Silver $\rightarrow$ Gold, con los volúmenes reales tras la depuración.}
@@ -22,12 +22,13 @@ La capa \textit{Silver} incorporó las características cíclicas temporales (se
 
 La Tabla \ref{tab:dataset_corpus} resume la composición del corpus resultante por macrozona. La cobertura se concentra en el Norte Chico y la Zona Central, en coherencia con la distribución real del parque fotovoltaico conectado al Sistema Eléctrico Nacional.
 
-\begin{table}[hbt!]
+\begin{table}[htbp]
   \centering
   \input{tablas/tab_dataset}
   \caption{\label{tab:dataset_corpus} Composición del corpus unificado (capa Silver) por macrozona.}
 \end{table}
 
+\FloatBarrier
 \subsection{Fase 1: Sintonización de Hiperparámetros}
 La búsqueda de hiperparámetros se implementó mediante optimización bayesiana (\textit{Optuna}), explorando la tasa de aprendizaje y la dimensión oculta de cada arquitectura global (mapeada al parámetro real de cada red: \textit{encoder} en LSTM, unidades MLP por bloque en N-HiTS y dimensión del modelo en TFT e Informer). Para contener el costo computacional, la sintonización se ejecuta una única vez por arquitectura y estrategia de escala, reutilizando la configuración óptima en todos los pliegues LOPO; la fuga de información a nivel de hiperparámetros asociada a esta decisión se considera despreciable en la literatura de pronóstico global.
 
@@ -35,7 +36,7 @@ Adicionalmente, el entrenamiento incorpora detención temprana (\textit{early st
 
 La Tabla \ref{tab:hparams} presenta la configuración óptima seleccionada para cada arquitectura global, junto a la ventana de entrada y la precisión de entrenamiento.
 
-\begin{table}[hbt!]
+\begin{table}[htbp]
   \centering
   \small
   \input{tablas/tab_hparams}
@@ -44,19 +45,20 @@ La Tabla \ref{tab:hparams} presenta la configuración óptima seleccionada para 
 
 Para dimensionar el costo estructural de cada enfoque, la Tabla \ref{tab:params} contrasta el número de parámetros de cada modelo con su error de pronóstico, y la Figura \ref{fig:complejidad} lo visualiza. La medida de complejidad es heterogénea por familia —pesos entrenables en las redes profundas, número de nodos del ensamble en los modelos de árboles—, por lo que la comparación es indicativa y no estrictamente conmensurable, pero evidencia que un mayor número de parámetros no se traduce necesariamente en mayor precisión bajo el régimen Cold-Start.
 
-\begin{table}[hbt!]
+\begin{table}[htbp]
   \centering
   \small
   \input{tablas/tab_params}
   \caption{\label{tab:params} Complejidad de cada modelo (número de parámetros) frente a su error mediano de pronóstico.}
 \end{table}
 
-\begin{figure}[hbt!]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.9\textwidth]{figuras/fig_complejidad.png}
   \caption{\label{fig:complejidad} Complejidad del modelo (escala logarítmica) frente al error de pronóstico Cold-Start.}
 \end{figure}
 
+\FloatBarrier
 \subsection{Fase 2: Simulación Cold-Start (LOPO)}
 La evaluación \textit{Leave-One-Plant-Out} se ejecutó conforme al diseño metodológico: para cada planta objetivo, los modelos globales se entrenan con las restantes $N-1$ instalaciones y la inferencia se inicializa con un contexto histórico 100\% sintético ($y = \text{capacidad} \times PR_{\text{regional}} \times \text{perfil solar}$), donde el \textit{Performance Ratio} regional se computa estrictamente sobre el conjunto de entrenamiento, estratificado por Macrozona y estación del año.
 
@@ -69,6 +71,7 @@ Como refinamiento metodológico surgido durante el desarrollo, la evaluación in
 
 Cada ventana se evalúa en los dos horizontes definidos (\textit{day1} y \textit{rollout7d}, este último con realimentación autorregresiva de la mediana predicha), y las ventanas de evaluación se excluyen íntegramente del entrenamiento del baseline local para prevenir contaminación \textit{train-on-test}.
 
+\FloatBarrier
 \subsection{Fase 3: Resultados y Análisis Comparativo}
 
 Los resultados que se presentan corresponden a la ejecución de la estrategia de escala \textit{total}: evaluación LOPO sobre las \textbf{94 plantas objetivo}, con los modelos globales entrenados sobre la base histórica completa (2014--2024) de las restantes $N-1$ instalaciones. Cada celda reportada corresponde a la \textbf{mediana} sobre las plantas evaluadas (robusta frente a casos extremos); $n$ indica el número de plantas con evaluación válida para cada modelo. Para la lectura de las magnitudes debe considerarse que el rRMSE normaliza por la generación media horaria de la ventana, la cual incluye las horas nocturnas de producción nula: esto infla sistemáticamente el indicador (valores sobre 100\,\% son esperables en pronóstico horario fotovoltaico bajo esta normalización) y su valor reside en la \textbf{comparación relativa} entre arquitecturas evaluadas sobre ventanas idénticas. Como salvaguarda metodológica, las métricas se computan únicamente sobre observaciones reales y todos los modelos —tanto de árboles como profundos— emiten intervalos de predicción P5/P50/P95 sobre una misma grilla horaria canónica, garantizando una comparación estrictamente pareada.
@@ -77,21 +80,21 @@ Los resultados que se presentan corresponden a la ejecución de la estrategia de
 
 Las Tablas \ref{tab:res_raw} y \ref{tab:res_op} resumen el desempeño de las ocho configuraciones evaluadas en ambas definiciones de ventana; la Figura \ref{fig:res_global} sintetiza la comparación en la ventana operacional.
 
-\begin{table}[hbt!]
+\begin{table}[htbp]
   \centering
   \small
   \input{tablas/tab_resultados_raw}
   \caption{\label{tab:res_raw} Métricas medianas por arquitectura y horizonte — ventana \textit{Raw} (desde la primera hora registrada; 94 plantas).}
 \end{table}
 
-\begin{table}[hbt!]
+\begin{table}[htbp]
   \centering
   \small
   \input{tablas/tab_resultados_operacional}
   \caption{\label{tab:res_op} Métricas medianas por arquitectura y horizonte — ventana \textit{Operacional} (desde la primera producción sostenida; subconjunto de 33 plantas con rampa de puesta en marcha distinguible).}
 \end{table}
 
-\begin{figure}[hbt!]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{figuras/fig_resultados_global.png}
   \caption{\label{fig:res_global} Error relativo mediano por arquitectura y horizonte en la ventana operacional.}
@@ -99,23 +102,24 @@ Las Tablas \ref{tab:res_raw} y \ref{tab:res_op} resumen el desempeño de las och
 
 Tres lecturas emergen con claridad de la ventana operacional (roll-out de 7 días). Primero, \textbf{XGBoost local} —entrenado con la historia propia de cada planta— es la configuración más precisa (rRMSE mediano de 62\,\%), seguido de \textbf{XGBoost global} (95\,\%), que se erige como el mejor modelo del paradigma \textit{Cross-Site}. Segundo, entre las redes profundas globales, la \textbf{LSTM} (118\,\%) supera a las arquitecturas atencionales \textit{Informer} (129\,\%) y \textit{TFT} (133\,\%) y a la \textbf{N-HiTS} (150\,\%), un ordenamiento coherente con la advertencia de la literatura sobre el sobre-dimensionamiento de la atención frente a líneas base más simples \cite{Zeng2023}. Tercero, la degradación entre el horizonte \textit{day1} y el roll-out semanal es moderada en todas las familias, lo que indica que la realimentación autorregresiva de la mediana predicha no desestabiliza los pronósticos.
 
+\FloatBarrier
 \subsubsection{Análisis por Estación del Año}
 
 El análisis por estación del año constituye un eje central de esta evaluación: para cada planta se construyen ventanas de arranque en frío que inician en cada una de las cuatro estaciones (tomadas de su propia historia posterior a la puesta en marcha), lo que permite caracterizar cómo la variabilidad meteorológica cíclica afecta la transferencia de conocimiento. Cabe precisar que estas ventanas estacionales son \textbf{simulaciones del arranque en frío en distintas épocas del año} y son independientes de la estación en que la planta se conectó realmente: una planta conectada en verano también aporta una ventana invernal. Las Tablas \ref{tab:estacional_day1} y \ref{tab:estacional} presentan la sensibilidad estacional en ambos horizontes, y la Figura \ref{fig:estacional} la sintetiza para las arquitecturas representativas.
 
-\begin{table}[hbt!]
+\begin{table}[htbp]
   \centering
   \input{tablas/tab_estacional_day1}
   \caption{\label{tab:estacional_day1} rRMSE mediano (\%) del horizonte \textit{day1} por estación del año en que inicia la ventana de evaluación.}
 \end{table}
 
-\begin{table}[hbt!]
+\begin{table}[htbp]
   \centering
   \input{tablas/tab_estacional}
   \caption{\label{tab:estacional} rRMSE mediano (\%) del roll-out de 7 días por estación del año en que inicia la ventana de evaluación.}
 \end{table}
 
-\begin{figure}[hbt!]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{figuras/fig_estacional.png}
   \caption{\label{fig:estacional} Sensibilidad estacional del Cold-Start para cuatro arquitecturas representativas.}
@@ -123,13 +127,15 @@ El análisis por estación del año constituye un eje central de esta evaluació
 
 El \textbf{invierno es sistemáticamente la estación de mayor dificultad predictiva para todas las arquitecturas}: en el roll-out semanal, XGBoost global pasa de 52\,\% (verano) a 133\,\% (invierno) y XGBoost local de 40\,\% a 115\,\%, un patrón que se repite en las redes profundas. La brecha se explica por la mayor variabilidad nubosa y la menor irradiación media invernal, que reducen la señal determinista del perfil solar y amplifican el peso relativo de los errores. Este hallazgo tiene una implicación operativa directa: la incertidumbre del pronóstico de un parque recién conectado depende de forma marcada de la estación de su puesta en marcha, siendo el invierno el escenario más adverso.
 
+\FloatBarrier
 \subsubsection{Análisis de Sensibilidad: Ventana Raw vs. Operacional}
 
 Solo 33 de las 94 plantas presentan una rampa de puesta en marcha superior a 24 horas; para el resto, ambas definiciones de ventana coinciden. En la mediana agregada las diferencias son moderadas (Tablas \ref{tab:res_raw} y \ref{tab:res_op}), pero el promedio de la ventana \textit{Raw} queda distorsionado en las plantas con rampa: al iniciar la evaluación sobre semanas de generación nula, la media de la ventana tiende a cero y el rRMSE se torna indefinido (reportado como no disponible para preservar la honestidad del agregado). El análisis confirma la decisión metodológica de \textbf{reportar ambas definiciones}: la ventana \textit{Raw} es fiel al registro histórico, mientras que la \textit{Operacional} produce métricas interpretables del desempeño sobre una planta que ya opera comercialmente.
 
+\FloatBarrier
 \subsubsection{Calidad Probabilística de los Intervalos}
 
-\begin{table}[hbt!]
+\begin{table}[htbp]
   \centering
   \input{tablas/tab_probabilistico}
   \caption{\label{tab:probabilistico} Calidad probabilística de los intervalos de 90\,\% (roll-out 7 días, ventana operacional). La \textit{cobertura con noche} incluye las horas nocturnas, donde el forzamiento físico a cero garantiza un acierto trivial; la \textit{cobertura diurna} (solo horas con $y>0$) es la medida honesta del mérito probabilístico.}
@@ -137,6 +143,7 @@ Solo 33 de las 94 plantas presentan una rampa de puesta en marcha superior a 24 
 
 La Tabla \ref{tab:probabilistico} revela un contraste nítido en la calibración de los intervalos. Evaluada sobre las horas productivas —métrica que descuenta el acierto trivial nocturno—, \textbf{la regresión cuantílica de XGBoost calibra adecuadamente} (cobertura diurna de 0,99 en el modelo global y 0,86 en el local, en torno al 0,90 nominal), mientras que \textbf{las redes profundas globales quedan subcalibradas} (LSTM 0,54, Informer 0,65, TFT 0,44, N-HiTS 0,36). La explicación es coherente con el diseño experimental: el escalador local de cada red profunda se ajusta sobre el contexto sintético, cuya varianza (un perfil solar idealizado) es inferior a la variabilidad real de la planta, produciendo bandas demasiado estrechas; los baselines locales profundos, que disponen de contexto real, mejoran su cobertura (LSTM local 0,79, N-HiTS local 0,66). XGBoost, en cambio, aprende los cuantiles P5/P50/P95 directamente de la dispersión real observada en el entrenamiento multi-planta, lo que explica su calibración superior. La calibración de los intervalos de las redes profundas bajo transferencia Zero-Shot —por ejemplo mediante predicción conformal— se identifica como línea de trabajo futuro.
 
+\FloatBarrier
 \subsubsection{Contraste de la Hipótesis}
 
 La hipótesis del Capítulo I postula que el modelo global multi-sitio es capaz de superar en precisión a un modelo entrenado localmente con la información histórica del centro. Los resultados permiten un veredicto matizado en tres planos:
@@ -147,7 +154,7 @@ La hipótesis del Capítulo I postula que el modelo global multi-sitio es capaz 
     \item \textbf{El valor operativo del modelo global reside en la disponibilidad inmediata:} el paradigma local exige meses de espera para acumular datos de entrenamiento, mientras que el modelo global emite pronósticos utilizables desde la primera hora de conexión —el escenario exacto que motiva esta investigación—. En ese régimen (historia local nula), el modelo global no tiene competidor local posible, y su calibración probabilística superior (en el caso de XGBoost global) lo hace directamente accionable para la gestión de riesgo.
 \end{enumerate}
 
-\begin{figure}[hbt!]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{figuras/fig_ejemplo_rollout.png}
   \caption{\label{fig:ejemplo_rollout} Ejemplo de roll-out Cold-Start de 7 días: el modelo global, sin haber visto jamás la planta objetivo, reproduce el ciclo diario y la magnitud de los picos de generación a partir únicamente del clima entrante y de las características geográficas estáticas, con el forzamiento físico a cero durante la noche astronómica.}

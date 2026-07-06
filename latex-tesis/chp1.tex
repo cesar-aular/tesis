@@ -1,7 +1,7 @@
 \section{Introducción y Objetivos}
 
 \subsection{Introducción}
-En las últimas décadas, la energía solar ha cobrado una gran relevancia, llegando a representar una parte sustancial de la generación de energía renovable a nivel mundial gracias a los avances en las tecnologías fotovoltaicas y a la creciente demanda energética \needcite{relevancia global de la energía solar y transición energética}. La expansión de la infraestructura de energía solar es un pilar fundamental para la electrificación, la transición energética global y el cumplimiento de los compromisos de cero emisiones netas para mitigar los efectos del cambio climático. Sin embargo, la generación fotovoltaica está sujeta a una alta variabilidad e intermitencia, ya que depende directamente de factores meteorológicos dinámicos como la Irradiancia Horizontal Global (GHI), la temperatura, la nubosidad y la velocidad del viento \needcite{dependencia meteorológica de la generación fotovoltaica}. Por lo tanto, la estimación precisa de la productividad en plantas de energía renovable es un desafío crítico para la planificación, operación y optimización de los sistemas energéticos de la red \cite{cen2025}.
+En las últimas décadas, la energía solar ha cobrado una gran relevancia, llegando a representar una parte sustancial de la generación de energía renovable a nivel mundial gracias a los avances en las tecnologías fotovoltaicas y a la creciente demanda energética \cite{IEA2023}. La expansión de la infraestructura de energía solar es un pilar fundamental para la electrificación, la transición energética global y el cumplimiento de los compromisos de cero emisiones netas para mitigar los efectos del cambio climático. Sin embargo, la generación fotovoltaica está sujeta a una alta variabilidad e intermitencia, ya que depende directamente de factores meteorológicos dinámicos como la Irradiancia Horizontal Global (GHI), la temperatura, la nubosidad y la velocidad del viento \cite{Antonanzas2016}. Por lo tanto, la estimación precisa de la productividad en plantas de energía renovable es un desafío crítico para la planificación, operación y optimización de los sistemas energéticos de la red \cite{cen2025}.
 
 Tradicionalmente, los modelos predictivos de generación solar se han abordado mediante técnicas estadísticas y algoritmos clásicos que se entrenan de manera local utilizando los datos históricos específicos de cada planta. Este enfoque presenta dos limitaciones fundamentales. En primer lugar, dependen fuertemente de la disponibilidad de un volumen considerable de datos históricos locales, lo cual dificulta enormemente su aplicación en escenarios de puesta en marcha de nuevas instalaciones (el problema de \textit{cold-start} o arranque en frío). En segundo lugar, omiten el aprovechamiento de los patrones meteorológicos y operativos que son compartidos entre distintas plantas y regiones climáticas, los cuales poseen un alto valor para mejorar la capacidad predictiva y la generalización de los modelos.
 
@@ -16,7 +16,7 @@ La transición hacia una matriz energética sostenible ha impulsado una expansi�
 
 Esta falta de predictibilidad a corto plazo desencadena severas ineficiencias operativas y un alto riesgo financiero a lo largo de la red. A nivel sistémico, el Coordinador Eléctrico Nacional (2025) reporta que las imprecisiones en los pronósticos de inyección renovable han introducido un error financiero del 4,62\% sobre la estimación de los costos operativos totales del Sistema Eléctrico Nacional. Más grave aún, la incapacidad de anticipar con exactitud la generación exacerba los cuellos de botella en la transmisión, derivando en niveles críticos de vertimiento de energía limpia (curtailment). Durante 2025, el vertimiento físico alcanzó los 6.084 GWh (Asociación Chilena de Energías Renovables y Almacenamiento (ACERA), 2025), lo que se ha traducido en pérdidas de ingresos para las generadoras equivalentes a 562 millones de dólares acumulados en los últimos tres años (Ember, 2025). Finalmente, en el ecosistema a menor escala, esta incertidumbre algorítmica expone directamente a los Pequeños Medios de Generación Distribuida (PMGD) a un riesgo de mermas financieras estimado en hasta 7.400 millones de dólares anuales ante la falta de certeza horaria en sus esquemas de inyección (Energía Estratégica, 2025).
 
-\begin{table}[hbt!]
+\begin{table}[htbp]
   \centering
   \resizebox{\textwidth}{!}{
   \begin{tabular}{|m{5cm}|m{3.5cm}|m{5.5cm}|}
@@ -57,7 +57,7 @@ La implementación de un modelo globalmente entrenado con información provenien
 \subsection{Alcance del Proyecto}
 Con el propósito de analizar y comparar el desempeño predictivo de modelos globales frente a modelos locales, el alcance de este proyecto se focaliza en el dominio de la producción de energía solar mediante el estudio de un conjunto consolidado de instalaciones agrupadas bajo un criterio de Macrozona. Esta estrategia de agrupación responde a la necesidad de estabilizar las características climáticas compartidas y escalar el aprendizaje cruzado entre plantas. Esta configuración experimental permite integrar series de tiempo de producción y variables meteorológicas de alta fidelidad para evaluar la capacidad de generalización y la respuesta del modelo ante la escasez de datos. Técnicamente, el trabajo se concentra en la parametrización, el entrenamiento multi-sitio y la validación de arquitecturas de estado del arte (TFT, Informer, N-HiTS), empleando modelos XGBoost y LSTM como líneas base comparativas. Finalmente, para mantener el foco en la evaluación del rendimiento del modelado, se excluyen explícitamente el desarrollo de nuevas estrategias o metodologías desde cero, el despliegue en entornos de producción (MLOps), la integración con sistemas SCADA y cualquier análisis de viabilidad financiera o rentabilidad operativa sobre los activos estudiados. De manera que el proyecto se compone de la recopilación y preprocesado de datos, la configuración de la estratégia de orquestación para el testeo, el entrenamiento de los modelos base, la ejecución y posterior comparación entre el modelo globalmente entrenado y las baseline en situaciones de ``Cold-Start''. Todo circunscrito por un repositorio con los pipelines de datos, entrenamiento y posterior testeo.
 
-\begin{figure}[hbt!]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{figuras/fig_mapa_muestra.png}
   \caption{\label{fig:mapa_alcance} Distribución de las plantas fotovoltaicas de la muestra por macrozona (94 instalaciones; 1.876 MW de capacidad agregada).}
@@ -71,7 +71,7 @@ Dada la naturaleza de la presente investigación, el desarrollo del modelo no se
 \subsection{Planificación del Trabajo (Carta Gantt)}
 Para cumplir con los objetivos trazados de manera sistemática, se ha definido una carta Gantt de seis semanas de duración orientada a la ejecución técnica, evaluación del \textit{Cold-Start} y consolidación de resultados (ver Figura \ref{fig:gantt_planificacion}).
 
-\begin{figure}[hbt!]
+\begin{figure}[htbp]
   \centering
   \begin{ganttchart}[
       hgrid, vgrid,
