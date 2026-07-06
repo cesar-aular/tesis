@@ -21,11 +21,12 @@
 \definecolor{obj3}{HTML}{2CA02C}
 \definecolor{general}{HTML}{7F7F7F}
 \usepackage[pdfborder={0 0 0}]{hyperref}
+\usepackage{xurl} % permite partir URLs largas en la bibliografia (evita desbordes)
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \usepackage[letterpaper,top=1.36in,left=1.18in,headheight=2in]{geometry}
 % --- ABOUT -----
-% Formato proyrcto de título para ICI-UCM
+% Formato proyecto de título para ICI-UCM
 % ver.0.1 -by Javier Rojas (jerojas@ucm.cl)
 
 \fancyhf{}
@@ -40,8 +41,8 @@
 \date{Junio 2026} % Fecha del trabajo
 \newcommand{\estudiante}{César David Aular Muñoz} % Nombre del estudiante
 \newcommand{\guia}{Dr. Sergio Hernández Álvarez} % Nombre del profesor Guia
-\newcommand{\revis}{PROFESOR COMISIÓN}
-\newcommand{\reviss}{PROFESOR COMISIÓN}
+\newcommand{\revis}{Dra. Xaviera Lopez Cortés}
+\newcommand{\reviss}{Dr. Juan Luis López Díaz}
 %\newcommand{\revisss}{PROFESOR COMISIÓN} %Si requirere agregar más, descomente esta linea
 \newcommand{\carrera}{INGENIERÍA CIVIL INFORMÁTICA} % Carrera
 %\includeonly{cap1,cap2} % En caso de querer compilar solo ciertos capitulos
@@ -52,7 +53,7 @@
 \pagenumbering{Roman}
 {
   \makeatletter
-  \newcommand{\motivo}{Proyecto de título para optar al Título de Ingenirero Civil Informático}
+  \newcommand{\motivo}{Proyecto de título para optar al Título de Ingeniero Civil Informático}
   \ \vspace{-1cm}\\
   {\centering\includegraphics[width=4cm]{logo_ucm}\\}
   \vspace{0.5cm}
@@ -143,7 +144,7 @@
 \addcontentsline{toc}{chapter}{\chaptername{} II}
 \include{chp2}
 
-\chapter*{Capítulo III\\Estado del Arte / Bechmarking}
+\chapter*{Capítulo III\\Estado del Arte / Benchmarking}
 \addcontentsline{toc}{chapter}{\chaptername{} III}
   
 \include{chp3}
@@ -166,7 +167,6 @@
 \phantomsection
 \addcontentsline{toc}{chapter}{Bibliografía}
 \fancyhead[L]{BIBLIOGRAFÍA}
-\nocite{*}
 \bibliographystyle{apalike}
 \begingroup
 \makeatletter

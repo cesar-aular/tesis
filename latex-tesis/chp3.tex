@@ -4,6 +4,8 @@ Este capítulo revisa la literatura científica reciente centrada específicamen
 \subsection{Enfoques de Machine Learning y Aprendizaje Profundo en el Pronóstico Fotovoltaico}
 La investigación aplicada inicial del pronóstico fotovoltaico se apoyó predominantemente en algoritmos ajustados con el historial climático de una sola ubicación. En una evaluación comparativa sobre un conjunto de datos solar real, Arslan et al. (2025) contrastaron algoritmos clásicos de \textit{Machine Learning} frente a modelos de aprendizaje profundo basados en Transformers, documentando la superioridad de estos últimos para capturar la dinámica no lineal de la irradiancia, aunque a costa de un mayor requerimiento computacional y de datos \cite{Arslan2025}. En la misma línea, los estudios centrados en algoritmos de potenciación del gradiente han consolidado a XGBoost como una línea base robusta y explicable para el pronóstico energético, destacando su eficiencia y su capacidad para jerarquizar la importancia de las variables meteorológicas, si bien evidencian su fragilidad ante regímenes de datos no observados en entrenamiento \cite{rodriguez2023energy}. Estos trabajos establecen el punto de partida empírico: los modelos locales son eficaces sobre bancos de datos extensos, pero su desempeño se degrada precisamente en las condiciones de escasez que caracterizan la puesta en marcha de una planta.
 
+El giro hacia el aprendizaje profundo consolidó una nueva generación de modelos aplicados específicamente al pronóstico fotovoltaico. Mellit et al. (2021) demostraron que las redes neuronales profundas superan a los métodos estadísticos clásicos en el pronóstico de potencia FV de corto plazo, capturando con mayor fidelidad la dinámica no lineal de la generación \cite{Mellit2021}. Khan et al. (2022) llevaron esta idea a esquemas de ensamble apilado (\textit{stacking}) de modelos profundos, reportando una mejora en la robustez de la predicción frente a las arquitecturas individuales, a costa de una mayor complejidad de entrenamiento \cite{Khan2022}. Revisiones sistemáticas del área, como la de Kumari y Toshniwal (2021), confirman la preeminencia del aprendizaje profundo para el pronóstico de irradiancia y potencia solar, al tiempo que señalan como limitación transversal la dependencia de historiales locales extensos para el entrenamiento \cite{Kumari2021}. Esta constatación —modelos cada vez más potentes pero aún atados al dato local— es la que motiva el giro hacia los paradigmas de transferencia que se revisan más adelante.
+
 \subsection{Arquitecturas Atencionales Aplicadas a la Energía Solar}
 La adopción de arquitecturas Transformer en el dominio solar ha producido resultados consistentemente favorables. López Santos et al. (2022) aplicaron el \textit{Temporal Fusion Transformer} al pronóstico fotovoltaico a un día vista (\textit{day-ahead}), aprovechando su capacidad para fusionar covariables estáticas y dinámicas y para emitir predicciones por cuantiles, y reportaron mejoras significativas frente a las líneas base recurrentes \cite{LopezSantos2022}. El-Saieed (2025) propuso un Transformer adaptativo para el pronóstico de largo plazo de temperatura y radiación en el contexto de la generación fotovoltaica, mostrando la idoneidad del mecanismo de atención para modelar las dependencias meteorológicas de largo alcance que gobiernan la producción \cite{ElSaieed2025}. Ampliando el espectro de fuentes de datos, Li et al. (2024) abordaron el \textit{nowcasting} solar mediante un Transformer que ingiere imágenes de satélite geoestacionario, evidenciando que la atención puede explotar información espacial exógena para anticipar la variabilidad inducida por la nubosidad \cite{Li2024}. En conjunto, esta línea confirma que las arquitecturas atencionales constituyen el estado del arte metodológico en el pronóstico fotovoltaico aplicado, pero la mayoría de estos trabajos opera todavía bajo el supuesto de disponer de historial local suficiente para el entrenamiento.
 
@@ -12,6 +14,7 @@ La frontera de la disciplina, y el núcleo de esta investigación, es la aplicac
 
 \subsection{Síntesis Comparativa y Brecha Identificada}
 La Tabla \ref{tab:benchmarking} sintetiza los estudios revisados según su enfoque, aporte principal y limitación metodológica.
+
 
 \begin{table}[htbp]
   \centering
@@ -23,6 +26,12 @@ La Tabla \ref{tab:benchmarking} sintetiza los estudios revisados según su enfoq
     Arslan et al. (2025) & ML vs.\ Transformer (local) & Comparación empírica sobre datos solares reales; superioridad de la atención. & Entrenamiento local; no aborda el arranque en frío. \\
     \hline
     Zhu et al.\ (XGBoost) & Machine Learning local & Línea base robusta y explicable para pronóstico energético. & Degradación severa fuera del rango histórico observado. \\
+    \hline
+    Mellit et al. (2021) & DL para potencia FV (corto plazo) & Superioridad del aprendizaje profundo sobre los métodos estadísticos clásicos. & Requiere historial local extenso para el entrenamiento. \\
+    \hline
+    Khan et al. (2022) & Ensamble profundo (\textit{stacking}) & Mayor robustez de la predicción frente a arquitecturas individuales. & Complejidad de entrenamiento del ensamble. \\
+    \hline
+    Kumari \& Toshniwal (2021) & Revisión DL irradiancia/FV & Consolida el DL como estado del arte del pronóstico solar. & Dependencia del dato local; sin foco en transferencia. \\
     \hline
     López Santos et al. (2022) & TFT para FV (\textit{day-ahead}) & Fusión de covariables estáticas/dinámicas y pronóstico por cuantiles. & Requiere historial local del sitio evaluado. \\
     \hline
