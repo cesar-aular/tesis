@@ -54,5 +54,9 @@ latex-tesis/*.fdb_latexmk
 Thumbs.db
 *.log
 
+# ---- AI ----
+.claude
+CLAUDE.md
+
 # ---- Keep structure of ignored dirs ----
 !.gitkeep
