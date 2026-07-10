@@ -48,6 +48,19 @@ latex-tesis/*.synctex.gz
 latex-tesis/*.synctex(busy)
 latex-tesis/*.fls
 latex-tesis/*.fdb_latexmk
+# Beamer (defensa) build artifacts
+latex-tesis/*.nav
+latex-tesis/*.snm
+latex-tesis/*.vrb
+
+# ---- LaTeX: paper IEEE-CS (paper/) ----
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.out
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz
 
 # ---- OS / editor ----
 .DS_Store

@@ -22,6 +22,10 @@
 \definecolor{general}{HTML}{7F7F7F}
 \usepackage[pdfborder={0 0 0}]{hyperref}
 \usepackage{xurl} % permite partir URLs largas en la bibliografia (evita desbordes)
+% Citas en formato APA (Autor, Año) con PARENTESIS en lugar de [corchetes]
+\makeatletter
+\renewcommand\@cite[2]{(#1\if@tempswa , #2\fi)}
+\makeatother
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \usepackage[letterpaper,top=1.36in,left=1.18in,headheight=2in]{geometry}
@@ -41,7 +45,7 @@
 \date{Junio 2026} % Fecha del trabajo
 \newcommand{\estudiante}{César David Aular Muñoz} % Nombre del estudiante
 \newcommand{\guia}{Dr. Sergio Hernández Álvarez} % Nombre del profesor Guia
-\newcommand{\revis}{Dra. Xaviera Lopez Cortés}
+\newcommand{\revis}{Dra. Xaviera López Cortés}
 \newcommand{\reviss}{Dr. Juan Luis López Díaz}
 %\newcommand{\revisss}{PROFESOR COMISIÓN} %Si requirere agregar más, descomente esta linea
 \newcommand{\carrera}{INGENIERÍA CIVIL INFORMÁTICA} % Carrera

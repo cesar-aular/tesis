@@ -1,0 +1,449 @@
+\documentclass[10pt,aspectratio=169]{beamer}
+\usetheme{metropolis}
+\metroset{block=fill, numbering=fraction, progressbar=frametitle}
+
+\usepackage[spanish,es-noquoting]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+% Evita el "Incompatible glue units" de babel-spanish al usar \% dentro de beamer
+\makeatletter
+\let\es@sppercent\relax
+\makeatother
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{xcolor}
+
+\graphicspath{{figuras/}}
+
+% --- Paleta institucional ---
+\definecolor{ucmblue}{RGB}{0,85,150}
+\definecolor{glob}{HTML}{1F77B4}
+\definecolor{loc}{HTML}{2CA02C}
+\definecolor{alertred}{HTML}{C0392B}
+\setbeamercolor{frametitle}{bg=ucmblue}
+\setbeamercolor{progress bar}{fg=ucmblue}
+
+\newcommand{\gl}[1]{\textcolor{glob}{\textbf{#1}}}
+\newcommand{\lo}[1]{\textcolor{loc}{\textbf{#1}}}
+\newcommand{\rj}[1]{\textcolor{alertred}{\textbf{#1}}}
+
+\title{Análisis comparativo de un enfoque multi-sitio frente a modelos locales}
+\subtitle{Proyección a corto plazo de generación fotovoltaica bajo escasez de datos}
+\author{César David Aular Muñoz}
+\institute{Ingeniería Civil Informática \\ Universidad Católica del Maule}
+\date{Examen de Título --- Junio 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{Contenidos}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+% ==================================================================
+\section{El problema}
+% ==================================================================
+
+\begin{frame}{El problema del \emph{Cold-Start} fotovoltaico}
+  \begin{columns}[T]
+    \begin{column}{0.56\textwidth}
+      \begin{itemize}
+        \item Una planta FV \textbf{recién conectada} no tiene historial de generación.
+        \item Los modelos clásicos entrenan \textbf{uno por planta} con meses o años de datos locales.
+        \item Aplicados a una planta nueva: \rj{no se pueden entrenar} o se degradan gravemente.
+      \end{itemize}
+      \vspace{0.4em}
+      \begin{alertblock}{Consecuencia}
+        Incertidumbre justo cuando más se necesita certeza $\rightarrow$ mayores costos de balance y riesgo financiero, en especial para los pequeños PMGD.
+      \end{alertblock}
+    \end{column}
+    \begin{column}{0.44\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{fig_cross_site.png}
+      \vspace{0.3em}
+
+      {\footnotesize El problema del arranque en frío, tomado de los sistemas de recomendación.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{La idea: aprendizaje \emph{Cross-Site}}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      Abandonar el supuesto \textbf{un-modelo-por-planta}.
+
+      \vspace{0.6em}
+      Un único modelo \gl{global} entrenado sobre \textbf{muchas plantas a la vez}:
+      \begin{itemize}
+        \item absorbe patrones compartidos clima~$\rightarrow$~potencia,
+        \item los \textbf{transfiere} a una planta jamás vista,
+        \item pronostica \textbf{desde la primera hora} de conexión.
+      \end{itemize}
+      \vspace{0.5em}
+      \textbf{Pregunta central (adversarial):}\\
+      \emph{¿realmente supera a una línea base local madura, o el premio de la transferencia se desvanece con una comparación justa?}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{fig_solucion.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Hipótesis y objetivos}
+  \begin{block}{Hipótesis}
+    El modelo global multi-sitio es \emph{más preciso} que un modelo entrenado localmente con la historia propia del centro.
+  \end{block}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \textbf{Objetivos específicos}
+      \begin{enumerate}
+        \item Adaptar una arquitectura Transformer al entrenamiento multi-serie.
+        \item Evaluarla frente a modelos locales bajo un protocolo \emph{Cold-Start} estricto.
+        \item Integrar datos multimodales sin fuga de información.
+      \end{enumerate}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{La brecha en la literatura}\\
+      Rara vez se combinan a la vez:
+      \begin{enumerate}
+        \item evaluación \textbf{ciega} a la planta objetivo (sin \emph{fine-tuning}),
+        \item contraste \textbf{justo} contra locales maduros,
+        \item caracterización \textbf{probabilística}.
+      \end{enumerate}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ==================================================================
+\section{Metodología}
+% ==================================================================
+
+\begin{frame}{Arquitectura del sistema}
+  \centering
+  \includegraphics[width=0.93\textwidth]{fig_arquitectura_componentes.png}
+\end{frame}
+
+\begin{frame}{Protocolo \emph{Leave-One-Plant-Out} (LOPO)}
+  \begin{columns}[T]
+    \begin{column}{0.52\textwidth}
+      \begin{itemize}
+        \item Para cada planta objetivo: los globales entrenan con las \textbf{$N-1$ restantes} (2014--2024 completo).
+        \item La planta objetivo es \rj{invisible} durante el entrenamiento.
+        \item Métricas: \textbf{mediana} sobre 94 plantas, solo observaciones reales.
+      \end{itemize}
+      \begin{exampleblock}{Integridad Zero-Shot (no negociable)}
+        Ninguna variable puede ser función de la generación del objetivo. Verificado por pruebas automatizadas.
+      \end{exampleblock}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{fig_lopo.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{La lección de la fuga de datos}
+  \begin{center}
+    \Large Un \emph{prior} de eficiencia calculado \textbf{por-fila} desde el objetivo
+  \end{center}
+  \vspace{0.3em}
+  \[
+    PR = \frac{y}{\text{capacidad}} \quad\Longrightarrow\quad \mathrm{corr}(PR,\,y)=1.0
+  \]
+  \vspace{0.2em}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \begin{alertblock}{rRMSE falso}
+        $\approx 0.8\,\%$ \; (demasiado bueno para ser verdad)
+      \end{alertblock}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{exampleblock}{rRMSE honesto (tras corregir)}
+        $\approx 56\,\%$
+      \end{exampleblock}
+    \end{column}
+  \end{columns}
+  \vspace{0.6em}
+  \centering
+  El \emph{prior} regional se agrega \textbf{solo sobre las plantas de entrenamiento} (por macrozona y estación).
+\end{frame}
+
+\begin{frame}{Semilla \emph{Cold-Start} sintética}
+  Los modelos profundos necesitan una ventana de contexto que la planta nueva no tiene. Se siembra sintéticamente:
+  \[
+    \hat{y}_{\text{seed}}(t) = \text{capacidad}\cdot PR_{\text{regional}}\cdot s(t)
+  \]
+  \begin{itemize}
+    \item $s(t)$: perfil solar determinista; $PR_{\text{regional}}$: solo plantas de entrenamiento.
+    \item Solo el clima exógeno (conocido/pronosticable) y la geografía estática usan valores reales del objetivo.
+    \item La generación de contexto es \rj{100\% sintética} $\rightarrow$ cero fuga.
+  \end{itemize}
+  \vspace{0.3em}
+  \centering
+  \includegraphics[width=0.86\textwidth]{fig_eval_protocolo.png}
+\end{frame}
+
+\begin{frame}{Ocho configuraciones y ventanas de evaluación}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{5 globales \gl{(Cross-Site)}}
+      \begin{itemize}
+        \item TFT, Informer, N-HiTS, LSTM
+        \item XGBoost global
+      \end{itemize}
+      \vspace{0.4em}
+      \textbf{3 locales \lo{(estrictas)}}
+      \begin{itemize}
+        \item XGBoost, LSTM, N-HiTS
+        \item entrenados solo con la historia propia
+      \end{itemize}
+      \vspace{0.5em}
+      \textbf{Horizontes:} \emph{day1} (24\,h) y \emph{rollout7d} (7 días autorregresivos).
+    \end{column}
+    \begin{column}{0.52\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{fig_ventanas_evaluacion.png}
+      \vspace{0.2em}
+
+      {\footnotesize \textbf{Raw} (incluye rampa) · \textbf{Operacional} (producción sostenida) · \textbf{Estacionales}.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ==================================================================
+\section{Resultados}
+% ==================================================================
+
+\begin{frame}{Precisión puntual --- ventana operacional (roll-out 7 días)}
+  \begin{columns}[T]
+    \begin{column}{0.46\textwidth}
+      \small
+      \begin{tabular}{llr}
+        \toprule
+        Config. & Tipo & rRMSE \\
+        \midrule
+        XGBoost & \lo{Local}  & \textbf{62\,\%} \\
+        XGBoost & \gl{Global} & 95\,\% \\
+        N-HiTS  & \lo{Local}  & 104\,\% \\
+        LSTM    & \gl{Global} & 118\,\% \\
+        Informer& \gl{Global} & 129\,\% \\
+        TFT     & \gl{Global} & 133\,\% \\
+        LSTM    & \lo{Local}  & 147\,\% \\
+        N-HiTS  & \gl{Global} & 150\,\% \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
+    \begin{column}{0.54\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{fig_resultados_global.png}
+    \end{column}
+  \end{columns}
+  \vspace{0.3em}
+  {\footnotesize El \lo{XGBoost local} es el más preciso; entre las redes globales la \gl{LSTM} supera a la atención (Informer/TFT) — coherente con Zeng et al. (2023).}
+\end{frame}
+
+\begin{frame}{Sensibilidad estacional: el invierno es el gran desafío}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{fig_estacional.png}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{rRMSE roll-out por estación}
+      \vspace{0.3em}
+
+      \begin{itemize}
+        \item XGBoost global: \; 52\,\% (verano) $\rightarrow$ \rj{134\,\%} (invierno)
+        \item XGBoost local: \; 40\,\% $\rightarrow$ \rj{115\,\%}
+      \end{itemize}
+      \vspace{0.5em}
+      Mayor variabilidad nubosa y menor irradiación invernal debilitan la señal determinista del perfil solar.
+      \vspace{0.5em}
+
+      \textbf{Implicación operativa:} la incertidumbre de un parque nuevo depende fuertemente de la \textbf{estación de su puesta en marcha}.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Calidad probabilística: la calibración no se transfiere}
+  \small
+  \begin{center}
+  \begin{tabular}{llcc}
+    \toprule
+    Config. & Tipo & Cobertura diurna & Pinball P95 (MWh) \\
+    \midrule
+    XGBoost  & \lo{Local}  & \textbf{0,86} & \textbf{0,033} \\
+    XGBoost  & \gl{Global} & 0,99 (sobre-cubre) & 0,091 \\
+    LSTM     & \gl{Global} & 0,54 & 0,140 \\
+    Informer & \gl{Global} & 0,65 & 0,114 \\
+    TFT      & \gl{Global} & 0,44 & 0,123 \\
+    N-HiTS   & \gl{Global} & 0,36 & 0,277 \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \normalsize
+  \begin{itemize}
+    \item Nominal = 0,90. \textbf{Ningún paradigma calibra idealmente}, con desvíos opuestos.
+    \item Redes globales \rj{subcalibradas} (bandas demasiado estrechas); XGBoost global \rj{sobre-cubre}.
+    \item \lo{XGBoost local} es el más cercano al nominal y con menor pinball.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Contraste de la hipótesis}
+  \begin{alertblock}{En precisión absoluta: la hipótesis se \rj{RECHAZA}}
+    Ningún modelo global alcanza al mejor baseline local (XGBoost local 62\,\% vs.\ global 95\,\%).
+  \end{alertblock}
+  \begin{block}{El único matiz: a igualdad de arquitectura}
+    \begin{itemize}
+      \item \gl{LSTM global} (118\,\%) \textbf{supera} a \lo{LSTM local} (147\,\%) — el clima generalizado excede la historia local limitada.
+      \item Pero \lo{N-HiTS local} (104\,\%) supera a \gl{N-HiTS global} (150\,\%) — la ventaja global no es universal.
+    \end{itemize}
+  \end{block}
+  \begin{exampleblock}{El valor real: disponibilidad inmediata}
+    En el arranque en frío puro (historia local nula) el modelo global \textbf{no tiene competidor local posible}.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Ejemplo de roll-out Cold-Start a 7 días}
+  \centering
+  \includegraphics[width=0.9\textwidth]{fig_ejemplo_rollout.png}
+
+  {\footnotesize El modelo global, \textbf{sin haber visto jamás la planta}, reproduce el ciclo diario y la magnitud de los picos usando solo el clima entrante y la geografía estática.}
+\end{frame}
+
+% ==================================================================
+\section{Conclusiones}
+% ==================================================================
+
+\begin{frame}{Conclusiones}
+  \begin{enumerate}
+    \item \textbf{Resultado negativo riguroso:} bajo un protocolo estrictamente ciego, un XGBoost local maduro sigue siendo el estándar a batir. La hipótesis se rechaza.
+    \item \textbf{El paradigma global conserva un régimen propio:} el arranque en frío puro, donde entrega pronósticos coherentes y accionables desde la hora cero.
+    \item Cuatro hallazgos metodológicos transferibles:
+    \begin{itemize}
+      \item las rampas de puesta en marcha distorsionan las métricas (análisis Raw/Operacional);
+      \item el invierno es sistemáticamente la estación más difícil;
+      \item la calibración probabilística no se transfiere a las redes profundas;
+      \item la integridad del \emph{target} (nunca imputar $y$) es esencial para la honestidad de las métricas.
+    \end{itemize}
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Trabajo futuro}
+  \begin{itemize}
+    \item \textbf{Fine-tuning en dos etapas:} pre-entrenar global $\rightarrow$ ajustar con los primeros días reales; cierra la brecha con el local a medida que crece la historia.
+    \item \textbf{Máscaras de intermitencia} en la atención: excluir la noche determinista y concentrar capacidad en la señal productiva.
+    \item \textbf{Recalibración conformal} de los intervalos bajo transferencia.
+    \item \textbf{Más datos y cómputo:} ampliar el corpus y el presupuesto de pasos (posible sub-entrenamiento de TFT/Informer en 6\,GB).
+    \item \textbf{Máscara astronómica} para el forzamiento nocturno independiente de sensores.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[standout]
+  Gracias.
+
+  \vspace{0.6em}
+  {\Large ¿Preguntas?}
+
+  \vspace{1.2em}
+  {\normalsize César David Aular Muñoz \\ \footnotesize cesaraular02@gmail.com}
+\end{frame}
+
+% ==================================================================
+% BACKUP SLIDES — anticipando los ataques de la comisión
+% ==================================================================
+\appendix
+
+\begin{frame}{Backup --- Definición del RMSE}
+  \begin{block}{Fórmula}
+    \[
+      \mathrm{RMSE} = \sqrt{\frac{1}{n}\sum_{i=1}^{n}\left(y_i - \hat{y}_i\right)^2}
+    \]
+  \end{block}
+  \begin{itemize}
+    \item Eleva al \textbf{cuadrado} cada error antes de promediar $\rightarrow$ penaliza las desviaciones grandes de forma \rj{cuadrática}, no lineal ni logarítmica.
+    \item Ideal para el pronóstico FV: castiga con fuerza los errores en los \textbf{picos de inyección} de mediodía.
+    \item Comparte unidades con la variable (MWh), a diferencia del MSE.
+    \item \textbf{rRMSE} = RMSE normalizado por la generación media horaria de la ventana (ver backup siguiente).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Backup --- ¿Por qué el rRMSE supera el 100\,\%?}
+  \[
+    \mathrm{rRMSE} = \frac{\mathrm{RMSE}}{\overline{y}_{\text{ventana}}}\times 100
+  \]
+  \begin{itemize}
+    \item El denominador $\overline{y}$ incluye las \textbf{horas nocturnas de generación nula}.
+    \item Esto \textbf{deprime la media} y por tanto \textbf{infla} sistemáticamente el indicador.
+    \item Valores $>100\,\%$ son \textbf{esperables} en pronóstico horario FV bajo esta normalización.
+    \item Su valor no es la magnitud absoluta, sino la \rj{comparación relativa} entre arquitecturas sobre \textbf{ventanas idénticas}.
+  \end{itemize}
+  \vspace{0.3em}
+  \centering\footnotesize
+  Todas las configuraciones se comparan sobre la misma grilla horaria canónica $\rightarrow$ comparación estrictamente pareada.
+\end{frame}
+
+\begin{frame}{Backup --- Calibración de XGBoost (global vs.\ local)}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \textbf{XGBoost global: 0,99 (sobre-cubre)}
+      \begin{itemize}
+        \item Regresión cuantílica sobre un contexto \textbf{heterogéneo} ($N-1$ plantas).
+        \item Bandas \textbf{demasiado anchas}: casi nunca fallan, pero pierden utilidad operativa.
+        \item Un defecto \textbf{simétrico} al de las redes, no una virtud.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{XGBoost local: 0,86 (casi nominal)}
+      \begin{itemize}
+        \item Ajustado a la variabilidad \textbf{real} de la propia planta.
+        \item Pinball P95 = \textbf{0,033} MWh vs.\ 0,091 del global.
+        \item Intervalos más estrechos y \textbf{mejor centrados}.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \vspace{0.5em}
+  \begin{alertblock}{¿Por qué las redes profundas subcalibran?}
+    Su escalador local se ajusta sobre el \textbf{contexto sintético}, cuya varianza (perfil solar idealizado) es menor que la real $\rightarrow$ bandas estrechas. Los baselines locales profundos, con contexto real, mejoran (LSTM local 0,79).
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Backup --- Detalles de cómputo}
+  \begin{itemize}
+    \item \textbf{Precisión fp32} completa: la mezcla fp16 introducía inestabilidad numérica en el entrenamiento.
+    \item \textbf{GPU RTX 2060 (6\,GB):} la VRAM la gobierna \texttt{batch\_size}$\times$\texttt{windows\_batch\_size}, no el tamaño del corpus $\rightarrow$ no se trunca la historia.
+    \item \textbf{Presupuesto por época corregido:} cada paso consume \texttt{batch}$\times$\texttt{windows\_batch} ventanas; la fórmula ingenua \texttt{filas/batch} sobreestimaba $\sim$250$\times$.
+    \item \textbf{\emph{Early stopping}} sobre \texttt{val\_size}=168; tuning cacheado una vez por modelo y reusado entre folds (fuga a nivel de hiperparámetro: despreciable y documentada).
+    \item Toda predicción se fuerza a $\hat{y}\geq 0$ y a cero de noche (consistencia física).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Backup --- Tabla completa (day1 y roll-out)}
+  \scriptsize
+  \begin{center}
+  \begin{tabular}{llcccc}
+    \toprule
+     & & \multicolumn{2}{c}{rRMSE (\%)} & \multicolumn{2}{c}{sMAPE (\%)} \\
+    \cmidrule(lr){3-4}\cmidrule(lr){5-6}
+    Config. & Tipo & day1 & roll7d & day1 & roll7d \\
+    \midrule
+    XGBoost  & \lo{Local}  & 40,6 & 62,2 & 51,4 & 51,5 \\
+    XGBoost  & \gl{Global} & 77,5 & 95,4 & 39,8 & 40,7 \\
+    N-HiTS   & \lo{Local}  & 73,6 & 104,0 & 56,9 & 69,1 \\
+    LSTM     & \gl{Global} & 103,4 & 118,2 & 86,3 & 91,8 \\
+    Informer & \gl{Global} & 96,9 & 129,3 & 82,2 & 89,0 \\
+    TFT      & \gl{Global} & 110,2 & 133,1 & 89,5 & 96,2 \\
+    LSTM     & \lo{Local}  & 102,6 & 146,9 & 82,2 & 91,4 \\
+    N-HiTS   & \gl{Global} & 130,6 & 150,4 & 95,8 & 96,9 \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \normalsize
+  \centering Ventana operacional, mediana sobre 33 plantas con rampa distinguible.
+\end{frame}
+
+\end{document}

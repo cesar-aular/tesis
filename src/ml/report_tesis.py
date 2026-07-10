@@ -343,6 +343,145 @@ def fig_cross_site():
     _save_fig(fig, "fig_cross_site.png")
 
 
+def fig_arquitectura_componentes():
+    """Diagrama de componentes con stack tecnológico y módulos del orquestador
+    (Cap. IV / V) — responde a la observación del criterio 10."""
+    fig, ax = plt.subplots(figsize=(12, 7.2))
+    ax.set_xlim(0, 12); ax.set_ylim(0, 7.2); ax.axis("off")
+
+    # --- Orquestador (entrada única) ---
+    ax.add_patch(FancyBboxPatch((0.4, 6.15), 11.2, 0.8, boxstyle="round,pad=0.02",
+                                fc="#C6E0B4", ec="#538135", lw=1.6))
+    ax.text(6.0, 6.7, "ORQUESTADOR — src/orchestrator.py", ha="center",
+            fontsize=11, fontweight="bold")
+    ax.text(6.0, 6.34, "punto de entrada único · gate TDD (pytest) · control de "
+            "idempotencia · flags --strategy / --force / --clean",
+            ha="center", fontsize=8.5)
+
+    # --- Capas del pipeline (componentes) ---
+    stages = [
+        ("1. ETL  (src/etl/)",
+         "landing_to_bronze_generation\nlanding_to_bronze_exogenous\nbronze_to_silver\n"
+         "silver_to_gold_split\nml/prepare_dl_dataset", "#FBE5D6", "#BF8F00"),
+        ("2. ML — LOPO  (src/ml/orchestrator_ml.py)",
+         "bucle por planta objetivo (N−1 train)\nGlobales: xgb_global, lstm, nhits,\n"
+         "tft, informer  (tune→train→test)\nLocales: xgb_local, lstm_local,\nnhits_local",
+         "#DEEBF7", "#1F4E79"),
+        ("3. Reporte",
+         "visualize.py\n(métricas consolidadas)\nreport_tesis.py\n(figuras + tablas .tex)",
+         "#E2EFDA", "#538135"),
+    ]
+    x = 0.4
+    widths = [3.5, 4.3, 2.7]
+    centers = []
+    for (title, body, fc, ec), w in zip(stages, widths):
+        ax.add_patch(FancyBboxPatch((x, 3.55), w, 2.2, boxstyle="round,pad=0.02",
+                                    fc=fc, ec=ec, lw=1.4))
+        ax.text(x + w / 2, 5.5, title, ha="center", fontsize=8.8, fontweight="bold")
+        ax.text(x + w / 2, 4.55, body, ha="center", va="center", fontsize=7.6)
+        centers.append(x + w / 2)
+        x += w + 0.35
+    for a, b in ((0, 1), (1, 2)):
+        _arrow(ax, (centers[a] + widths[a] / 2 - 0.05, 4.65),
+               (centers[b] - widths[b] / 2 + 0.05, 4.65))
+    _arrow(ax, (6.0, 6.15), (6.0, 5.75), color="#538135")
+
+    # --- Utilidades compartidas ---
+    ax.add_patch(FancyBboxPatch((0.4, 2.55), 11.2, 0.75, boxstyle="round,pad=0.02",
+                                fc="#FFF2CC", ec="#BF8F00", lw=1.4))
+    ax.text(6.0, 3.08, "UTILIDADES COMPARTIDAS  (src/ml/utils/)", ha="center",
+            fontsize=9, fontweight="bold")
+    ax.text(6.0, 2.76, "data_loader (split LOPO) · grid (grilla canónica) · eval_window · "
+            "regional_prior · dl_models · dl_test · dl_local · metrics · physics · idempotency",
+            ha="center", fontsize=7.3)
+
+    # --- Stack tecnológico (banda inferior) ---
+    ax.add_patch(FancyBboxPatch((0.4, 1.3), 11.2, 1.0, boxstyle="round,pad=0.02",
+                                fc="#F2F2F2", ec="#7F7F7F", lw=1.4))
+    ax.text(6.0, 2.05, "STACK TECNOLÓGICO", ha="center", fontsize=9, fontweight="bold")
+    ax.text(6.0, 1.62, "Python 3.12 · PyArrow / Parquet · pandas 2.3 · "
+            "PyTorch 2.5.1+cu121 · NeuralForecast (Nixtla) · XGBoost 3.3 · "
+            "Optuna · scikit-learn · matplotlib / seaborn · pytest",
+            ha="center", fontsize=7.6)
+    _arrow(ax, (6.0, 2.55), (6.0, 2.3), color="#7F7F7F")
+
+    # --- Almacenamiento (nota lateral) ---
+    ax.text(6.0, 0.75, "Persistencia en capas Medallion (todo Parquet): "
+            "landing → bronze → silver → gold → results/",
+            ha="center", fontsize=8, style="italic", color="#555555")
+
+    fig.suptitle("Arquitectura de componentes del sistema y stack tecnológico",
+                 fontsize=12)
+    _save_fig(fig, "fig_arquitectura_componentes.png")
+
+
+def fig_ventanas_evaluacion():
+    """Línea de tiempo con las ventanas de evaluación (Raw / Operacional /
+    estacionales) y la estructura interna de cada una (Cap. V) — responde a la
+    observación del criterio 12."""
+    fig, ax = plt.subplots(figsize=(12, 6.4))
+    ax.set_xlim(0, 24); ax.set_ylim(0, 6.4); ax.axis("off")
+
+    # --- Eje temporal (vida de la planta) ---
+    y_line = 4.6
+    ax.annotate("", xy=(23.4, y_line), xytext=(0.5, y_line),
+                arrowprops=dict(arrowstyle="-|>", lw=1.6, color="black"))
+    ax.text(23.3, y_line - 0.32, "tiempo (historia de la planta)", ha="right", fontsize=9)
+
+    # rampa de puesta en marcha (ceros) al inicio
+    ax.add_patch(plt.Rectangle((0.5, y_line + 0.05), 3.0, 0.55, fc="#F4CCCC",
+                               ec="#CC0000", hatch="//", lw=1.0))
+    ax.text(2.0, y_line + 1.55, "rampa de puesta en marcha (ceros)", ha="center",
+            fontsize=7.8, color="#CC0000")
+
+    # marcas de inicio de cada ventana
+    starts = [
+        (1.2, "Raw", "#CC0000", "inicia en la 1.ª hora\nregistrada (en la rampa)"),
+        (4.4, "Operacional", "#538135", "1.ª producción\nsostenida"),
+        (8.0, "Verano", "#B45F06", ""),
+        (12.0, "Otoño", "#B45F06", ""),
+        (16.0, "Invierno", "#B45F06", ""),
+        (20.0, "Primavera", "#B45F06", ""),
+    ]
+    for xpos, label, col, note in starts:
+        ax.plot([xpos, xpos], [y_line - 0.15, y_line + 0.75], color=col, lw=1.8)
+        ax.plot(xpos, y_line + 0.75, marker="v", color=col, markersize=7)
+        ax.text(xpos, y_line + 0.98, label, ha="center", fontsize=8.4,
+                fontweight="bold", color=col)
+        if note:
+            ax.text(xpos, y_line - 0.55, note, ha="center", va="top", fontsize=7,
+                    color=col)
+    ax.text(14.0, y_line + 1.7, "ventanas estacionales: 1.ª ventana sostenida que "
+            "inicia en cada estación\n(tomadas de la historia posterior de la MISMA planta)",
+            ha="center", fontsize=7.6, color="#B45F06")
+
+    # --- Zoom: estructura interna de una ventana ---
+    zy = 1.7
+    ax.text(0.5, zy + 1.35, "Estructura de cada ventana (336 h):", fontsize=9,
+            fontweight="bold")
+    # contexto sintetico
+    ax.add_patch(plt.Rectangle((0.7, zy), 8.0, 0.85, fc="#FFF2CC", ec="#BF8F00"))
+    ax.text(4.7, zy + 0.43, "Contexto sintético — 168 h\n"
+            r"$y = capacidad \times PR_{regional} \times perfil\ solar$",
+            ha="center", va="center", fontsize=8)
+    # day1
+    ax.add_patch(plt.Rectangle((8.7, zy), 2.0, 0.85, fc="#C6E0B4", ec="#538135"))
+    ax.text(9.7, zy + 0.43, "day1\n(24 h)", ha="center", va="center", fontsize=8)
+    # rollout7d
+    ax.add_patch(plt.Rectangle((10.7, zy), 12.6, 0.85, fc="#DEEBF7", ec="#1F4E79"))
+    ax.text(17.0, zy + 0.43, "rollout7d — 7 días autorregresivos "
+            "(realimenta la mediana predicha, nunca la realidad)",
+            ha="center", va="center", fontsize=8)
+    # conector desde la marca operacional al zoom
+    ax.annotate("", xy=(4.7, zy + 1.0), xytext=(4.2, y_line - 0.75),
+                arrowprops=dict(arrowstyle="-|>", lw=1.0, color="#999999",
+                                linestyle="--"))
+
+    fig.suptitle("Ventanas de evaluación Cold-Start y su estructura interna",
+                 fontsize=12)
+    _save_fig(fig, "fig_ventanas_evaluacion.png")
+
+
 # --------------------------------------------------------------------------
 # Figuras de resultados (Capítulo V)
 # --------------------------------------------------------------------------
@@ -724,6 +863,8 @@ def main(strategy: str = "half"):
     fig_lopo()
     fig_eval_protocolo()
     fig_medallion_impl()
+    fig_arquitectura_componentes()
+    fig_ventanas_evaluacion()
 
     # Resultados (cap. V)
     fig_resultados_global(df)
