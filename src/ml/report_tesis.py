@@ -118,43 +118,113 @@ def fig_solucion():
     _save_fig(fig, "fig_solucion.png")
 
 
+# --------------------------------------------------------------------------
+# Diagrama de linaje de datos Medallion (estilo "data lineage": sistemas de
+# origen -> zonas Bronze/Silver/Gold con tablas nombradas -> flechas de linaje).
+# Comparte un dibujante para las variantes conceptual (Cap. IV) e implementada
+# (Cap. V), garantizando nombres de tabla idénticos a los del pipeline real.
+# --------------------------------------------------------------------------
+_SRC_FC, _SRC_EC = "#9DC3E6", "#2E75B6"   # sistemas de origen (azul)
+_BRZ_FC, _BRZ_EC = "#C9A227", "#7F6000"   # Bronze (ámbar)
+_SLV_FC, _SLV_EC = "#E7E6E6", "#808080"   # Silver (gris)
+_GLD_FC, _GLD_EC = "#FFD966", "#BF9000"   # Gold (amarillo)
+
+
+def _tbl(ax, cx, cy, w, h, text, fc, ec, tc="#1A1A1A", fs=8.5):
+    """Nodo-tabla con nombre en monoespaciado (estilo catálogo de datos)."""
+    ax.add_patch(FancyBboxPatch((cx - w / 2, cy - h / 2), w, h,
+                                boxstyle="round,pad=0.015", fc=fc, ec=ec, lw=1.3))
+    ax.text(cx, cy, text, ha="center", va="center", fontsize=fs,
+            family="monospace", color=tc)
+
+
+def _zone(ax, x0, x1, y0, y1, title, subtitle, ec):
+    """Zona Medallion: rectángulo redondeado punteado + cabecera."""
+    ax.add_patch(FancyBboxPatch((x0, y0), x1 - x0, y1 - y0,
+                                boxstyle="round,pad=0.05", fc="none", ec=ec,
+                                lw=1.7, linestyle=(0, (6, 4))))
+    ax.text((x0 + x1) / 2, y1 - 0.6, title, ha="center", fontsize=13, fontweight="bold")
+    ax.text((x0 + x1) / 2, y1 - 1.15, subtitle, ha="center", fontsize=8.5,
+            color="#555555", family="monospace")
+
+
+def _draw_medallion_lineage(ax, variant):
+    """Dibuja el linaje Medallion. variant in {'concept','impl'}."""
+    ax.set_xlim(0, 26); ax.set_ylim(0, 14); ax.axis("off")
+
+    # --- Sistemas de origen (izquierda) ---
+    sources = [(10.4, "CEN /\nCoordinador\n(generación)"),
+               (7.0, "Maestro de\ninstalaciones\n(geo, capacidad)"),
+               (3.6, "CR2\n(meteorología)")]
+    for cy, txt in sources:
+        ax.add_patch(FancyBboxPatch((0.4, cy - 1.0), 3.0, 2.0, boxstyle="round,pad=0.02",
+                                    fc=_SRC_FC, ec=_SRC_EC, lw=1.3))
+        ax.text(1.9, cy, txt, ha="center", va="center", fontsize=8.6)
+
+    # --- Zonas ---
+    _zone(ax, 4.4, 9.8, 1.5, 13.0, "Bronze", "schema = bronze", _BRZ_EC)
+    _zone(ax, 10.7, 16.5, 1.5, 13.0, "Silver", "schema = silver", _SLV_EC)
+    _zone(ax, 17.4, 25.6, 1.5, 13.0, "Gold", "schema = gold", _GLD_EC)
+
+    # --- Tablas Bronze ---
+    _tbl(ax, 7.1, 9.4, 3.6, 1.3, "maestro_\ngeneracion", _BRZ_FC, _BRZ_EC, tc="#241D00")
+    _tbl(ax, 7.1, 4.6, 3.6, 1.3, "maestro_\nexogenas", _BRZ_FC, _BRZ_EC, tc="#241D00")
+
+    # --- Tablas Silver ---
+    _tbl(ax, 13.6, 8.2, 3.7, 1.3, "silver_\nunified", _SLV_FC, _SLV_EC)
+    _tbl(ax, 13.6, 4.6, 3.7, 1.2, "silver_dl", _SLV_FC, _SLV_EC)
+
+    # --- Tablas Gold (pila = múltiples particiones) ---
+    gx, gy = 21.5, 8.2
+    for dx, dy in ((0.7, -0.7), (0.35, -0.35)):
+        _tbl(ax, gx + dx, gy + dy, 4.8, 1.3, "", _GLD_FC, _GLD_EC)
+    _tbl(ax, gx, gy, 4.8, 1.3, "{macrozona}/{estacion}/\n<id>_test", _GLD_FC, _GLD_EC, fs=8.0)
+
+    # --- Flechas de linaje ---
+    _arrow(ax, (3.4, 10.4), (5.3, 9.7))    # CEN -> maestro_generacion
+    _arrow(ax, (3.4, 7.0), (5.3, 9.1))     # Maestro -> maestro_generacion
+    _arrow(ax, (3.4, 3.6), (5.3, 4.6))     # CR2 -> maestro_exogenas
+    _arrow(ax, (8.9, 9.4), (11.75, 8.5))   # maestro_generacion -> silver_unified
+    _arrow(ax, (8.9, 4.6), (11.75, 7.9))   # maestro_exogenas   -> silver_unified (join)
+    ax.text(10.25, 6.55, "join", ha="center", fontsize=7.5, style="italic", color="#777777")
+    _arrow(ax, (13.6, 7.55), (13.6, 5.2))  # silver_unified -> silver_dl
+    _arrow(ax, (15.45, 8.2), (19.1, 8.2))  # silver_unified -> gold (LOPO split)
+    ax.text(17.3, 8.55, "split\nLOPO", ha="center", fontsize=7.5, style="italic",
+            color="#777777")
+
+    # --- Anotaciones por variante ---
+    if variant == "impl":
+        ax.text(1.9, 12.1, "139 archivos · 2014–2024", ha="center", fontsize=8,
+                style="italic", color="#333333")
+        ax.text(13.6, 9.55, "94 plantas · ≈ 4,37 M filas", ha="center", fontsize=7.8,
+                color="#333333")
+        ax.text(13.6, 3.75, "float32 · label-encoded", ha="center", fontsize=7.8,
+                color="#333333")
+        ax.text(21.8, 9.7, "94 particiones LOPO", ha="center", fontsize=7.8, color="#333333")
+        ax.text(15.0, 0.55, "Orquestador único (src/orchestrator.py) · gate TDD (pytest) "
+                "previo a cada corrida · idempotencia con marcadores de completitud",
+                ha="center", fontsize=8.3, style="italic", color="#555555")
+    else:  # concept
+        ax.text(7.1, 2.35, "parseo paralelo · recorte 2014–2024\n"
+                "descarte −9999 · agregación multi-unidad", ha="center", fontsize=7.6,
+                color="#333333")
+        ax.text(13.6, 2.35, "macrozona · cíclicas sin/cos\nimputación exógenas (+dummy)\n"
+                "y JAMÁS imputada", ha="center", fontsize=7.6, color="#333333")
+        ax.text(21.5, 2.35, "una partición de test\npor planta objetivo\n(solo validación)",
+                ha="center", fontsize=7.6, color="#333333")
+        ax.add_patch(FancyBboxPatch((4.4, 0.15), 21.2, 1.0, boxstyle="round,pad=0.02",
+                                    fc="#FFF2CC", ec="#BF8F00", lw=1.3))
+        ax.text(15.0, 0.65, "Reglas anti-leakage: sin PR = y/capacidad · prior regional solo "
+                "con plantas de entrenamiento (dentro de cada split LOPO) · pytest bloquea la "
+                "ejecución si una regla se rompe (gate TDD)",
+                ha="center", va="center", fontsize=8.2)
+
+
 def fig_etl_flow():
-    """Flujograma del ETL Medallion con reglas de calidad."""
-    fig, ax = plt.subplots(figsize=(11.5, 5.0))
-    ax.set_xlim(0, 11.5); ax.set_ylim(0, 5.0); ax.axis("off")
-
-    stages = [
-        ("LANDING", "CSV crudos\nCEN (generación)\nCR2 (meteorología)\nMaestro instalaciones", "#F2F2F2"),
-        ("BRONZE", "Parseo paralelo\nRecorte 2014–2024\nDescarte de −9999\nAgregación multi-unidad\nColapso seguro DST", "#FBE5D6"),
-        ("SILVER", "Macrozonas geográficas\nFeatures cíclicas sin/cos\nImputación exógenas\n(ffill/bfill + dummy)\ny: JAMÁS imputada", "#DEEBF7"),
-        ("GOLD / DL", "Particiones LOPO\npor planta (validación)\nsilver_dl numérico\nfloat32", "#E2EFDA"),
-    ]
-    box_w, box_h, y0 = 2.5, 2.4, 2.3
-    x = 0.25
-    centers = []
-    for title, body, color in stages:
-        # Caja vacía; título arriba y cuerpo debajo en y DISTINTAS (evita el
-        # choque del patrón anterior, que centraba ambos en el mismo punto)
-        ax.add_patch(FancyBboxPatch((x, y0), box_w, box_h, boxstyle="round,pad=0.02",
-                                    fc=color, ec="#1F4E79", lw=1.4))
-        cx = x + box_w / 2
-        ax.text(cx, y0 + box_h - 0.33, title, ha="center", va="center",
-                fontsize=11, fontweight="bold")
-        ax.text(cx, y0 + box_h / 2 - 0.42, body, ha="center", va="center", fontsize=8)
-        centers.append(cx)
-        if x > 0.5:
-            _arrow(ax, (x - 0.28, y0 + box_h / 2), (x, y0 + box_h / 2))
-        x += box_w + 0.35
-
-    ax.add_patch(FancyBboxPatch((2.0, 0.35), 7.5, 1.2, boxstyle="round,pad=0.02",
-                                fc="#FFF2CC", ec="#BF8F00", lw=1.4))
-    ax.text(5.75, 0.95, "Reglas anti-leakage: sin PR = y/capacidad · prior regional "
-            "calculado solo con plantas de entrenamiento\n(dentro de cada split LOPO) · "
-            "pytest bloquea la ejecución si una regla se rompe (gate TDD)",
-            ha="center", va="center", fontsize=8.5)
-    _arrow(ax, (centers[2], y0), (5.75, 1.55), color="#C00000")
-    fig.suptitle("Pipeline Medallion de preparación de datos y control de calidad",
-                 fontsize=12)
+    """Linaje Medallion (variante conceptual con controles de calidad) — Cap. IV."""
+    fig, ax = plt.subplots(figsize=(13, 7.3))
+    _draw_medallion_lineage(ax, "concept")
+    fig.suptitle("Pipeline Medallion: linaje de datos y controles de calidad", fontsize=13)
     _save_fig(fig, "fig_etl_flow.png")
 
 
@@ -217,29 +287,11 @@ def fig_eval_protocolo():
 
 
 def fig_medallion_impl():
-    """Pipeline implementado con volúmenes reales (Capítulo V)."""
-    fig, ax = plt.subplots(figsize=(11, 3.6))
-    ax.set_xlim(0, 11); ax.set_ylim(0, 3.6); ax.axis("off")
-    stages = [
-        ("LANDING", "139 archivos CEN\n+ estaciones CR2\n2014–2024", "#F2F2F2"),
-        ("BRONZE", "CSV por planta\ny por estación\nmeteorológica", "#FBE5D6"),
-        ("SILVER", "silver_unified\n94 plantas\n≈ 4,37 M filas", "#DEEBF7"),
-        ("GOLD / DL", "94 particiones LOPO\nsilver_dl float32\n(solo numérico)", "#E2EFDA"),
-        ("ML / REPORTE", "8 modelos ×\nventanas × horizontes\nmétricas + gráficas", "#FCE4D6"),
-    ]
-    x = 0.3
-    for title, body, color in stages:
-        _box(ax, (x, 1.2), 1.85, 1.6, "", fc=color)
-        ax.text(x + 0.92, 2.45, title, ha="center", fontsize=9.5, fontweight="bold")
-        ax.text(x + 0.92, 1.85, body, ha="center", va="center", fontsize=8)
-        if x > 0.5:
-            _arrow(ax, (x - 0.35, 2.0), (x, 2.0))
-        x += 2.2
-    ax.text(5.5, 0.55, "Orquestador único (src/orchestrator.py) · gate TDD (pytest) "
-            "previo a cada corrida · idempotencia con marcadores de completitud",
-            ha="center", fontsize=8.5, style="italic")
-    fig.suptitle("Pipeline Medallion implementado (volúmenes reales tras depuración)",
-                 fontsize=11)
+    """Linaje Medallion (variante implementada con volúmenes reales) — Cap. V."""
+    fig, ax = plt.subplots(figsize=(13, 7.3))
+    _draw_medallion_lineage(ax, "impl")
+    fig.suptitle("Pipeline Medallion implementado: linaje de datos y volúmenes reales",
+                 fontsize=13)
     _save_fig(fig, "fig_medallion_impl.png")
 
 
