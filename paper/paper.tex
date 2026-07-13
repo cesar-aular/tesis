@@ -7,6 +7,7 @@
 \usepackage{booktabs}
 \usepackage{textcomp}
 \usepackage{xcolor}
+\usepackage{balance} % equilibra las columnas de la ultima pagina (referencias)
 \usepackage[hidelinks]{hyperref}
 
 \graphicspath{{figuras/}}
@@ -175,10 +176,16 @@ generation context is entirely synthetic (Fig.~\ref{fig:method}).
 We evaluate five global configurations---TFT~\cite{Lim2021}, Informer~\cite{Zhou2021},
 N-HiTS~\cite{Challu2023}, LSTM~\cite{Hochreiter1997} and a global gradient-boosted
 XGBoost~\cite{Chen2016}---and three strictly local baselines (XGBoost, LSTM, N-HiTS) trained
-only on the target's own history with all evaluation windows excluded. Deep models are
-trained with NeuralForecast in \texttt{fp32} on a 6\,GB GPU; hyperparameters are tuned once
-per model and reused across folds. Every model emits P5/P50/P95 quantiles (90\,\% intervals),
-and predictions are physically constrained ($\hat{y}\!\geq\!0$; forced to zero at night).
+only on the target's own history with all evaluation windows excluded. The four deep
+architectures span complementary inductive biases: the TFT combines variable-selection
+networks with interpretable multi-head attention and gating; the Informer replaces full
+attention with a ProbSparse mechanism for long sequences; N-HiTS performs hierarchical
+multi-rate interpolation; and the LSTM is a strong recurrent baseline. Deep models are
+trained with NeuralForecast in \texttt{fp32} on a 6\,GB GPU under an epoch-based step budget
+capped per strategy, with early stopping on a 168-hour validation split; hyperparameters are
+tuned once per model and cached across LOPO folds (a negligible, documented parameter-level
+leakage). Every model emits P5/P50/P95 quantiles (90\,\% intervals), and predictions are
+physically constrained ($\hat{y}\!\geq\!0$; forced to zero at night).
 
 \subsection{Evaluation Windows and Metrics}
 \label{sec:windows}
@@ -331,6 +338,16 @@ training budget may under-serve the higher-capacity TFT/Informer, offering an al
 explanation for their being outperformed by simpler models. \emph{Interval recalibration}
 under transfer (conformal methods) is needed before operational deployment.
 
+\textbf{Transferable methodological findings.} Beyond the benchmark, four lessons generalize
+to any cold-start forecasting study. (1) Commissioning ramps of null generation distort
+relative metrics unless the window is defined from sustained production, which motivated our
+Raw/Operational split. (2) Winter is systematically the hardest regime, doubling or tripling
+summer errors across all architectures. (3) Probabilistic calibration does not transfer to
+the deep networks under a synthetic context, whereas quantile gradient boosting calibrates
+well---a critical distinction for electricity-market use. (4) Target integrity---never
+imputing missing generation---is essential to metric honesty, in contrast to the common
+practice of zero-filling.
+
 \textbf{Limitations.} The study is zero-shot by design (no fine-tuning arm); the rRMSE
 normalization inflates absolute magnitudes and is meaningful only in relative comparison;
 and operational MLOps deployment is out of scope.
@@ -347,11 +364,20 @@ to quantify rigorously the trade-off between \emph{immediate availability} and
 \emph{asymptotic accuracy} that governs paradigm choice during the commissioning of a new
 solar plant.
 
+\section*{Reproducibility}
+The medallion ETL, the LOPO split and all eight configurations are driven by a single
+orchestrator behind an automated test gate that halts the run on any failure; every metric is
+computed only over real observations on a shared canonical hourly grid, so the eight models
+are compared in a strictly paired fashion. Idempotent completion markers make long runs
+resumable, and the regional prior is recomputed inside each fold to preserve zero-shot
+integrity.
+
 \section*{Acknowledgment}
 This paper condenses the author's undergraduate thesis at Universidad Cat\'olica del Maule,
 supervised by Dr.\ Sergio Hern\'andez \'Alvarez. AI-assisted tools supported drafting and
 figure preparation; all content, data and results were produced and verified by the author.
 
+\balance
 \bibliographystyle{IEEEtran}
 \bibliography{paper}
 
