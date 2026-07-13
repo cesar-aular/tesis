@@ -1,10 +1,7 @@
-\documentclass[10pt,aspectratio=169]{beamer}
-\usetheme{metropolis}
-\metroset{block=fill, numbering=fraction, progressbar=frametitle}
-
-\usepackage[spanish,es-noquoting]{babel}
+\documentclass[aspectratio=169]{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage[spanish,es-noquoting]{babel}
 % Evita el "Incompatible glue units" de babel-spanish al usar \% dentro de beamer
 \makeatletter
 \let\es@sppercent\relax
@@ -16,30 +13,43 @@
 
 \graphicspath{{figuras/}}
 
-% --- Paleta institucional ---
-\definecolor{ucmblue}{RGB}{0,85,150}
+% --- Metadatos (usados por la plantilla oficial en portada, pie y cabecera) ---
+\title[Multi-sitio vs.\ local: pronóstico FV \emph{Cold-Start}]{Análisis comparativo de un enfoque multi-sitio frente a modelos locales}
+\subtitle{Proyección a corto plazo de generación fotovoltaica bajo escasez de datos}
+\author[César Aular]{César David Aular Muñoz}
+\institute[Escuela ICI --- UCM]{Escuela Ingeniería Civil Informática \\ Universidad Católica del Maule}
+\date{Examen de Título --- Junio 2026}
+
+% --- Plantilla oficial de presentación UCM (tema QUT: azul institucional #00407a) ---
+\usepackage{QUT}
+
+% --- Colores semánticos: global (azul) / local (verde) / alerta (rojo) ---
 \definecolor{glob}{HTML}{1F77B4}
 \definecolor{loc}{HTML}{2CA02C}
 \definecolor{alertred}{HTML}{C0392B}
-\setbeamercolor{frametitle}{bg=ucmblue}
-\setbeamercolor{progress bar}{fg=ucmblue}
-
 \newcommand{\gl}[1]{\textcolor{glob}{\textbf{#1}}}
 \newcommand{\lo}[1]{\textcolor{loc}{\textbf{#1}}}
 \newcommand{\rj}[1]{\textcolor{alertred}{\textbf{#1}}}
 
-\title{Análisis comparativo de un enfoque multi-sitio frente a modelos locales}
-\subtitle{Proyección a corto plazo de generación fotovoltaica bajo escasez de datos}
-\author{César David Aular Muñoz}
-\institute{Ingeniería Civil Informática \\ Universidad Católica del Maule}
-\date{Examen de Título --- Junio 2026}
+% --- Bloques redondeados con relleno (info=azul UCM / ejemplo=verde / alerta=rojo) ---
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamercolor{block title}{bg=qut,fg=white}
+\setbeamercolor{block body}{bg=qut!8,fg=black}
+\setbeamercolor{block title example}{bg=loc,fg=white}
+\setbeamercolor{block body example}{bg=loc!8,fg=black}
+\setbeamercolor{block title alerted}{bg=alertred,fg=white}
+\setbeamercolor{block body alerted}{bg=alertred!8,fg=black}
 
 \begin{document}
 
-\maketitle
+\begin{frame}[plain]
+  \titlepage
+  \begin{center}
+    \includegraphics[width=0.16\linewidth]{figuras/logoUCM.png}
+  \end{center}
+\end{frame}
 
-\begin{frame}{Contenidos}
-  \setbeamertemplate{section in toc}[sections numbered]
+\begin{frame}{Agenda}
   \tableofcontents[hideallsubsections]
 \end{frame}
 
@@ -343,14 +353,15 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}[standout]
-  Gracias.
-
-  \vspace{0.6em}
-  {\Large ¿Preguntas?}
-
-  \vspace{1.2em}
-  {\normalsize César David Aular Muñoz \\ \footnotesize cesaraular02@gmail.com}
+\begin{frame}[plain]
+  \centering
+  \vfill
+  {\usebeamercolor[fg]{structure}\Huge \textbf{Gracias}}\\[0.5em]
+  {\Large ¿Preguntas?}\\[1.0em]
+  \includegraphics[width=0.13\linewidth]{figuras/logoUCM.png}\\[0.5em]
+  {\normalsize César David Aular Muñoz}\\
+  {\footnotesize cesaraular02@gmail.com}
+  \vfill
 \end{frame}
 
 % ==================================================================

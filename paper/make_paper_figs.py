@@ -1,8 +1,9 @@
 """Standalone figure generation for the IEEE-CS paper (English labels).
 
-Produces two publication-quality figures under paper/figuras/:
-  - fig_method_en.png   : Cold-Start LOPO evaluation protocol (context + horizons + windows)
-  - fig_results_en.png  : median rRMSE (7-day roll-out, operational window) per configuration
+Produces publication-quality figures under paper/figuras/:
+  - fig_method_en.png    : Cold-Start LOPO evaluation protocol (context + horizons + windows)
+  - fig_results_en.png   : median rRMSE (7-day roll-out, operational window) per configuration
+  - fig_medallion_en.png : Medallion data-lineage of the ETL pipeline (Bronze/Silver/Gold)
 
 Run:  ./.venv/Scripts/python.exe paper/make_paper_figs.py
 """
@@ -10,7 +11,7 @@ import os
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.patches import FancyBboxPatch
+from matplotlib.patches import FancyBboxPatch, FancyArrowPatch
 
 OUT = os.path.join(os.path.dirname(__file__), "figuras")
 os.makedirs(OUT, exist_ok=True)
@@ -23,6 +24,79 @@ def _save(fig, name):
     fig.savefig(path)
     plt.close(fig)
     print("[paper]", path)
+
+
+def _arrow(ax, p1, p2, color="#555555"):
+    ax.add_patch(FancyArrowPatch(p1, p2, arrowstyle="-|>", mutation_scale=14,
+                                 color=color, lw=1.5, shrinkA=2, shrinkB=2))
+
+
+def fig_medallion():
+    """Medallion data-lineage of the ETL pipeline (source systems -> Bronze/Silver/Gold)."""
+    src_fc, src_ec = "#9DC3E6", "#2E75B6"
+    brz_fc, brz_ec = "#C9A227", "#7F6000"
+    slv_fc, slv_ec = "#E7E6E6", "#808080"
+    gld_fc, gld_ec = "#FFD966", "#BF9000"
+
+    def tbl(cx, cy, w, h, text, fc, ec, tc="#1A1A1A", fs=8.5):
+        ax.add_patch(FancyBboxPatch((cx - w / 2, cy - h / 2), w, h,
+                                    boxstyle="round,pad=0.015", fc=fc, ec=ec, lw=1.3))
+        ax.text(cx, cy, text, ha="center", va="center", fontsize=fs,
+                family="monospace", color=tc)
+
+    def zone(x0, x1, y0, y1, title, subtitle, ec):
+        ax.add_patch(FancyBboxPatch((x0, y0), x1 - x0, y1 - y0,
+                                    boxstyle="round,pad=0.05", fc="none", ec=ec,
+                                    lw=1.7, linestyle=(0, (6, 4))))
+        ax.text((x0 + x1) / 2, y1 - 0.6, title, ha="center", fontsize=13, fontweight="bold")
+        ax.text((x0 + x1) / 2, y1 - 1.15, subtitle, ha="center", fontsize=8.5,
+                color="#555555", family="monospace")
+
+    fig, ax = plt.subplots(figsize=(13, 6.4))
+    ax.set_xlim(0, 26); ax.set_ylim(0, 14); ax.axis("off")
+
+    for cy, txt in [(10.4, "Grid operator\n(generation)"),
+                    (7.0, "Plant master\n(geo, capacity)"),
+                    (3.6, "CR2\n(meteorology)")]:
+        ax.add_patch(FancyBboxPatch((0.4, cy - 1.0), 3.0, 2.0, boxstyle="round,pad=0.02",
+                                    fc=src_fc, ec=src_ec, lw=1.3))
+        ax.text(1.9, cy, txt, ha="center", va="center", fontsize=8.8)
+
+    zone(4.4, 9.8, 1.5, 13.0, "Bronze", "schema = bronze", brz_ec)
+    zone(10.7, 16.5, 1.5, 13.0, "Silver", "schema = silver", slv_ec)
+    zone(17.4, 25.6, 1.5, 13.0, "Gold", "schema = gold", gld_ec)
+
+    tbl(7.1, 9.4, 3.6, 1.3, "maestro_\ngeneracion", brz_fc, brz_ec, tc="#241D00")
+    tbl(7.1, 4.6, 3.6, 1.3, "maestro_\nexogenas", brz_fc, brz_ec, tc="#241D00")
+    tbl(13.6, 8.2, 3.7, 1.3, "silver_\nunified", slv_fc, slv_ec)
+    tbl(13.6, 4.6, 3.7, 1.2, "silver_dl", slv_fc, slv_ec)
+    gx, gy = 21.5, 8.2
+    for dx, dy in ((0.7, -0.7), (0.35, -0.35)):
+        tbl(gx + dx, gy + dy, 4.8, 1.3, "", gld_fc, gld_ec)
+    tbl(gx, gy, 4.8, 1.3, "{macrozona}/{estacion}/\n<id>_test", gld_fc, gld_ec, fs=8.0)
+
+    _arrow(ax, (3.4, 10.4), (5.3, 9.7))
+    _arrow(ax, (3.4, 7.0), (5.3, 9.1))
+    _arrow(ax, (3.4, 3.6), (5.3, 4.6))
+    _arrow(ax, (8.9, 9.4), (11.75, 8.5))
+    _arrow(ax, (8.9, 4.6), (11.75, 7.9))
+    ax.text(10.25, 6.55, "join", ha="center", fontsize=7.5, style="italic", color="#777777")
+    _arrow(ax, (13.6, 7.55), (13.6, 5.2))
+    _arrow(ax, (15.45, 8.2), (19.1, 8.2))
+    ax.text(17.3, 8.55, "LOPO\nsplit", ha="center", fontsize=7.5, style="italic", color="#777777")
+
+    ax.text(1.9, 12.1, "raw CSV · 2014–2024", ha="center", fontsize=8,
+            style="italic", color="#333333")
+    ax.text(13.6, 9.55, "94 plants · ≈ 4.37 M rows", ha="center", fontsize=7.8, color="#333333")
+    ax.text(13.6, 3.75, "float32 · label-encoded", ha="center", fontsize=7.8, color="#333333")
+    ax.text(21.8, 9.7, "94 LOPO partitions", ha="center", fontsize=7.8, color="#333333")
+    ax.text(15.0, 0.55, "Generation y is never imputed · exogenous imputation flagged "
+            "· zero data leakage enforced by automated tests",
+            ha="center", fontsize=8.3, style="italic", color="#555555")
+
+    fig.suptitle("Medallion ETL data-lineage: source systems → Bronze / Silver / Gold",
+                 fontsize=13)
+    _save(fig, "fig_medallion_en.png")
 
 
 def fig_method():
@@ -98,4 +172,5 @@ def fig_results():
 if __name__ == "__main__":
     fig_method()
     fig_results()
+    fig_medallion()
     print("done")

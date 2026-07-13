@@ -126,13 +126,30 @@ calibration itself survives the zero-shot transfer.
 \subsection{Dataset and Medallion ETL}
 The corpus comprises hourly generation from 94 PV plants of the Chilean National Electric
 System (2014--2024), dynamic exogenous meteorology (global horizontal irradiance,
-temperature, humidity) and static geographic attributes (macro-zone, installed capacity). A
-Medallion pipeline (landing\,$\rightarrow$\,bronze\,$\rightarrow$\,silver\,$\rightarrow$\,gold)
-parses raw meteorological CSVs, standardizes to a canonical
-$(\mathit{unique\_id},\,\mathit{ds},\,y)$ schema, groups plants by macro-zone, engineers
-cyclic calendar features and imputes \emph{only} exogenous variables (with an
+temperature, humidity) from the CR2 network, and static geographic attributes (macro-zone,
+installed capacity). The plants span the country's steep solar gradient and are grouped into
+four macro-zones from the Atacama desert in the north to the south; this grouping is the
+static key over which the regional prior is aggregated. A Medallion pipeline
+(landing\,$\rightarrow$\,bronze\,$\rightarrow$\,silver\,$\rightarrow$\,gold, Fig.~\ref{fig:medallion})
+parses the raw meteorological and generation CSVs, standardizes them to a canonical
+$(\mathit{unique\_id},\,\mathit{ds},\,y)$ schema, joins them into a single
+\texttt{silver\_unified} table ($\approx$4.37\,M hourly rows), engineers cyclic calendar
+features, and imputes \emph{only} exogenous variables (each flagged with an
 \texttt{is\_imputed} dummy). Generation $y$ is never imputed: missing hours remain missing,
-and metrics score real observations only.
+and metrics score real observations only. A numeric, label-encoded \texttt{silver\_dl} view
+feeds the deep networks, while the gold layer materializes one held-out test partition per
+plant for the LOPO evaluation. A single orchestrator runs the pipeline behind a pre-run test
+gate with idempotent completion markers.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{fig_medallion_en.png}
+\caption{Medallion ETL data-lineage. Source systems feed two Bronze master tables, joined
+into \texttt{silver\_unified} and its numeric \texttt{silver\_dl} view; the gold layer holds
+one LOPO test partition per plant. Generation is never imputed, and zero leakage is enforced
+by automated tests.}
+\label{fig:medallion}
+\end{figure*}
 
 \subsection{LOPO Protocol and Zero-Shot Integrity}
 Evaluation follows a Leave-One-Plant-Out design. For each target plant, the global models
@@ -231,6 +248,15 @@ indicating that autoregressive median feedback does not destabilize the forecast
 in green, global Cross-Site models in blue; the dashed line marks the best local baseline.}
 \label{fig:results}
 \end{figure}
+
+\subsection{Commissioning-Ramp Window Sensitivity}
+Only 33 of the 94 plants exhibit a commissioning ramp longer than 24\,h; for the rest the
+Raw and Operational windows coincide. On the aggregate median the two definitions differ only
+moderately, but on plants with a ramp the Raw window is distorted: starting the evaluation
+over weeks of null generation drives the window mean toward zero and makes rRMSE undefined.
+Reporting both definitions is therefore deliberate---Raw is faithful to the historical record,
+whereas Operational yields interpretable metrics for a plant already in commercial operation
+and is the window used for the headline comparison.
 
 \subsection{Seasonal Sensitivity}
 For every plant we build Cold-Start windows starting in each of the four seasons, taken from

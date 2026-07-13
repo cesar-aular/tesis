@@ -1,0 +1,138 @@
+\documentclass{beamer}
+%\usepackage{hyperref}
+%\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+%\UseRawInputEncoding
+
+\usepackage{latexsym,amsmath,xcolor,multicol,booktabs,calligra}
+\usepackage{graphicx,listings,stackengine}
+
+
+\author{César Aular}
+\title{Primera Presentacion Beamer}
+\subtitle{Trabajando en Overleaf}
+\institute [Escuela ICI] {Escuela Ingeniería Civil Informática\\Universidad Católica del Maule}
+\date{\today}
+\usepackage{QUT}
+
+\def\cmd#1{\texttt{\color{red}\footnotesize $\backslash$#1}}
+\def\env#1{\texttt{\color{blue}\footnotesize #1}}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+\definecolor{halfgray}{gray}{0.55}
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\bfseries\color{deepblue},
+    emphstyle=\ttfamily\color{deepred},    % Custom highlighting style
+    stringstyle=\color{deepgreen},
+    numbers=left,
+    numberstyle=\small\color{halfgray},
+    rulesepcolor=\color{red!20!green!20!blue!20},
+    frame=shadowbox,
+}
+
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+    \begin{figure}[htpb]
+        \begin{center}
+            \includegraphics[width=0.2\linewidth]{img/logoUCM.png}
+        \end{center}
+    \end{figure}
+    
+    \begin{note}
+        {Introduce your self}
+    \end{note}
+
+\end{frame}
+
+\begin{frame}{Agenda}
+    \tableofcontents%[sectionstyle=show,subsectionstyle=show/shaded/hide,subsubsectionstyle=show/shaded/hide]
+\end{frame}
+
+
+\section{Motivación}
+
+\begin{frame}{Ejemplo uso minipage}
+    \begin{minipage}[t]{.45\textwidth}
+
+    Este texto estará justificado en ambos lados para mostrar como el texto puede ocupar una columna.
+
+    \end{minipage}
+    \hfill
+    \noindent
+    \begin{minipage}[t]{.45\textwidth}
+    \begin{figure}[t]
+    \includegraphics[width=0.8\linewidth]{img/logoUCM.png}
+    \centering
+    \end{figure}
+    \end{minipage}
+\end{frame}
+
+\section{Introducción}
+
+\begin{frame}{Introducción}
+
+    \begin{block}{}
+    \end{block}{} 
+    
+       \begin{itemize}
+            \item[] \textbf{Imagenes Tomográficas}: Ruido + Efecto de Volumen parcial
+        \pause
+            \item [] \textbf{Objetivo General}
+        \begin{itemize}
+            \item Describir objetivo general
+        \end{itemize}
+        \end{itemize}
+        \pause
+        \begin{itemize}
+            \item [] \textbf{Objetivos Especificos}
+            \begin{enumerate}
+                \item Subobjetivo 1
+                \item Subobjetivo 2
+                \item Subobjetivo 3
+            \end{enumerate}
+        \end{itemize}
+       \begin{enumerate}
+           \item Esto se encuentra enumerado
+           \item ...
+       \end{enumerate}
+       
+       
+\end{frame}
+
+\section{Marco Teórico}
+    \begin{frame}{Marco Teórico}
+        \begin{itemize}
+            \item Explica los conceptos necesarios para entender el contenido
+            \item [] $\longrightarrow$Concepto 1
+            \item [] $\longrightarrow$Concepto 2
+        \end{itemize}
+     \end{frame}
+     
+\section{Desarrollo}
+    \begin{frame}{Desarrollo 1}
+        \begin{itemize}
+            \item Explica el contenido en sí
+        \end{itemize}
+    \end{frame}
+    
+    \begin{frame}{Desarrollo 2}
+        \begin{itemize}
+            \item Aca se continua el desarrollo
+        \end{itemize}
+    \end{frame}
+    
+\section{Resultados y conclusiones}
+    \begin{frame}{Resultados y conclusiones}
+        \begin{itemize}
+            \item Analizar los resultados obtenidos a partir de la experimentación y analizar que podemos rescatar de ellos
+        \end{itemize}
+    \end{frame}
+    
+\end{document}
