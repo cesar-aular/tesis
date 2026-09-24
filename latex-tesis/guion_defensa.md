@@ -1,7 +1,13 @@
 # Guión de defensa — Examen de Título (20 min)
 
 **César David Aular Muñoz** · Escuela Ingeniería Civil Informática · Universidad Católica del Maule
-Presentación: `latex-tesis/defensa.pdf`
+Presentación: `latex-tesis/defensa.pdf` (defensa) · `latex-tesis/charla_conferencia.pdf` (conferencia)
+
+> **Doble uso — defensa y conferencia.** El mismo deck compila en dos modos (interruptor `\confmode` en `defensa.tex`). El **contenido y los tiempos son idénticos**; solo cambia el encuadre. Para la **conferencia** ajusta cuatro cosas al hablar:
+> 1. **Apertura**: en vez de *"hoy defiendo mi proyecto de título"*, di *"presentamos nuestro trabajo sobre pronóstico fotovoltaico en condiciones de arranque en frío"*.
+> 2. **Coautoría**: menciona a **Sergio Hernández** como coautor (aparece en portada y cierre del modo conferencia).
+> 3. **Encuadre**: habla de *"contribuciones del trabajo"* en lugar de *"objetivos de la tesis"* en la diapositiva de Hipótesis y objetivos.
+> 4. **Cierre**: cambia *"quedo atento a sus preguntas"* (comisión) por *"gracias, quedamos atentos a preguntas"* (audiencia). Las diapositivas de respaldo siguen siendo útiles para el turno de preguntas técnico.
 
 ---
 
@@ -18,11 +24,16 @@ Presentación: `latex-tesis/defensa.pdf`
 | Bloque | Diapositivas | Tiempo | Acumulado |
 |--------|--------------|--------|-----------|
 | Apertura | Portada + Agenda | 1:00 | 1:00 |
-| 1. El problema | 3 | 3:30 | 4:30 |
-| 2. Metodología | 5 | 6:00 | 10:30 |
+| 1. El problema | 3 | 3:15 | 4:15 |
+| 2. Metodología | 6 (incl. mapa) | 6:15 | 10:30 |
 | 3. Resultados | 5 | 7:00 | 17:30 |
 | 4. Conclusiones | 2 | 2:00 | 19:30 |
 | Cierre | Gracias | 0:30 | 20:00 |
+
+> **Nota de tiempos.** Se añadió la diapositiva del **mapa** (0:45) en Metodología; se
+> compensa recortando 15 s en El problema y 30 s en la Semilla sintética. El total sigue
+> siendo 20:00. Si vas apretado, el mapa es la primera candidata a acortar (basta con
+> señalar el contraste norte-grande / centro-pequeño).
 
 ---
 
@@ -104,15 +115,23 @@ Presentación: `latex-tesis/defensa.pdf`
 
 ## BLOQUE 3 — RESULTADOS (7:00)
 
+### Diapositiva "¿Dónde están las plantas?" (mapa) — *(0:45)*
+
+**[Señalas el mapa.]** *Antes de los resultados, dónde estamos parados. Estas son las 94 plantas sobre el mapa de Chile, a lo largo de todo el gradiente solar, desde Arica hasta la zona sur.*
+
+*Fíjense en el contraste: en el norte hay pocas plantas pero muy grandes, de escala utility, hasta 200 megawatts, con altísima irradiancia. En la zona central hay muchísimas plantas pequeñas —los PMGD, con una mediana de unos 3 megawatts—, que son justamente el segmento que más sufre el arranque en frío, porque son los actores con menos capacidad de análisis.*
+
+*Y un detalle metodológico: la macrozona es la única señal espacial que ven los modelos, y es la clave sobre la que se agrega el prior regional que siembra el contexto sintético.*
+
 ### Diapositiva "Precisión puntual" — *(2:00)*
 
-*Vamos a los resultados, que son el corazón de la defensa.*
+*Vamos a los resultados, que son el corazón de la presentación.*
 
-**[Señalas la tabla y la figura.]** *Tres lecturas en la ventana operacional, roll-out semanal. Primero: el modelo más preciso es el XGBoost local, con 62 % de error relativo. Le sigue el XGBoost global, con 95 %, que es el mejor de los modelos globales.*
+**[Señalas la tabla y la figura.]** *Primero, una aclaración de métrica. Reportamos el error normalizado por la capacidad instalada, el NRMSE, porque es directamente interpretable: es el error como porcentaje de la potencia nominal de la planta. El rRMSE que aparece al lado divide por la generación media, que incluye las horas de noche, y por eso se dispara sobre 100 %.*
 
-*Segundo, y muy interesante: entre las redes profundas globales, la LSTM —la más simple— con 118 % supera a las arquitecturas atencionales, Informer y TFT, que quedan en 129 y 133 %. Es decir, la atención, que era la gran promesa, quedó por detrás de una red recurrente sencilla. Esto es coherente con la advertencia de la literatura de que los Transformers pueden estar sobredimensionados frente a líneas base simples.*
+*Con eso: el modelo más preciso es el XGBoost local, con 13,2 % de la potencia nominal. Le sigue el XGBoost global, con 17,1 %, que es el mejor de los modelos globales. Las redes profundas forman un grupo claramente peor, entre 22 y 31 %.*
 
-*Tercero: la degradación de day1 al roll-out semanal es moderada en todas las familias, lo que indica que la realimentación autorregresiva no desestabiliza los pronósticos.*
+*Y aquí hay una lección de medición: si uno ordena por rRMSE, el LSTM global parece claramente mejor que el local. Si ordena por NRMSE, el orden se invierte. Comparar medianas marginales de un cociente cuyo denominador cambia por planta no es una base segura para rankear —y eso es exactamente lo que nos llevó a los tests pareados.*
 
 ### Diapositiva "Sensibilidad estacional" — *(1:30)*
 
@@ -130,15 +149,19 @@ Presentación: `latex-tesis/defensa.pdf`
 
 *El más cercano al nominal es el XGBoost local, con 0,86 y la menor pérdida pinball. La razón de fondo en las redes es que su escalador se ajusta sobre el contexto sintético, cuya varianza es menor que la real, y por eso las bandas salen estrechas.*
 
-### Diapositiva "Contraste de la hipótesis" — *(2:00)*
+### Diapositiva "Contraste de la hipótesis — con test estadístico" — *(2:00)*
 
-*Con todo esto, contrasto la hipótesis. Y el veredicto tiene dos capas.*
+*Con todo esto, contrasto la hipótesis. Y ahora no con medianas, sino con un test.*
 
-**[Bloque rojo.]** *En precisión absoluta, la hipótesis se rechaza, sin ambigüedad: ningún modelo global alcanza al mejor baseline local. 62 % del XGBoost local contra 95 % del mejor global.*
+*El diseño es pareado y balanceado: las 94 plantas evaluadas con las 8 configuraciones sobre la misma grilla horaria. Eso permite un Friedman como test global y luego Wilcoxon pareado con corrección de Holm.*
 
-**[Bloque azul.]** *El único matiz aparece a igualdad de arquitectura. La LSTM global supera a la LSTM local —118 contra 147 %—, lo que muestra que el conocimiento climático generalizado sí puede exceder a una historia local limitada. Pero la N-HiTS local supera a la global, así que la ventaja del paradigma global no es universal.*
+**[Bloque rojo.]** *La hipótesis se rechaza, y ahora con significancia: el XGBoost local gana al XGBoost global en 77 de 94 plantas, con p menor a diez a la menos siete. No es un artefacto de cómo agregamos.*
 
-**[Bloque verde.]** *Y aquí está el punto que quiero que quede: el valor real del modelo global no es ganar en precisión, es la disponibilidad inmediata. En el arranque en frío puro, con historia local nula, el modelo global simplemente no tiene competidor local posible, porque el modelo local no puede existir. La contribución de la tesis no es coronar un ganador absoluto, sino cuantificar con rigor ese compromiso entre disponibilidad inmediata y precisión asintótica.*
+**[Bloque azul.]** *A igualdad de arquitectura el resultado es, ahora sí, inequívoco: la N-HiTS local supera a la global en 88 de 94 plantas. Y el par LSTM —que en la versión anterior parecía favorecer al global— es un empate estadístico: 49 contra 45 plantas, p igual a 1,00. Quiero ser transparente: el matiz que reportábamos antes no sobrevive al test pareado. La diferencia de medianas la producían unas pocas plantas donde el LSTM local falla mucho, no una ventaja sistemática del global.*
+
+*Dicho de otro modo: no hay ninguna arquitectura en la que la transferencia global supere significativamente a su contraparte local.*
+
+**[Bloque verde.]** *Y aquí está el punto que quiero que quede: el valor real del modelo global no es ganar en precisión, es la disponibilidad inmediata. En el arranque en frío puro, con historia local nula, el modelo global simplemente no tiene competidor local posible, porque el modelo local no puede existir. La contribución no es coronar un ganador absoluto, sino cuantificar con rigor ese compromiso entre disponibilidad inmediata y precisión asintótica.*
 
 ### Diapositiva "Ejemplo de roll-out" — *(0:60)*
 
@@ -185,6 +208,15 @@ Salta a la diapositiva de respaldo correspondiente según lo que pregunte la com
 
 - **"¿No estará sub-entrenando los Transformers en una GPU de 6 GB?"** → *Backup — Detalles de cómputo.*
   *Es una limitación reconocida y una de las explicaciones candidatas. La VRAM la gobierna batch × windows_batch, no el tamaño del corpus, así que no trunqué la historia; pero TFT e Informer pudieron quedar sub-entrenados, y reentrenar con más presupuesto es trabajo futuro explícito.*
+
+- **"¿Las diferencias son estadísticamente significativas?"** → *Backup — Tests estadísticos.*
+  *Friedman da chi-cuadrado 260,7 con p menor a diez a la menos cincuenta, así que las configuraciones no son equivalentes. El ranking medio pone al XGBoost local primero con 1,80. Y por planta, el XGBoost local es el mejor en 60 de 94. Los contrastes por pares usan Wilcoxon con corrección de Holm.*
+
+- **"¿Los baselines locales no están viendo el futuro?"** → *Backup — Causalidad temporal.*
+  *Buena observación, y la respuesta honesta es que sí en parte: se entrenan con la historia completa menos las ventanas de evaluación, así que incluyen horas posteriores a la ventana. Los lags hacia las ventanas están enmascarados, o sea no hay fuga del target, pero no es estrictamente causal. Es una elección de diseño: queríamos el rival local más fuerte posible. Y lo importante es la dirección del sesgo: favorece al local, que gana, mientras que el espejo —LOPO oculta la planta pero no el calendario— favorece al global, que pierde igual. Ambos sesgos empujan contra nuestra conclusión, así que la refuerzan.*
+
+- **"¿Por qué NRMSE y no solo rRMSE?"** → *Backup — rRMSE > 100 %.*
+  *Mantuvimos rRMSE por continuidad, pero agregamos NRMSE normalizado por capacidad instalada porque es acotado e interpretable como porcentaje de la potencia nominal, y está definido para todas las plantas —el rRMSE queda indefinido cuando la media de la ventana es cero.*
 
 - **"¿Me muestra todos los números?"** → *Backup — Tabla completa (day1 y roll-out).*
 

@@ -62,6 +62,15 @@ paper/*.fls
 paper/*.fdb_latexmk
 paper/*.synctex.gz
 
+# ---- LaTeX: paper final de conferencia (docs/) ----
+docs/*.aux
+docs/*.bbl
+docs/*.blg
+docs/*.out
+docs/*.fls
+docs/*.fdb_latexmk
+docs/*.synctex.gz
+
 # ---- OS / editor ----
 .DS_Store
 Thumbs.db

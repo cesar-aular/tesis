@@ -1,0 +1,34 @@
+Friedman chi2=260.66, p=1.489e-52, n=94 plantas
+ranking medio: XGB_LOCAL=1.80, NHITS_LOCAL=3.32, XGB_GLOBAL=3.34, TFT=5.10, INFORMER=5.15, LSTM_LOCAL=5.30, LSTM=5.41, NHITS=6.59
+win counts: XGB_LOCAL=60, XGB_GLOBAL=15, NHITS_LOCAL=10, NHITS=1, LSTM_LOCAL=5, LSTM=1, TFT=2, INFORMER=0
+metrica=NRMSE (% of installed capacity), 7-day roll-out
+
+TODOS los contrastes (Holm):
+  XGB_LOCAL    vs NHITS        dmed= -17.41 wins=88/ 6 p_holm=1.838e-13
+  XGB_LOCAL    vs INFORMER     dmed=  -9.77 wins=88/ 6 p_holm=2.533e-13
+  XGB_LOCAL    vs LSTM         dmed= -11.04 wins=86/ 8 p_holm=6.447e-13
+  XGB_LOCAL    vs TFT          dmed=  -9.66 wins=86/ 8 p_holm=1.109e-12
+  XGB_LOCAL    vs LSTM_LOCAL   dmed= -10.83 wins=81/13 p_holm=1.361e-11
+  NHITS_LOCAL  vs NHITS        dmed= -13.85 wins=88/ 6 p_holm=1.417e-11
+  NHITS_LOCAL  vs LSTM         dmed=  -6.57 wins=79/15 p_holm=1.041e-08
+  XGB_LOCAL    vs XGB_GLOBAL   dmed=  -3.68 wins=77/17 p_holm=4.612e-08
+  XGB_LOCAL    vs NHITS_LOCAL  dmed=  -4.66 wins=77/17 p_holm=4.931e-08
+  NHITS        vs TFT          dmed=  +6.90 wins=22/72 p_holm=8.893e-08
+  XGB_GLOBAL   vs NHITS        dmed= -15.13 wins=75/19 p_holm=1.808e-07
+  XGB_GLOBAL   vs INFORMER     dmed=  -7.19 wins=77/17 p_holm=9.880e-07
+  NHITS_LOCAL  vs LSTM_LOCAL   dmed=  -5.21 wins=71/23 p_holm=1.705e-06
+  NHITS_LOCAL  vs TFT          dmed=  -3.91 wins=74/20 p_holm=1.705e-06
+  XGB_GLOBAL   vs LSTM         dmed=  -8.96 wins=75/19 p_holm=2.443e-06
+  NHITS_LOCAL  vs INFORMER     dmed=  -6.29 wins=71/23 p_holm=2.443e-06
+  NHITS        vs INFORMER     dmed=  +8.25 wins=26/68 p_holm=1.105e-05
+  NHITS        vs LSTM         dmed=  +7.14 wins=25/69 p_holm=1.375e-05
+  XGB_GLOBAL   vs TFT          dmed=  -7.18 wins=74/20 p_holm=3.678e-05
+  NHITS        vs LSTM_LOCAL   dmed=  +3.09 wins=29/65 p_holm=1.014e-04
+  XGB_GLOBAL   vs LSTM_LOCAL   dmed=  -8.37 wins=66/28 p_holm=7.544e-04
+  LSTM         vs INFORMER     dmed=  +1.21 wins=38/56 p_holm=2.803e-01
+  LSTM         vs TFT          dmed=  +0.43 wins=45/49 p_holm=8.637e-01
+  XGB_GLOBAL   vs NHITS_LOCAL  dmed=  -2.37 wins=54/40 p_holm=1.000e+00
+  LSTM_LOCAL   vs LSTM         dmed=  +0.35 wins=45/49 p_holm=1.000e+00
+  LSTM_LOCAL   vs TFT          dmed=  +1.68 wins=38/56 p_holm=1.000e+00
+  LSTM_LOCAL   vs INFORMER     dmed=  +1.22 wins=42/52 p_holm=1.000e+00
+  TFT          vs INFORMER     dmed=  -0.19 wins=48/46 p_holm=1.000e+00

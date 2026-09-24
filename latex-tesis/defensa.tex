@@ -1,4 +1,11 @@
 \documentclass[10pt,aspectratio=169]{beamer}
+% ====================================================================
+% Deck doble: DEFENSA (examen de titulo) y CONFERENCIA (paper IEEE).
+%   - Defensa (por defecto):   pdflatex defensa.tex
+%   - Conferencia:             pdflatex -jobname=charla_conferencia "\def\confmode{1}\input{defensa.tex}"
+% Solo cambian portada/autores/afiliacion/evento; el contenido es el mismo.
+% ====================================================================
+\providecommand{\confmode}{0}% 0 = defensa, 1 = conferencia
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[spanish,es-noquoting]{babel}
@@ -14,11 +21,21 @@
 \graphicspath{{figuras/}}
 
 % --- Metadatos (usados por la plantilla oficial en portada, pie y cabecera) ---
-\title[Multi-sitio vs.\ local: pronóstico FV \emph{Cold-Start}]{Análisis comparativo de un enfoque multi-sitio frente a modelos locales}
-\subtitle{Proyección a corto plazo de generación fotovoltaica bajo escasez de datos}
-\author[César Aular]{César David Aular Muñoz}
-\institute[Escuela ICI --- UCM]{Escuela Ingeniería Civil Informática \\ Universidad Católica del Maule}
-\date{Examen de Título --- Junio 2026}
+\ifnum\confmode=1
+  % ----- Modo CONFERENCIA (paper IEEE) -----
+  \title[Pronóstico FV \emph{Cold-Start} · LOPO]{Pronóstico fotovoltaico a corto plazo bajo escasez de datos mediante evaluación \emph{Leave-One-Plant-Out}}
+  \subtitle{Un enfoque \emph{Cross-Site} multi-planta frente a modelos locales}
+  \author[Aular \& Hernández]{César David Aular Muñoz \and Sergio Hernández}
+  \institute[UCM]{Departamento de Computación e Industrias \\ Facultad de Ciencias de la Ingeniería \\ Universidad Católica del Maule}
+  \date{Conferencia IEEE --- 2026}% <-- editar con el nombre y fecha reales de la conferencia
+\else
+  % ----- Modo DEFENSA (examen de título) -----
+  \title[Multi-sitio vs.\ local: pronóstico FV \emph{Cold-Start}]{Análisis comparativo de un enfoque multi-sitio frente a modelos locales para la proyección a corto plazo de generación fotovoltaica bajo escasez de datos}
+  % \subtitle{Proyección a corto plazo de generación fotovoltaica bajo escasez de datos}
+  \author[César Aular]{César David Aular Muñoz}
+  \institute[Escuela ICI --- UCM]{Escuela Ingeniería Civil Informática \\ Universidad Católica del Maule}
+  \date{Proyecto de Título --- Junio 2026}
+\fi
 
 % --- Plantilla oficial de presentación UCM (tema QUT: azul institucional #00407a) ---
 \usepackage{QUT}
@@ -224,36 +241,65 @@
   \end{columns}
 \end{frame}
 
+\begin{frame}{¿Dónde están las plantas? El corpus sobre el mapa}
+  \begin{columns}[T]
+    \begin{column}{0.42\textwidth}
+      \centering
+      \includegraphics[height=0.78\textheight]{fig_mapa_plantas.png}
+    \end{column}
+    \begin{column}{0.58\textwidth}
+      \vspace{1.2em}
+      \begin{itemize}
+        \item \textbf{94 plantas} del Sistema Eléctrico Nacional, a lo largo de todo el
+              gradiente solar de Chile (Arica $\rightarrow$ zona sur).
+        \item \gl{Norte Grande y Norte Chico}: pocas plantas pero \textbf{grandes}
+              (utility scale, hasta 200\,MW) y de alta irradiancia.
+        \item \lo{Zona Central}: muchas plantas \textbf{pequeñas} (PMGD, mediana
+              $\approx$3\,MW) — el segmento que más sufre el arranque en frío.
+      \end{itemize}
+      \vspace{0.4em}
+      \begin{exampleblock}{Por qué importa para la transferencia}
+        La \textbf{macrozona} es la única señal espacial que ven los modelos, y es la
+        clave sobre la que se agrega el \emph{prior} regional que siembra el contexto
+        sintético.
+      \end{exampleblock}
+    \end{column}
+  \end{columns}
+\end{frame}
+
 % ==================================================================
 \section{Resultados}
 % ==================================================================
 
-\begin{frame}{Precisión puntual --- ventana operacional (roll-out 7 días)}
+\begin{frame}{Precisión puntual --- ventana \emph{cold-start}, 94 plantas (roll-out 7 días)}
   \begin{columns}[T]
     \begin{column}{0.46\textwidth}
       \small
-      \begin{tabular}{llr}
+      \begin{tabular}{llrr}
         \toprule
-        Config. & Tipo & rRMSE \\
+        Config. & Tipo & NRMSE & rRMSE \\
         \midrule
-        XGBoost & \lo{Local}  & \textbf{62\,\%} \\
-        XGBoost & \gl{Global} & 95\,\% \\
-        N-HiTS  & \lo{Local}  & 104\,\% \\
-        LSTM    & \gl{Global} & 118\,\% \\
-        Informer& \gl{Global} & 129\,\% \\
-        TFT     & \gl{Global} & 133\,\% \\
-        LSTM    & \lo{Local}  & 147\,\% \\
-        N-HiTS  & \gl{Global} & 150\,\% \\
+        XGBoost & \lo{Local}  & \textbf{13,2\,\%} & 60\,\% \\
+        XGBoost & \gl{Global} & 17,1\,\% & 75\,\% \\
+        N-HiTS  & \lo{Local}  & 17,6\,\% & 85\,\% \\
+        Informer& \gl{Global} & 22,8\,\% & 107\,\% \\
+        TFT     & \gl{Global} & 23,6\,\% & 113\,\% \\
+        LSTM    & \lo{Local}  & 23,9\,\% & 129\,\% \\
+        LSTM    & \gl{Global} & 24,8\,\% & 109\,\% \\
+        N-HiTS  & \gl{Global} & 30,7\,\% & 148\,\% \\
         \bottomrule
       \end{tabular}
+
+      \vspace{0.3em}
+      {\scriptsize NRMSE = RMSE / capacidad instalada. \textbf{94 plantas}.}
     \end{column}
     \begin{column}{0.54\textwidth}
       \centering
-      \includegraphics[width=\linewidth]{fig_resultados_global.png}
+      \includegraphics[width=\linewidth]{fig_resultados_nrmse_es.png}
     \end{column}
   \end{columns}
-  \vspace{0.3em}
-  {\footnotesize El \lo{XGBoost local} es el más preciso; entre las redes globales la \gl{LSTM} supera a la atención (Informer/TFT) — coherente con Zeng et al. (2023).}
+  \vspace{0.2em}
+  {\footnotesize El \lo{XGBoost local} es el más preciso (13\,\% de la potencia nominal). Normalizar por \textbf{capacidad} hace los números interpretables —y cambia el orden del par LSTM respecto de rRMSE.}
 \end{frame}
 
 \begin{frame}{Sensibilidad estacional: el invierno es el gran desafío}
@@ -286,12 +332,12 @@
     \toprule
     Config. & Tipo & Cobertura diurna & Pinball P95 (MWh) \\
     \midrule
-    XGBoost  & \lo{Local}  & \textbf{0,86} & \textbf{0,033} \\
-    XGBoost  & \gl{Global} & 0,99 (sobre-cubre) & 0,091 \\
-    LSTM     & \gl{Global} & 0,54 & 0,140 \\
-    Informer & \gl{Global} & 0,65 & 0,114 \\
-    TFT      & \gl{Global} & 0,44 & 0,123 \\
-    N-HiTS   & \gl{Global} & 0,36 & 0,277 \\
+    XGBoost  & \lo{Local}  & \textbf{0,86} & \textbf{0,035} \\
+    XGBoost  & \gl{Global} & 0,97 (sobre-cubre) & 0,092 \\
+    LSTM     & \gl{Global} & 0,53 & 0,159 \\
+    Informer & \gl{Global} & 0,64 & 0,115 \\
+    TFT      & \gl{Global} & 0,38 & 0,158 \\
+    N-HiTS   & \gl{Global} & 0,37 & 0,372 \\
     \bottomrule
   \end{tabular}
   \end{center}
@@ -303,14 +349,16 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Contraste de la hipótesis}
-  \begin{alertblock}{En precisión absoluta: la hipótesis se \rj{RECHAZA}}
-    Ningún modelo global alcanza al mejor baseline local (XGBoost local 62\,\% vs.\ global 95\,\%).
+\begin{frame}{Contraste de la hipótesis --- con test estadístico}
+  \begin{alertblock}{La hipótesis se \rj{RECHAZA}, y ahora con significancia}
+    \lo{XGBoost local} gana a \gl{XGBoost global} en \textbf{77 de 94 plantas}
+    ($p<10^{-7}$, Wilcoxon pareado con corrección de Holm).
   \end{alertblock}
-  \begin{block}{El único matiz: a igualdad de arquitectura}
+  \begin{block}{A igualdad de arquitectura: ningún global gana significativamente}
     \begin{itemize}
-      \item \gl{LSTM global} (118\,\%) \textbf{supera} a \lo{LSTM local} (147\,\%) — el clima generalizado excede la historia local limitada.
-      \item Pero \lo{N-HiTS local} (104\,\%) supera a \gl{N-HiTS global} (150\,\%) — la ventaja global no es universal.
+      \item \lo{N-HiTS local} supera a \gl{N-HiTS global} en \textbf{88/94} ($p<10^{-10}$).
+      \item El par \textbf{LSTM} es un \rj{empate estadístico}: 49/45 plantas, $p=1{,}00$.
+            El matiz que sugerían las medianas \textbf{no sobrevive} al test pareado.
     \end{itemize}
   \end{block}
   \begin{exampleblock}{El valor real: disponibilidad inmediata}
@@ -359,8 +407,13 @@
   {\usebeamercolor[fg]{structure}\Huge \textbf{Gracias}}\\[0.5em]
   {\Large ¿Preguntas?}\\[1.0em]
   \includegraphics[width=0.13\linewidth]{figuras/logoUCM.png}\\[0.5em]
-  {\normalsize César David Aular Muñoz}\\
-  {\footnotesize cesaraular02@gmail.com}
+  \ifnum\confmode=1
+    {\normalsize César David Aular Muñoz \quad·\quad Sergio Hernández}\\
+    {\footnotesize cesaraular02@gmail.com \quad·\quad Universidad Católica del Maule}
+  \else
+    {\normalsize César David Aular Muñoz}\\
+    {\footnotesize cesaraular02@gmail.com}
+  \fi
   \vfill
 \end{frame}
 
@@ -368,6 +421,49 @@
 % BACKUP SLIDES — anticipando los ataques de la comisión
 % ==================================================================
 \appendix
+
+\begin{frame}{Backup --- Tests estadísticos (Friedman + Wilcoxon-Holm)}
+  \textbf{Diseño pareado y balanceado:} 94 plantas $\times$ 8 configuraciones sobre la
+  misma grilla horaria canónica $\rightarrow$ aplica la comparación por rangos de
+  Demšar (2006).
+  \vspace{0.3em}
+  \begin{itemize}
+    \item \textbf{Friedman (omnibus):} $\chi^2 = 260{,}7$, $p < 10^{-50}$ — las
+          configuraciones no son equivalentes.
+    \item \textbf{Ranking medio} (1 = mejor): XGB local 1,80 · N-HiTS local 3,32 ·
+          XGB global 3,34 · TFT 5,10 · Informer 5,15 · LSTM local 5,30 ·
+          LSTM global 5,41 · N-HiTS global 6,59.
+    \item \textbf{Mejor por planta:} XGB local en 60/94, XGB global en 15,
+          N-HiTS local en 10.
+  \end{itemize}
+  \vspace{0.2em}
+  \begin{alertblock}{Por qué la mediana marginal engañaba}
+    rRMSE mediano sugería \gl{LSTM global} (118\,\%) mejor que \lo{LSTM local}
+    (147\,\%). Pero la \textbf{mediana de las diferencias por planta} es $\approx 0$ y
+    levemente a favor del local: la brecha la producían unas pocas plantas donde el
+    local falla mucho, no una ventaja sistemática del global.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Backup --- Causalidad temporal de los baselines locales}
+  \begin{block}{Qué se hizo exactamente}
+    Los baselines locales se entrenan con la historia \textbf{completa} de la planta
+    \textbf{menos todas las ventanas de evaluación} (Raw, Operacional y las 4
+    estacionales), con los \emph{lags} hacia esas ventanas enmascarados.
+  \end{block}
+  \begin{itemize}
+    \item No hay fuga del \emph{target}: ningún rezago apunta dentro de una ventana.
+    \item Pero el entrenamiento \textbf{sí incluye horas posteriores} a la ventana
+          predicha $\rightarrow$ \rj{no es estrictamente causal}.
+    \item Es una elección de diseño: representa el modelo maduro que el operador
+          tendría \emph{tras acumular historia} — el rival más fuerte posible.
+  \end{itemize}
+  \begin{exampleblock}{Por qué esto refuerza la conclusión}
+    El sesgo favorece al lado \lo{local}, que \textbf{gana}; y el espejo (LOPO oculta
+    la planta pero \textbf{no el calendario}) favorece al lado \gl{global}, que
+    \textbf{pierde igual}. Ambos sesgos empujan contra la conclusión reportada.
+  \end{exampleblock}
+\end{frame}
 
 \begin{frame}{Backup --- Definición del RMSE}
   \begin{block}{Fórmula}
@@ -401,7 +497,7 @@
 \begin{frame}{Backup --- Calibración de XGBoost (global vs.\ local)}
   \begin{columns}[T]
     \begin{column}{0.5\textwidth}
-      \textbf{XGBoost global: 0,99 (sobre-cubre)}
+      \textbf{XGBoost global: 0,97 (sobre-cubre)}
       \begin{itemize}
         \item Regresión cuantílica sobre un contexto \textbf{heterogéneo} ($N-1$ plantas).
         \item Bandas \textbf{demasiado anchas}: casi nunca fallan, pero pierden utilidad operativa.
@@ -412,7 +508,7 @@
       \textbf{XGBoost local: 0,86 (casi nominal)}
       \begin{itemize}
         \item Ajustado a la variabilidad \textbf{real} de la propia planta.
-        \item Pinball P95 = \textbf{0,033} MWh vs.\ 0,091 del global.
+        \item Pinball P95 = \textbf{0,035} MWh vs.\ 0,092 del global.
         \item Intervalos más estrechos y \textbf{mejor centrados}.
       \end{itemize}
     \end{column}
@@ -436,25 +532,26 @@
 \begin{frame}{Backup --- Tabla completa (day1 y roll-out)}
   \scriptsize
   \begin{center}
-  \begin{tabular}{llcccc}
+  \begin{tabular}{llcccccc}
     \toprule
-     & & \multicolumn{2}{c}{rRMSE (\%)} & \multicolumn{2}{c}{sMAPE (\%)} \\
+     & & \multicolumn{2}{c}{NRMSE (\% cap.)} & \multicolumn{2}{c}{rRMSE (\%)} & & \\
     \cmidrule(lr){3-4}\cmidrule(lr){5-6}
-    Config. & Tipo & day1 & roll7d & day1 & roll7d \\
+    Config. & Tipo & day1 & roll7d & day1 & roll7d & Cob. & Pinball \\
     \midrule
-    XGBoost  & \lo{Local}  & 40,6 & 62,2 & 51,4 & 51,5 \\
-    XGBoost  & \gl{Global} & 77,5 & 95,4 & 39,8 & 40,7 \\
-    N-HiTS   & \lo{Local}  & 73,6 & 104,0 & 56,9 & 69,1 \\
-    LSTM     & \gl{Global} & 103,4 & 118,2 & 86,3 & 91,8 \\
-    Informer & \gl{Global} & 96,9 & 129,3 & 82,2 & 89,0 \\
-    TFT      & \gl{Global} & 110,2 & 133,1 & 89,5 & 96,2 \\
-    LSTM     & \lo{Local}  & 102,6 & 146,9 & 82,2 & 91,4 \\
-    N-HiTS   & \gl{Global} & 130,6 & 150,4 & 95,8 & 96,9 \\
+    XGBoost  & \lo{Local}  & \textbf{9,5} & \textbf{13,2} & 45,6 & 59,9 & 0,86 & 0,035 \\
+    XGBoost  & \gl{Global} & 15,6 & 17,1 & 64,0 & 75,1 & 0,97 & 0,092 \\
+    N-HiTS   & \lo{Local}  & 14,2 & 17,6 & 62,3 & 85,2 & 0,72 & 0,096 \\
+    Informer & \gl{Global} & 21,0 & 22,8 & 96,6 & 106,5 & 0,64 & 0,115 \\
+    TFT      & \gl{Global} & 22,0 & 23,6 & 105,1 & 112,7 & 0,38 & 0,158 \\
+    LSTM     & \lo{Local}  & 16,3 & 23,9 & 102,6 & 128,8 & 0,72 & 0,235 \\
+    LSTM     & \gl{Global} & 22,6 & 24,8 & 99,7 & 108,6 & 0,53 & 0,159 \\
+    N-HiTS   & \gl{Global} & 28,6 & 30,7 & 129,8 & 148,2 & 0,37 & 0,372 \\
     \bottomrule
   \end{tabular}
   \end{center}
   \normalsize
-  \centering Ventana operacional, mediana sobre 33 plantas con rampa distinguible.
+  \centering Ventana \emph{cold-start}, mediana sobre las \textbf{94 plantas}
+  (Operacional donde hay rampa $>$24\,h; Raw en el resto).
 \end{frame}
 
 \end{document}
