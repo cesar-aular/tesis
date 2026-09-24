@@ -1,3 +1,9 @@
+@IEEEtranBSTCTL{IEEEexample:BSTcontrol,
+  CTLuse_forced_etal       = "yes",
+  CTLmax_names_forced_etal = "6",
+  CTLnames_show_etal       = "1"
+}
+
 @article{Antonanzas2016,
   author  = {Antonanzas, J. and Osorio, N. and Escobar, R. and Urraca, R. and Martinez-de-Pison, F. J. and Antonanzas-Torres, F.},
   title   = {Review of photovoltaic power forecasting},
@@ -191,37 +197,46 @@
 
 % ===== Zero-/few-shot: modelos fundacionales de series de tiempo (R1.5) =====
 @article{Ansari2024,
-  author  = {Ansari, Abdul Fatir and Stella, Lorenzo and Turkmen, Caner and Zhang, Xiyuan and Mercado, Pedro and Shen, Huibin and Shchur, Oleksandr and Rangapuram, Syama Sundar and Pineda Arango, Sebastian and Kapoor, Shubham and Zschiegner, Jasper and Maddix, Danielle C. and Mahoney, Michael W. and Torkkola, Kari and Wilson, Andrew Gordon and Bohlke-Schneider, Michael and Wang, Yuyang},
+  author  = {Ansari, Abdul Fatir and Stella, Lorenzo and Turkmen, Caner and Zhang, Xiyuan and Mercado, Pedro and Shen, Huibin and Shchur, Oleksandr and Rangapuram, Syama Sundar and Pineda Arango, Sebastian and Kapoor, Shubham and Zschiegner, Jasper and Maddix, Danielle C. and Wang, Hao and Mahoney, Michael W. and Torkkola, Kari and Wilson, Andrew Gordon and Bohlke-Schneider, Michael and Wang, Yuyang},
   title   = {Chronos: Learning the Language of Time Series},
-  journal = {arXiv preprint arXiv:2403.07815},
-  year    = {2024}
+  journal = {Transactions on Machine Learning Research},
+  year    = {2024},
+  note    = {\url{https://openreview.net/forum?id=DOz10U6BKO}}
 }
 
 @article{Garza2023,
-  author  = {Garza, Azul and Mergenthaler-Canseco, Max},
+  author  = {Garza, Azul and Challu, Cristian and Mergenthaler-Canseco, Max},
   title   = {{TimeGPT-1}},
   journal = {arXiv preprint arXiv:2310.03589},
-  year    = {2023}
+  year    = {2023},
+  doi     = {10.48550/arXiv.2310.03589}
 }
 
 @inproceedings{Woo2024,
   author    = {Woo, Gerald and Liu, Chenghao and Kumar, Akshat and Xiong, Caiming and Savarese, Silvio and Sahoo, Doyen},
   title     = {Unified Training of Universal Time Series Forecasting Transformers},
   booktitle = {Proc. 41st Int. Conf. on Machine Learning (ICML)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {235},
+  pages     = {53140--53164},
   year      = {2024}
 }
 
 @article{Rasul2023,
-  author  = {Rasul, Kashif and Ashok, Arjun and Williams, Andrew Robert and Khorasani, Arian and Adamopoulos, George and Bhagwatkar, Rishika and Bilo{\v{s}}, Marin and Ghonia, Hena and Hassen, Nadhir and Schneider, Anderson and Garg, Sahil and Drouin, Alexandre and Chapados, Nicolas and Nevmyvaka, Yuriy and Rish, Irina},
+  author  = {Rasul, Kashif and Ashok, Arjun and Williams, Andrew Robert and Ghonia, Hena and Bhagwatkar, Rishika and Khorasani, Arian and Darvishi Bayazi, Mohammad Javad and Adamopoulos, George and Riachi, Roland and Hassen, Nadhir and Bilo{\v{s}}, Marin and Garg, Sahil and Schneider, Anderson and Chapados, Nicolas and Drouin, Alexandre and Zantedeschi, Valentina and Nevmyvaka, Yuriy and Rish, Irina},
   title   = {{Lag-Llama}: Towards Foundation Models for Probabilistic Time Series Forecasting},
   journal = {arXiv preprint arXiv:2310.08278},
-  year    = {2023}
+  year    = {2023},
+  doi     = {10.48550/arXiv.2310.08278}
 }
 
 @inproceedings{Das2024,
   author    = {Das, Abhimanyu and Kong, Weihao and Sen, Rajat and Zhou, Yichen},
   title     = {A Decoder-Only Foundation Model for Time-Series Forecasting},
   booktitle = {Proc. 41st Int. Conf. on Machine Learning (ICML)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {235},
+  pages     = {10148--10167},
   year      = {2024}
 }
 
@@ -229,9 +244,10 @@
 @book{Vovk2005,
   author    = {Vovk, Vladimir and Gammerman, Alexander and Shafer, Glenn},
   title     = {Algorithmic Learning in a Random World},
-  publisher = {Springer},
+  publisher = {Springer-Verlag},
   address   = {New York},
   year      = {2005},
+  isbn      = {0387001522},
   doi       = {10.1007/b106715}
 }
 
@@ -240,6 +256,7 @@
   title     = {Conformalized Quantile Regression},
   booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
   volume    = {32},
+  pages     = {3543--3553},
   year      = {2019}
 }
 
@@ -247,6 +264,9 @@
   author    = {Xu, Chen and Xie, Yao},
   title     = {Conformal Prediction Interval for Dynamic Time-Series},
   booktitle = {Proc. 38th Int. Conf. on Machine Learning (ICML)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {139},
+  pages     = {11559--11569},
   year      = {2021}
 }
 
@@ -255,6 +275,7 @@
   title     = {Adaptive Conformal Inference Under Distribution Shift},
   booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
   volume    = {34},
+  pages     = {1660--1672},
   year      = {2021}
 }
 
@@ -262,6 +283,9 @@
   author    = {Kuleshov, Volodymyr and Fenner, Nathan and Ermon, Stefano},
   title     = {Accurate Uncertainties for Deep Learning Using Calibrated Regression},
   booktitle = {Proc. 35th Int. Conf. on Machine Learning (ICML)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {80},
+  pages     = {2796--2804},
   year      = {2018}
 }
 
