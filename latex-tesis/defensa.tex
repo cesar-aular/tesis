@@ -27,7 +27,7 @@
   \subtitle{Un enfoque \emph{Cross-Site} multi-planta frente a modelos locales}
   \author[Aular \& Hernández]{César David Aular Muñoz \and Sergio Hernández}
   \institute[UCM]{Departamento de Computación e Industrias \\ Facultad de Ciencias de la Ingeniería \\ Universidad Católica del Maule}
-  \date{Conferencia IEEE --- 2026}% <-- editar con el nombre y fecha reales de la conferencia
+  \date{Chilean Workshop on Pattern Recognition (CWPR) --- 2026}
 \else
   % ----- Modo DEFENSA (examen de título) -----
   \title[Multi-sitio vs.\ local: pronóstico FV \emph{Cold-Start}]{Análisis comparativo de un enfoque multi-sitio frente a modelos locales para la proyección a corto plazo de generación fotovoltaica bajo escasez de datos}
@@ -151,7 +151,7 @@
 
 \begin{frame}{Arquitectura del sistema}
   \centering
-  \includegraphics[width=0.93\textwidth]{fig_arquitectura_componentes.png}
+  \includegraphics[height=0.78\textheight,keepaspectratio]{fig_arquitectura_componentes.png}
 \end{frame}
 
 \begin{frame}{Protocolo \emph{Leave-One-Plant-Out} (LOPO)}
@@ -209,9 +209,9 @@
     \item Solo el clima exógeno (conocido/pronosticable) y la geografía estática usan valores reales del objetivo.
     \item La generación de contexto es \rj{100\% sintética} $\rightarrow$ cero fuga.
   \end{itemize}
-  \vspace{-0.2em}
+  \vspace{-0.4em}
   \centering
-  \includegraphics[width=0.6\textwidth]{fig_eval_protocolo.png}
+  \includegraphics[width=0.54\textwidth]{fig_eval_protocolo.png}
 \end{frame}
 
 \begin{frame}{Ocho configuraciones y ventanas de evaluación}
@@ -350,7 +350,9 @@
 \end{frame}
 
 \begin{frame}{Contraste de la hipótesis --- con test estadístico}
-  \begin{alertblock}{La hipótesis se \rj{RECHAZA}, y ahora con significancia}
+  % OJO: dentro de un título de bloque NO usar \rj/\lo/\gl — el fondo ya es de color
+  % y el texto quedaría invisible (rojo sobre rojo). Se usa negrita sobre el blanco heredado.
+  \begin{alertblock}{La hipótesis se \textbf{RECHAZA}, y ahora con significancia}
     \lo{XGBoost local} gana a \gl{XGBoost global} en \textbf{77 de 94 plantas}
     ($p<10^{-7}$, Wilcoxon pareado con corrección de Holm).
   \end{alertblock}
