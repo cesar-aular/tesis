@@ -6,6 +6,9 @@
 % Solo cambian portada/autores/afiliacion/evento; el contenido es el mismo.
 % ====================================================================
 \providecommand{\confmode}{0}% 0 = defensa, 1 = conferencia
+% \minmode=1 -> versión MÍNIMA: deck de la defensa + mapa, sin las diapositivas
+% de tests estadísticos ni los respaldos nuevos (ver README_charlas.md).
+\providecommand{\minmode}{0}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[spanish,es-noquoting]{babel}
@@ -349,9 +352,28 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Contraste de la hipótesis --- con test estadístico}
+\ifnum\minmode=1
+% ---- Versión MÍNIMA: sin mencionar tests estadísticos ----
+\begin{frame}{Contraste de la hipótesis}
   % OJO: dentro de un título de bloque NO usar \rj/\lo/\gl — el fondo ya es de color
   % y el texto quedaría invisible (rojo sobre rojo). Se usa negrita sobre el blanco heredado.
+  \begin{alertblock}{La hipótesis se \textbf{RECHAZA}}
+    Ningún modelo global alcanza al mejor baseline local:
+    \lo{XGBoost local} (13,2\,\%) frente a \gl{XGBoost global} (17,1\,\%).
+  \end{alertblock}
+  \begin{block}{A igualdad de arquitectura tampoco hay ventaja global}
+    \begin{itemize}
+      \item \lo{N-HiTS local} (17,6\,\%) supera a \gl{N-HiTS global} (30,7\,\%).
+      \item El par \textbf{LSTM} queda prácticamente empatado (23,9\,\% vs.\ 24,8\,\%).
+    \end{itemize}
+  \end{block}
+  \begin{exampleblock}{El valor real: disponibilidad inmediata}
+    En el arranque en frío puro (historia local nula) el modelo global \textbf{no tiene competidor local posible}.
+  \end{exampleblock}
+\end{frame}
+\else
+% ---- Versión COMPLETA: con los tests pareados del paper ----
+\begin{frame}{Contraste de la hipótesis --- con test estadístico}
   \begin{alertblock}{La hipótesis se \textbf{RECHAZA}, y ahora con significancia}
     \lo{XGBoost local} gana a \gl{XGBoost global} en \textbf{77 de 94 plantas}
     ($p<10^{-7}$, Wilcoxon pareado con corrección de Holm).
@@ -367,6 +389,7 @@
     En el arranque en frío puro (historia local nula) el modelo global \textbf{no tiene competidor local posible}.
   \end{exampleblock}
 \end{frame}
+\fi
 
 \begin{frame}{Ejemplo de roll-out Cold-Start a 7 días}
   \centering
@@ -424,6 +447,8 @@
 % ==================================================================
 \appendix
 
+% Respaldos exclusivos de la versión COMPLETA (se omiten en \minmode=1)
+\ifnum\minmode=0
 \begin{frame}{Backup --- Tests estadísticos (Friedman + Wilcoxon-Holm)}
   \textbf{Diseño pareado y balanceado:} 94 plantas $\times$ 8 configuraciones sobre la
   misma grilla horaria canónica $\rightarrow$ aplica la comparación por rangos de
@@ -466,6 +491,8 @@
     \textbf{pierde igual}. Ambos sesgos empujan contra la conclusión reportada.
   \end{exampleblock}
 \end{frame}
+
+\fi% fin de los respaldos exclusivos de la versión completa
 
 \begin{frame}{Backup --- Definición del RMSE}
   \begin{block}{Fórmula}
